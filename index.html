@@ -602,7 +602,7 @@ body {
 .toverlay { position:fixed; inset:0; z-index:2000; background:rgba(0,0,0,0.92); display:none; align-items:center; justify-content:center; padding:8px; }
 .toverlay.open { display:flex; }
 
-.twindow { width:100%; max-width:960px; height:85vh; background:#0c0c0c; border:1px solid #333; border-radius:8px; display:flex; flex-direction:column; overflow:hidden; box-shadow:0 0 60px rgba(32,255,32,0.08); }
+.twindow { width:100%; max-width:960px; height:85vh; height:85dvh; background:#0c0c0c; border:1px solid #333; border-radius:8px; display:flex; flex-direction:column; overflow:hidden; box-shadow:0 0 60px rgba(32,255,32,0.08); }
 
 .ttbar { background:#1a1a1a; padding:8px 14px; display:flex; align-items:center; font-family:"SF Mono",Consolas,monospace; font-size:0.75rem; color:#777; border-bottom:1px solid #2a2a2a; user-select:none; }
 .ttbar span { flex:1; }
@@ -621,7 +621,10 @@ body {
 .tinput input { flex:1; background:transparent; border:none; outline:none; color:#20ff20; font-family:"SF Mono",Consolas,monospace; font-size:0.82rem; caret-color:#20ff20; }
 .tinput input::placeholder { color:#3a3; }
 
-@media (max-width: 800px) { .twindow { height:92vh; border-radius:0; } }
+@media (max-width: 800px) {
+  .toverlay { padding:0; align-items:stretch; }
+  .twindow { height:100%; max-width:none; border-radius:0; }
+}
 </style>
 </head>
 <body>
