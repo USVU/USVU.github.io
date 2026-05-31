@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Web Pipe — AAP Liwanag 19.91</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: #0a0a0a;
+  color: #e0e0e0;
+  font-family: system-ui, -apple-system, sans-serif;
+  min-height: 100vh;
+}
+
+.header {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 32px 24px 16px;
+}
+
+.header h1 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #20ff20;
+}
+
+.header h1 a {
+  color: #20ff20;
+  text-decoration: none;
+}
+
+.header .desc {
+  color: #888;
+  margin-top: 4px;
+  font-size: 0.95rem;
+}
+
+.header .total {
+  color: #555;
+  font-size: 0.85rem;
+  margin-top: 2px;
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+.controls label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.82rem;
+  color: #888;
+  cursor: pointer;
+}
+
+.controls input[type="checkbox"] {
+  appearance: none;
+  width: 36px;
+  height: 20px;
+  border-radius: 10px;
+  background: #333;
+  border: 1px solid #444;
+  cursor: pointer;
+  position: relative;
+  transition: background 0.2s;
+  flex-shrink: 0;
+}
+
+.controls input[type="checkbox"]::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #888;
+  transition: transform 0.2s, background 0.2s;
+}
+
+.controls input[type="checkbox"]:checked {
+  background: #20ff20;
+  border-color: #20ff20;
+}
+
+.controls input[type="checkbox"]:checked::after {
+  transform: translateX(16px);
+  background: #000;
+}
+
+.controls .mode-label {
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.controls .mode-label .active {
+  color: #20ff20;
+  font-weight: 600;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 24px 24px;
+}
+
+.tile {
+  background: #141414;
+  border: 1px solid #222;
+  border-radius: 10px;
+  overflow: hidden;
+  transition: border-color 0.2s, transform 0.2s;
+  cursor: pointer;
+}
+
+.tile:hover {
+  border-color: #20ff20;
+  transform: translateY(-2px);
+}
+
+.tile-img {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  display: block;
+  background: #1a1a1a;
+}
+
+.tile-body {
+  padding: 12px 14px 14px;
+}
+
+.tile-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #20ff20;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.tile-text {
+  font-size: 0.82rem;
+  color: #aaa;
+  margin-top: 6px;
+  line-height: 1.45;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.tile-text p { margin-bottom: 4px; }
+
+.tile-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 10px;
+  font-size: 0.72rem;
+  color: #555;
+}
+
+.tile-date { color: #555; }
+
+.tile-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 8px;
+}
+
+.tile-tag {
+  font-size: 0.68rem;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: #1a1a1a;
+  color: #666;
+  border: 1px solid #2a2a2a;
+}
+
+.tile-permalink {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  background: rgba(0,0,0,0.7);
+  border: 1px solid #20ff20;
+  color: #20ff20;
+  font-size: 0.65rem;
+  padding: 3px 7px;
+  border-radius: 4px;
+  opacity: 0;
+  transition: opacity 0.2s;
+  pointer-events: none;
+}
+
+.tile:hover .tile-permalink {
+  opacity: 1;
+}
+
+.tile .tile-inner {
+  color: inherit;
+  text-decoration: none;
+  display: block;
+  position: relative;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  max-width: 1400px;
+  margin: 24px auto 48px;
+  padding: 0 24px;
+  flex-wrap: wrap;
+}
+
+.pagination button,
+.pagination .page-btn {
+  padding: 8px 16px;
+  border: 1px solid #333;
+  border-radius: 6px;
+  background: #141414;
+  color: #aaa;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: all 0.15s;
+}
+
+.pagination button:hover:not(:disabled),
+.pagination .page-btn:hover:not(.current) {
+  border-color: #20ff20;
+  color: #20ff20;
+}
+
+.pagination button:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.pagination .page-btn.current {
+  background: #20ff20;
+  color: #000;
+  border-color: #20ff20;
+  font-weight: 600;
+}
+
+.loading {
+  text-align: center;
+  padding: 80px 24px;
+  color: #555;
+}
+
+.loading::after {
+  content: '';
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  border: 2px solid #333;
+  border-top-color: #20ff20;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  margin-left: 8px;
+  vertical-align: middle;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.error {
+  text-align: center;
+  padding: 40px;
+  color: #ff6b6b;
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s, visibility 0.2s;
+}
+
+.modal-overlay.open {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal-content {
+  background: #111;
+  border: 1px solid #333;
+  border-radius: 12px;
+  max-width: 720px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  padding: 32px;
+}
+
+.modal-close {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  background: none;
+  border: none;
+  color: #666;
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: color 0.15s;
+  line-height: 1;
+}
+
+.modal-close:hover { color: #20ff20; }
+
+.modal-head {
+  margin-bottom: 20px;
+  padding-right: 32px;
+}
+
+.modal-head .modal-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #20ff20;
+  line-height: 1.3;
+}
+
+.modal-head .modal-date {
+  font-size: 0.8rem;
+  color: #555;
+  margin-top: 4px;
+}
+
+.modal-head .modal-meta {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 6px;
+  font-size: 0.78rem;
+}
+
+.modal-head .modal-meta span {
+  background: #1a1a1a;
+  border: 1px solid #2a2a2a;
+  padding: 2px 8px;
+  border-radius: 4px;
+  color: #888;
+}
+
+.modal-img {
+  width: 100%;
+  max-height: 70vh;
+  object-fit: contain;
+  display: block;
+  margin: 0 auto 20px;
+  border-radius: 6px;
+  background: #0a0a0a;
+}
+
+.modal-body {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: #ccc;
+}
+
+.modal-body p { margin-bottom: 12px; }
+.modal-body ul, .modal-body ol { margin: 8px 0 12px 24px; }
+.modal-body li { margin-bottom: 4px; }
+.modal-body a { color: #20ff20; }
+.modal-body img { max-width: 100%; border-radius: 6px; margin: 8px 0; }
+.modal-body blockquote {
+  border-left: 2px solid #333;
+  margin: 12px 0;
+  padding-left: 16px;
+  color: #999;
+}
+.modal-body h1, .modal-body h2, .modal-body h3 { color: #e0e0e0; margin: 16px 0 8px; }
+.modal-body hr { border: none; border-top: 1px solid #222; margin: 16px 0; }
+
+.modal-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid #222;
+}
+
+.modal-tags a {
+  font-size: 0.78rem;
+  padding: 4px 10px;
+  border-radius: 4px;
+  background: #1a1a1a;
+  border: 1px solid #2a2a2a;
+  color: #888;
+  text-decoration: none;
+  transition: all 0.15s;
+}
+
+.modal-tags a:hover {
+  border-color: #20ff20;
+  color: #20ff20;
+}
+
+.modal-footer {
+  margin-top: 20px;
+  padding-top: 12px;
+  border-top: 1px solid #222;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.modal-footer a {
+  font-size: 0.82rem;
+  color: #20ff20;
+  text-decoration: none;
+  border: 1px solid #20ff20;
+  padding: 6px 14px;
+  border-radius: 6px;
+  transition: all 0.15s;
+}
+
+.modal-footer a:hover {
+  background: #20ff20;
+  color: #000;
+}
+
+@media (max-width: 800px) {
+  .modal-content { padding: 24px 20px; }
+  .modal-head .modal-title { font-size: 1.1rem; }
+}
+
+@media (max-width: 500px) {
+  .grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1><a href="https://kredtidy.tumblr.com" target="_blank">AAP Liwanag 19.91</a></h1>
+  <div class="desc">Artist / MetaDeveloper / B.I.G.</div>
+  <div class="total" id="total"></div>
+  <div class="controls">
+    <label>
+      <input type="checkbox" id="modeToggle" checked>
+      <span class="mode-label">Infinite scroll <span class="active" id="modeDisplay">on</span></span>
+    </label>
+  </div>
+</div>
+
+<div class="grid" id="grid"></div>
+
+<div class="pagination" id="pagination"></div>
+<div id="sentinel" style="height:1px"></div>
+
+<div class="modal-overlay" id="modal">
+  <div class="modal-content" id="modalContent">
+    <button class="modal-close" id="modalClose">&times;</button>
+    <div id="modalInner"></div>
+  </div>
+</div>
+
+<script>
+const BLOG = 'kredtidy';
+const PER_PAGE = 20;
+let currentPage = 1;
+let totalPosts = 0;
+let isInfinite = true;
+let loading = false;
+let allLoaded = false;
+let observer = null;
+const postCache = new Map();
+
+function $(id) { return document.getElementById(id); }
+
+function stripHtml(html) {
+  const d = document.createElement('div');
+  d.innerHTML = html;
+  return d.textContent || d.innerText || '';
+}
+
+function truncate(text, max) {
+  return text.length > max ? text.slice(0, max) + '…' : text;
+}
+
+function formatDate(dateStr) {
+  try {
+    const d = new Date(dateStr);
+    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  } catch { return dateStr; }
+}
+
+function firstImage(post) {
+  if (post.type === 'photo') {
+    return post['photo-url-500'] || post['photo-url-250'] || null;
+  }
+  if (post.type === 'regular') {
+    const m = (post['regular-body'] || '').match(/<img[^>]+src=["']([^"']+)/);
+    return m ? m[1] : null;
+  }
+  return null;
+}
+
+function extractText(post) {
+  if (post.type === 'regular') return stripHtml(post['regular-body'] || '');
+  if (post.type === 'photo') return stripHtml(post['photo-caption'] || '');
+  if (post.type === 'quote') return stripHtml(post['quote-text'] || '');
+  if (post.type === 'link') return stripHtml(post['link-description'] || post['link-text'] || '');
+  if (post.type === 'chat') return stripHtml(post['regular-body'] || post.body || '');
+  if (post.type === 'video') return post['video-caption'] ? stripHtml(post['video-caption']) : '';
+  if (post.type === 'audio') return post['audio-caption'] ? stripHtml(post['audio-caption']) : '';
+  if (post.type === 'answer') return stripHtml(post.answer || '');
+  return '';
+}
+
+function extractTitle(post) {
+  if (post.type === 'regular') return post['regular-title'] || '';
+  if (post.type === 'photo') return stripHtml(post['photo-caption'] || '').slice(0, 80);
+  if (post.type === 'quote') return stripHtml(post['quote-text'] || '').slice(0, 80);
+  if (post.type === 'link') return post['link-text'] || post['link-title'] || '';
+  if (post.type === 'chat') return post.title || post['regular-title'] || '';
+  if (post.type === 'video') return post['video-title'] || (post['video-caption'] ? stripHtml(post['video-caption']).slice(0, 60) : '');
+  if (post.type === 'audio') return post['audio-title'] || (post['audio-caption'] ? stripHtml(post['audio-caption']).slice(0, 60) : '');
+  if (post.type === 'answer') return stripHtml(post.question || '').slice(0, 80);
+  return '';
+}
+
+function escHtml(s) {
+  const d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
+
+function tileHtml(post) {
+  const img = firstImage(post);
+  const title = extractTitle(post);
+  const text = extractText(post);
+  const tags = post.tags || [];
+  const date = formatDate(post['date-gmt'] || post.date);
+  const url = post['url-with-slug'] || post.url;
+  const id = post.id;
+
+  return `<div class="tile" data-post-id="${id}" onclick="openPermalink('${id}')">
+    <div class="tile-inner">
+      ${img ? `<img class="tile-img" src="${img}" alt="" loading="lazy">` : ''}
+      <div class="tile-body">
+        ${title ? `<div class="tile-title">${escHtml(title)}</div>` : ''}
+        ${text ? `<div class="tile-text">${escHtml(truncate(text, 180))}</div>` : ''}
+        <div class="tile-meta">
+          <span class="tile-date">${date}</span>
+          <span style="color:#555;text-transform:capitalize;font-size:0.7rem">${post.type}</span>
+        </div>
+        ${tags.length ? `<div class="tile-tags">${tags.map(t => `<span class="tile-tag">${escHtml(t)}</span>`).join('')}</div>` : ''}
+      </div>
+      <div class="tile-permalink">&#182; permalink</div>
+    </div>
+  </div>`;
+}
+
+function jsonp(url) {
+  return new Promise((resolve, reject) => {
+    const cb = '_jp' + Math.random().toString(36).slice(2);
+    window[cb] = data => { delete window[cb]; resolve(data); };
+    const s = document.createElement('script');
+    s.src = url + '&callback=' + cb;
+    s.onerror = () => { delete window[cb]; reject(new Error('JSONP failed')); };
+    document.head.appendChild(s);
+  });
+}
+
+async function fetchPage(page, append) {
+  if (loading) return;
+  const start = (page - 1) * PER_PAGE;
+  loading = true;
+
+  if (!append) {
+    $('grid').innerHTML = '<div class="loading">Loading…</div>';
+  }
+
+  try {
+    const data = await jsonp(`https://${BLOG}.tumblr.com/api/read/json?num=${PER_PAGE}&start=${start}`);
+    totalPosts = data['posts-total'];
+    $('total').textContent = totalPosts + ' posts total';
+    loading = false;
+
+    if (!data.posts || data.posts.length === 0) {
+      if (!append) $('grid').innerHTML = '<div class="error">No posts found.</div>';
+      return;
+    }
+
+    data.posts.forEach(p => postCache.set(p.id, p));
+
+    if (append) {
+      $('grid').insertAdjacentHTML('beforeend', data.posts.map(tileHtml).join(''));
+    } else {
+      $('grid').innerHTML = data.posts.map(tileHtml).join('');
+    }
+
+    const totalPages = Math.ceil(totalPosts / PER_PAGE);
+    if (page >= totalPages) {
+      allLoaded = true;
+      if (isInfinite) {
+        $('pagination').innerHTML = '<div style="text-align:center;padding:32px;color:#555;font-size:0.85rem">All ' + totalPosts + ' posts loaded.</div>';
+      }
+    }
+
+    if (isInfinite) {
+      setupInfiniteScroll();
+    } else {
+      renderPagination();
+    }
+  } catch {
+    loading = false;
+    if (!append) $('grid').innerHTML = '<div class="error">Failed to load posts. Try again.</div>';
+  }
+}
+
+async function fetchSinglePost(id) {
+  try {
+    const data = await jsonp(`https://${BLOG}.tumblr.com/api/read/json?id=${id}`);
+    if (data.posts && data.posts.length) {
+      const p = data.posts[0];
+      postCache.set(p.id, p);
+      return p;
+    }
+  } catch {}
+  return null;
+}
+
+async function openPermalink(id) {
+  let post = postCache.get(id);
+  if (!post) {
+    $('modalInner').innerHTML = '<div class="loading">Loading post…</div>';
+    $('modal').classList.add('open');
+    post = await fetchSinglePost(id);
+    if (!post) {
+      $('modalInner').innerHTML = '<div class="error">Post not found.</div>';
+      return;
+    }
+  }
+  renderModal(post);
+  $('modal').classList.add('open');
+  history.replaceState(null, '', '#post-' + id);
+}
+
+function closePermalink() {
+  $('modal').classList.remove('open');
+  const hash = location.hash;
+  if (hash.startsWith('#post-')) {
+    history.replaceState(null, '', isInfinite ? '#infinite' : '');
+  }
+}
+
+function renderModal(post) {
+  const title = extractTitle(post);
+  const tags = post.tags || [];
+  const date = formatDate(post['date-gmt'] || post.date);
+  const type = post.type;
+  const url = post['url-with-slug'] || post.url;
+  const notes = post['note-count'] || 0;
+  const id = post.id;
+
+  let img = null;
+  if (post.type === 'photo') {
+    img = post['photo-url-1280'] || post['photo-url-500'] || null;
+  } else if (post.type === 'regular') {
+    const m = (post['regular-body'] || '').match(/<img[^>]+src=["']([^"']+)/);
+    img = m ? m[1] : null;
+  }
+
+  let bodyHtml = '';
+  if (post.type === 'regular') {
+    bodyHtml = post['regular-body'] || '';
+  } else if (post.type === 'photo') {
+    bodyHtml = post['photo-caption'] || '';
+  } else if (post.type === 'quote') {
+    bodyHtml = '<blockquote>' + (post['quote-text'] || '') + '</blockquote>';
+    if (post['quote-source']) bodyHtml += '<p>&mdash; ' + post['quote-source'] + '</p>';
+  } else if (post.type === 'link') {
+    bodyHtml = (post['link-description'] || '') + '<p><a href="' + escHtml(post['link-url'] || '#') + '" target="_blank">' + escHtml(post['link-text'] || post['link-url'] || '') + '</a></p>';
+  } else if (post.type === 'chat') {
+    bodyHtml = post['regular-body'] || post.body || '';
+  } else if (post.type === 'video') {
+    bodyHtml = post['video-caption'] || '';
+    if (post['video-player']) bodyHtml = post['video-player'] + bodyHtml;
+  } else if (post.type === 'audio') {
+    bodyHtml = post['audio-caption'] || '';
+    if (post['audio-player']) bodyHtml = post['audio-player'] + bodyHtml;
+  } else if (post.type === 'answer') {
+    bodyHtml = '<p><b>Q:</b> ' + (post.question || '') + '</p><p><b>A:</b> ' + (post.answer || '') + '</p>';
+  }
+
+  $('modalInner').innerHTML = `
+    <div class="modal-head">
+      ${title ? `<div class="modal-title">${escHtml(title)}</div>` : ''}
+      <div class="modal-date">${date}</div>
+      <div class="modal-meta">
+        <span>${type}</span>
+        <span>${notes} notes</span>
+      </div>
+    </div>
+    ${img ? `<img class="modal-img" src="${img}" alt="" loading="lazy">` : ''}
+    <div class="modal-body">${bodyHtml}</div>
+    ${tags.length ? `<div class="modal-tags">${tags.map(t => `<a href="https://${BLOG}.tumblr.com/tagged/${encodeURIComponent(t)}" target="_blank">#${escHtml(t)}</a>`).join('')}</div>` : ''}
+    <div class="modal-footer">
+      <a href="${url}" target="_blank">View on Tumblr &rarr;</a>
+      <a href="#" onclick="event.preventDefault();copyPermalink('${id}')">Copy permalink</a>
+    </div>`;
+}
+
+function copyPermalink(id) {
+  const url = location.origin + location.pathname + '#post-' + id;
+  navigator.clipboard.writeText(url).catch(() => {});
+}
+
+function setupInfiniteScroll() {
+  if (observer) observer.disconnect();
+  if (allLoaded) return;
+
+  const sentinel = $('sentinel');
+  observer = new IntersectionObserver(entries => {
+    if (entries[0].isIntersecting && !loading && !allLoaded) {
+      const nextPage = Math.ceil($('grid').querySelectorAll('.tile').length / PER_PAGE) + 1;
+      if (nextPage <= Math.ceil(totalPosts / PER_PAGE)) {
+        const spinner = document.createElement('div');
+        spinner.className = 'loading';
+        spinner.id = 'load-spinner';
+        $('pagination').innerHTML = '';
+        $('pagination').appendChild(spinner);
+        fetchPage(nextPage, true);
+      }
+    }
+  }, { rootMargin: '400px' });
+  observer.observe(sentinel);
+}
+
+function renderPagination() {
+  if (observer) observer.disconnect();
+  const total = Math.ceil(totalPosts / PER_PAGE);
+  const el = $('pagination');
+  if (total <= 1) { el.innerHTML = ''; return; }
+
+  let h = '';
+  h += `<button onclick="goPage(${currentPage - 1})" ${currentPage <= 1 ? 'disabled' : ''}>‹ Prev</button>`;
+
+  let startPage = Math.max(1, currentPage - 3);
+  let endPage = Math.min(total, currentPage + 3);
+
+  if (startPage > 1) {
+    h += `<button class="page-btn" onclick="goPage(1)">1</button>`;
+    if (startPage > 2) h += `<span style="color:#555">…</span>`;
+  }
+
+  for (let i = startPage; i <= endPage; i++) {
+    h += `<button class="page-btn${i === currentPage ? ' current' : ''}" onclick="goPage(${i})">${i}</button>`;
+  }
+
+  if (endPage < total) {
+    if (endPage < total - 1) h += `<span style="color:#555">…</span>`;
+    h += `<button class="page-btn" onclick="goPage(${total})">${total}</button>`;
+  }
+
+  h += `<button onclick="goPage(${currentPage + 1})" ${currentPage >= total ? 'disabled' : ''}>Next ›</button>`;
+  el.innerHTML = h;
+}
+
+function goPage(page) {
+  const total = Math.ceil(totalPosts / PER_PAGE);
+  if (page < 1 || page > total) return;
+  currentPage = page;
+  fetchPage(page, false);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  history.replaceState(null, '', '#page=' + page);
+}
+
+function toggleMode() {
+  isInfinite = $('modeToggle').checked;
+  $('modeDisplay').textContent = isInfinite ? 'on' : 'off';
+  allLoaded = false;
+  if (observer) observer.disconnect();
+
+  if (isInfinite) {
+    $('pagination').innerHTML = '';
+    currentPage = 1;
+    fetchPage(1, false);
+    history.replaceState(null, '', '#infinite');
+  } else {
+    currentPage = 1;
+    fetchPage(1, false);
+    history.replaceState(null, '', '');
+  }
+}
+
+function openPostFromHash() {
+  const m = location.hash.match(/^#post-(\d+)$/);
+  if (m) {
+    openPermalink(m[1]);
+    return true;
+  }
+  return false;
+}
+
+(function init() {
+  $('modeToggle').addEventListener('change', toggleMode);
+  $('modalClose').addEventListener('click', closePermalink);
+  $('modal').addEventListener('click', e => {
+    if (e.target === $('modal')) closePermalink();
+  });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && $('modal').classList.contains('open')) closePermalink();
+  });
+  window.addEventListener('hashchange', () => {
+    if (!openPostFromHash() && $('modal').classList.contains('open')) {
+      if (!location.hash.startsWith('#post-')) closePermalink();
+    }
+  });
+
+  const hash = location.hash;
+  if (hash.startsWith('#post-')) {
+    isInfinite = true;
+    fetchPage(1, true);
+    return;
+  }
+
+  if (hash === '#infinite') {
+    isInfinite = true;
+    $('modeToggle').checked = true;
+    $('modeDisplay').textContent = 'on';
+  } else {
+    const m = hash.match(/page=(\d+)/);
+    if (m) {
+      isInfinite = false;
+      $('modeToggle').checked = false;
+      $('modeDisplay').textContent = 'off';
+      currentPage = parseInt(m[1]);
+    }
+  }
+
+  if (isInfinite) {
+    fetchPage(1, false);
+  } else {
+    fetchPage(currentPage, false);
+  }
+})();
+</script>
+</body>
+</html>
