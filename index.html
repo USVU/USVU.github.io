@@ -622,8 +622,8 @@ body {
 .tinput input::placeholder { color:#3a3; }
 
 @media (max-width: 800px) {
-  .toverlay { padding:0; align-items:stretch; }
-  .twindow { height:100%; max-width:none; border-radius:0; }
+  .toverlay { padding:0; }
+  .twindow { max-width:none; border-radius:0; }
 }
 </style>
 </head>
@@ -1146,6 +1146,17 @@ function _tprt(t, c) { _tout('<div class="to' + (c ? ' ' + c : '') + '">' + t + 
 function _tscb() { var e = document.getElementById('tbody'); if (e) e.scrollTop = e.scrollHeight; }
 function _tesc(s) { var d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
 
+var _tvpHandler = null;
+
+function _tadj() {
+  if (!window.visualViewport) return;
+  if (window.innerWidth > 800) { var w = document.querySelector('.twindow'); if (w) w.style.height = ''; return; }
+  var w = document.querySelector('.twindow');
+  if (!w) return;
+  var h = window.visualViewport.height;
+  w.style.height = (h - 8) + 'px';
+}
+
 function _topen() {
   var o = document.getElementById('toverlay');
   var b = document.getElementById('tbody');
@@ -1155,12 +1166,23 @@ function _topen() {
   _tprt('kredtidy@web-pipe v2.0', 'tdim');
   _tprt('type <b>help</b> for commands, <b>exit</b> to close', 'tdim');
   _tprt('');
+  _tadj();
+  if (window.visualViewport && !_tvpHandler) {
+    _tvpHandler = function() { _tadj(); };
+    window.visualViewport.addEventListener('resize', _tvpHandler);
+    window.visualViewport.addEventListener('scroll', _tvpHandler);
+  }
   setTimeout(function() { var i = document.getElementById('tinput'); if (i) i.focus(); }, 100);
 }
 
 function _tclose() {
   var o = document.getElementById('toverlay');
   if (o) o.classList.remove('open');
+  if (_tvpHandler) {
+    window.visualViewport.removeEventListener('resize', _tvpHandler);
+    window.visualViewport.removeEventListener('scroll', _tvpHandler);
+    _tvpHandler = null;
+  }
 }
 
 function _tgen() {
@@ -1973,12 +1995,13 @@ _treg('matrix', ['hack'], 'matrix rain', function(a) {
     var tc = $('tclose'); if (tc) tc.addEventListener('click', _tclose);
     var to = $('toverlay'); if (to) to.addEventListener('click', function(e) { if (e.target === to) _tclose(); });
     var ti = $('tinput');
-    if (ti) ti.addEventListener('keydown', function(e) {
+    if (ti) { ti.addEventListener('keydown', function(e) {
       if (e.key === 'Enter') { e.preventDefault(); _trun(this.value); this.value = ''; }
       else if (e.key === 'ArrowUp') { e.preventDefault(); if (_thi > 0) { _thi--; this.value = _th[_thi]; } }
       else if (e.key === 'ArrowDown') { e.preventDefault(); if (_thi < _th.length - 1) { _thi++; this.value = _th[_thi]; } else { _thi = _th.length; this.value = ''; } }
       else if (e.key === 'Tab') { e.preventDefault(); var v = this.value.trim().toLowerCase(); var m = Object.keys(_tcmds).filter(function(k) { return k.indexOf(v) === 0; }); if (m.length === 1) this.value = m[0] + ' '; }
     });
+    ti.addEventListener('focus', function() { setTimeout(_tadj, 300); }); }
   } catch(e) {}
 
   var saved = localStorage.getItem('wp-theme') || 'dark-green';
