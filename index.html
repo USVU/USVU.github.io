@@ -1810,7 +1810,13 @@ function _searchAll(q, isTag, label, maxPosts) {
         var sorted = all.slice().sort(function(x, y) { return (y['unix-timestamp'] || 0) - (x['unix-timestamp'] || 0); });
         _results = sorted;
         $('grid').innerHTML = sorted.map(tileHtml).join('');
-        if (!isTextOnly) applyMasonry();
+        if (!isTextOnly) {
+          applyMasonry();
+          $('grid').querySelectorAll('img').forEach(function(img) {
+            if (!img.complete) img.addEventListener('load', applyMasonry, { once: true });
+          });
+          setTimeout(applyMasonry, 300);
+        }
         $('total').textContent = all.length + ' matches so far...';
       }
       if (fetched < total && fetched < max) { start += 50; setTimeout(next, 250); }
