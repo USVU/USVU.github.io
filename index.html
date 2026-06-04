@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Web Pipe — AAP Liwanag 19.91</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/xterm/css/xterm.min.css">
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -602,12 +603,22 @@ body {
 .toverlay { position:fixed; inset:0; z-index:2000; background:rgba(0,0,0,0.92); display:none; align-items:center; justify-content:center; padding:8px; }
 .toverlay.open { display:flex; }
 
-.twindow { width:100%; max-width:960px; height:85vh; height:85dvh; background:#0c0c0c; border:1px solid #333; border-radius:8px; display:flex; flex-direction:column; overflow:hidden; box-shadow:0 0 60px rgba(32,255,32,0.08); }
+.twindow { width:100%; max-width:1200px; height:85vh; height:85dvh; background:#0c0c0c; border:1px solid #333; border-radius:8px; display:flex; flex-direction:column; overflow:hidden; box-shadow:0 0 60px rgba(32,255,32,0.08); }
 
-.ttbar { background:#1a1a1a; padding:8px 14px; display:flex; align-items:center; font-family:"SF Mono",Consolas,monospace; font-size:0.75rem; color:#777; border-bottom:1px solid #2a2a2a; user-select:none; }
+.ttbar { background:#1a1a1a; padding:8px 14px; display:flex; align-items:center; font-family:"SF Mono",Consolas,monospace; font-size:0.75rem; color:#777; border-bottom:1px solid #2a2a2a; user-select:none; flex-shrink:0; position:relative; z-index:10; }
 .ttbar span { flex:1; }
 .ttbar .tclose { background:none; border:none; color:#666; cursor:pointer; font-size:1.2rem; line-height:1; padding:0 4px; }
 .ttbar .tclose:hover { color:#ff5f57; }
+
+#liveOverlay { padding: 8px; }
+#liveWindow { width:100%; max-width:1200px; height:85vh; height:85dvh; border-radius:8px; display:flex; flex-direction:column; overflow:hidden; }
+#liveWindow #xterm-container { flex: 1; min-height: 0; }
+#xterm-container { padding: 0; background: #0c0c0c; overflow: hidden !important; }
+#xterm-container .terminal { padding: 0; }
+#xterm-container .terminal-cursor { background: #20ff20; color: #000; }
+#xterm-container .xterm { height: 100% !important; overflow: hidden !important; }
+#xterm-container .xterm-viewport { height: 100% !important; overflow-x: auto !important; overflow-y: hidden !important; }
+#xterm-container .xterm-helper-textarea { overflow: hidden !important; }
 
 .tbody { flex:1; overflow-y:auto; padding:10px 16px; font:0.8rem/1.55 "SF Mono",Consolas,monospace; color:#20ff20; background:#0c0c0c; white-space:pre-wrap; word-break:break-word; }
 .tbody .to { margin-bottom:2px; }
@@ -616,7 +627,7 @@ body {
 .tbody .terr { color:#ff4444; }
 .tbody .twarn { color:#ffaa00; }
 
-.tinput { display:flex; align-items:center; background:#0c0c0c; border-top:1px solid #2a2a2a; padding:8px 16px; }
+.tinput { display:flex; align-items:center; background:#0c0c0c; border-top:1px solid #2a2a2a; padding:8px 16px; flex-shrink:0; }
 .tinput span { color:#20ff20; font-family:"SF Mono",Consolas,monospace; font-size:0.82rem; margin-right:6px; }
 .tinput input { flex:1; background:transparent; border:none; outline:none; color:#20ff20; font-family:"SF Mono",Consolas,monospace; font-size:0.82rem; caret-color:#20ff20; }
 .tinput input::placeholder { color:#3a3; }
@@ -629,7 +640,8 @@ body {
 </head>
 <body>
 
-<div class="header">
+<div id="page-wrap">
+  <div class="header">
   <h1><a href="https://kredtidy.tumblr.com" target="_blank">Web Pipe — AAP Liwanag 19.91</a></h1>
   <div class="desc">Artist / MetaDeveloper / B.I.G.</div>
   <div class="total" id="total"></div>
@@ -649,6 +661,10 @@ body {
       <option value="light-blue">Light Blue</option>
     </select>
     <button class="term-btn" id="terminalBtn">&gt;_ Terminal</button>
+    <button class="term-btn" id="liveBtn" style="position:relative;padding:4px 12px 4px 22px;border-color:#555">
+      <span id="liveDot" style="position:absolute;left:7px;top:50%;transform:translateY(-50%);width:8px;height:8px;border-radius:50%;background:#555;display:inline-block;transition:background 0.3s"></span>
+      <span id="liveLabel" style="font-family:system-ui,sans-serif;font-size:0.75rem">Offline</span>
+    </button>
   </div>
 </div>
 
@@ -664,6 +680,8 @@ body {
   </div>
 </div>
 
+</div> <!-- end page-wrap -->
+
 <div class="toverlay" id="toverlay">
   <div class="twindow">
     <div class="ttbar">
@@ -675,6 +693,16 @@ body {
       <span>$</span>
       <input id="tinput" placeholder="type help…" autocomplete="off" autocapitalize="off" spellcheck="false">
     </div>
+  </div>
+</div>
+
+<div class="toverlay" id="liveOverlay">
+  <div class="twindow" id="liveWindow">
+    <div class="ttbar">
+      <span id="termTitle">kredtidy@pipe — connecting...</span>
+      <button class="tclose" id="liveClose">&times;</button>
+    </div>
+    <div id="xterm-container"></div>
   </div>
 </div>
 
@@ -1855,8 +1883,100 @@ _treg('tag', ['filter'], 'tag <name> [max]', function(a) {
   var max = null, qa = a;
   if (a.length && /^\d+$/.test(a[a.length - 1])) { max = parseInt(a.pop()); qa = a; }
   var q = qa.join(' ').trim();
+
   if (!q) { _tprt('usage: tag <name> [max]', 'twarn'); return; }
-  _searchAll(q, true, '#' + q, max);
+  var results = [];
+  postCache.forEach(function(p) {
+    if (max && results.length >= max) return;
+    if ((p.tags || []).some(function(t) { return t.toLowerCase().indexOf(q) > -1; })) {
+      results.push(p);
+    }
+  });
+  if (!results.length) { _tprt('no posts found with tag "' + _tesc(q) + '"', 'tdim'); return; }
+  results.sort(function(a, b) { return (b['unix-timestamp'] || 0) - (a['unix-timestamp'] || 0); });
+  _tprt('found ' + results.length + ' posts with tag "' + _tesc(q) + '":');
+  results.forEach(function(p) {
+    _tprt('  ' + formatDate(p['date-gmt'] || p.date) + '  [' + p.type + ']  #' + p.id);
+  });
+});
+
+_treg('date-search', ['posts-by', 'filter-date', 'by-date'], 'date-search <YYYY> or <YYYY-MM> or <YYYY-MM-DD> [max]', function(a) {
+  var max = null, qa = a.slice();
+  if (qa.length >= 2 && /^\d{1,3}$/.test(qa[qa.length - 1])) { max = parseInt(qa.pop()); }
+  var q = qa.join(' ').trim();
+  if (!q) { _tprt('usage: date-search <YYYY> or <YYYY-MM> or <YYYY-MM-DD> or <month YYYY> [max]', 'twarn'); return; }
+
+  var all = []; var start = 0; var total = 0; var fetched = 0;
+  var limit = max || Infinity;
+  var gen = ++_searchGen;
+  _searchActive = true;
+  if (observer) { observer.disconnect(); observer = null; }
+  $('grid').innerHTML = '<div class="loading">Searching by date…</div>';
+  $('pagination').innerHTML = '';
+  _tprt('searching posts for ' + _tesc(q) + '...', 'tdim');
+
+  function matchesDate(p) {
+    var d = new Date(p['date-gmt'] || p.date);
+    if (isNaN(d.getTime())) return false;
+    var y = d.getFullYear();
+    var m = String(d.getMonth() + 1).padStart(2, '0');
+    var day = String(d.getDate()).padStart(2, '0');
+    var dateStr = y + '-' + m + '-' + day;
+    var ymStr = y + '-' + m;
+    if (/^\d{4}$/.test(q) && parseInt(q) === y) return true;
+    if (/^\d{4}-\d{2}$/.test(q) && q === ymStr) return true;
+    if (/^\d{4}-\d{2}-\d{2}$/.test(q) && q === dateStr) return true;
+    var mDate = new Date(q);
+    if (!isNaN(mDate.getTime()) && mDate.getFullYear() === y && mDate.getMonth() === d.getMonth()) return true;
+    return false;
+  }
+
+  function nextPage() {
+    if (gen !== _searchGen) { _searchActive = false; return; }
+    jsonp('https://' + BLOG + '.tumblr.com/api/read/json?num=50&start=' + start).then(function(data) {
+      if (gen !== _searchGen) return;
+      total = data['posts-total'] || 0;
+      if (data.posts) {
+        data.posts.forEach(function(p) {
+          postCache.set(p.id, p);
+          if (matchesDate(p)) all.push(p);
+        });
+      }
+      fetched += 50;
+      var done = all.length >= limit || fetched >= total;
+      _tprt('  ' + Math.min(fetched, total) + ' / ' + total + ' scanned, ' + all.length + ' matches', 'tdim');
+      if (all.length) {
+        var sorted = all.slice().sort(function(x, y) { return (y['unix-timestamp'] || 0) - (x['unix-timestamp'] || 0); });
+        if (limit < sorted.length) sorted.length = limit;
+        _results = sorted;
+        $('grid').innerHTML = sorted.map(tileHtml).join('');
+        if (!isTextOnly) { applyMasonry(); setTimeout(applyMasonry, 300); }
+        $('total').textContent = all.length + ' matches for ' + _tesc(q);
+      }
+      if (done) {
+        if (!all.length) {
+          $('grid').innerHTML = '<div class="error">No posts found for ' + _tesc(q) + '</div>';
+          _tprt('no matches found in ' + total + ' posts.', 'tdim');
+        } else {
+          var display = all.slice();
+          if (limit < display.length) display.length = limit;
+          display.sort(function(x, y) { return (y['unix-timestamp'] || 0) - (x['unix-timestamp'] || 0); });
+          _tprt('── ' + display.length + ' results for ' + _tesc(q) + ' ──', 'tbold');
+          display.forEach(function(p) {
+            var t = _tesc(extractTitle(p) || '(untitled)').slice(0, 80);
+            _tprt('  ' + formatDate(p['date-gmt'] || p.date) + '  [' + p.type + ']  ' + t + '  #' + p.id);
+          });
+          _tprt('done. ' + display.length + ' results (' + total + ' scanned).', 'tdim');
+        }
+        _searchActive = false;
+        $('total').textContent = all.length + ' results for ' + _tesc(q);
+      } else {
+        start += 50;
+        setTimeout(nextPage, 250);
+      }
+    }).catch(function() { _tprt('error, retrying...', 'terr'); setTimeout(nextPage, 1000); });
+  }
+  nextPage();
 });
 
 _treg('reset', ['home', 'restore'], 'restore main page', function() {
@@ -2058,6 +2178,211 @@ _treg('matrix', ['hack'], 'matrix rain', function(a) {
     fetchPage(currentPage, false);
   }
 })();
+
+// ── Live Terminal (WebSocket + xterm.js) ──────────────────────────
+
+const WS_TUNNEL_URL = "wss://luba-unemissive-sensationally.ngrok-free.dev";
+let wsTerm = null;
+let wsXterm = null;
+let wsConnected = false;
+let wsReconnectTimer = null;
+
+const $liveDot = document.getElementById("liveDot");
+const $liveLabel = document.getElementById("liveLabel");
+const $termTitle = document.getElementById("termTitle");
+
+function setLiveStatus(connected) {
+  wsConnected = connected;
+  $liveDot.style.background = connected ? "#20ff20" : "#555";
+  $liveLabel.textContent = connected ? "Live" : "Offline";
+  document.getElementById("liveBtn").style.borderColor = connected ? "#20ff20" : "#555";
+}
+
+function wsConnect() {
+  setLiveStatus(false);
+  if (wsTerm) { wsTerm.close(); wsTerm = null; }
+
+  if (!WS_TUNNEL_URL || WS_TUNNEL_URL.includes("PASTE_YOUR")) {
+    console.error("WS_TUNNEL_URL not configured");
+    if (wsXterm) wsXterm.write("\r\n\x1b[31m[ERROR: WS_TUNNEL_URL not set in HTML]\x1b[0m\r\n");
+    return;
+  }
+
+  try {
+    wsTerm = new WebSocket(WS_TUNNEL_URL);
+  } catch (e) {
+    console.error("WebSocket creation failed:", e);
+    if (wsXterm) wsXterm.write(`\r\n\x1b[31m[ERROR: ${e.message}]\x1b[0m\r\n`);
+    return;
+  }
+
+  wsTerm.onopen = () => {
+    console.log("WebSocket connected");
+    setLiveStatus(true);
+    if ($termTitle) $termTitle.textContent = "kredtidy@pipe — connected";
+    if (wsXterm) wsXterm.write("\r\n\x1b[32m[connected]\x1b[0m\r\n");
+  };
+
+  wsTerm.onclose = (e) => {
+    console.log("WebSocket closed:", e.code, e.reason);
+    setLiveStatus(false);
+    if ($termTitle) $termTitle.textContent = "kredtidy@pipe — disconnected";
+    if (wsXterm) wsXterm.write(`\r\n\x1b[31m[connection lost: ${e.reason || "closed"}]\x1b[0m\r\n`);
+    wsTerm = null;
+  };
+
+  wsTerm.onerror = (e) => {
+    console.error("WebSocket error:", e);
+    setLiveStatus(false);
+    if (wsXterm) wsXterm.write("\r\n\x1b[31m[connection error]\x1b[0m\r\n");
+    wsTerm = null;
+  };
+
+  wsTerm.onmessage = (e) => {
+    if (!wsXterm) return;
+    try {
+      const msg = JSON.parse(e.data);
+      if (msg.type === "output" && msg.data) {
+        wsXterm.write(msg.data);
+      }
+    } catch {}
+  };
+}
+
+// Auto-reconnect in background (checks every 5 seconds)
+function startKeepalive() {
+  if (wsReconnectTimer) return;
+  wsReconnectTimer = setInterval(() => {
+    if (wsConnected || (wsTerm && wsTerm.readyState === WebSocket.OPEN)) return;
+    // Quick probe — try a fresh connect in background
+    wsConnect();
+  }, 5000);
+}
+
+function stopKeepalive() {
+  if (wsReconnectTimer) {
+    clearInterval(wsReconnectTimer);
+    wsReconnectTimer = null;
+  }
+}
+
+function openLiveTerminal() {
+  if (wsXterm) { closeTerminal(); return; }
+
+  const o = document.getElementById("liveOverlay");
+  if (!o) return;
+  o.classList.add("open");
+
+  if (!wsConnected) {
+    $liveLabel.textContent = "Connecting...";
+    $liveDot.style.background = "#ffaa00";
+  }
+
+  document.getElementById("page-wrap").style.display = "none";
+
+  const container = document.getElementById("xterm-container");
+  container.innerHTML = "";
+
+  // Wait for container to have real size before creating xterm
+  function createWhenReady() {
+    const cw = container.clientWidth;
+    const ch = container.clientHeight;
+    if (cw < 100 || ch < 50) { setTimeout(createWhenReady, 100); return; }
+
+    const cols = Math.max(20, Math.floor((cw - 10) / 8.5));
+    const rows = Math.max(5, Math.floor(ch / 20));
+
+    wsXterm = new Terminal({
+      cursorBlink: true,
+      cursorStyle: "block",
+      fontSize: 14,
+      fontFamily: "Consolas, 'Courier New', monospace",
+      theme: { background: "#0c0c0c", foreground: "#20ff20", cursor: "#20ff20", selectionBackground: "#20ff2040" },
+      allowTransparency: false,
+      cols,
+      rows,
+    });
+
+    wsXterm.open(container);
+    wsXterm.focus();
+
+    // Send initial terminal size to server
+    if (wsTerm && wsTerm.readyState === WebSocket.OPEN) {
+      wsTerm.send(JSON.stringify({ type: "resize", cols, rows }));
+    }
+
+    container.addEventListener("click", () => wsXterm.focus());
+
+    // Re-fit on resize
+    const ro = new ResizeObserver(() => {
+      const cw2 = container.clientWidth;
+      const ch2 = container.clientHeight;
+      if (cw2 < 20 || ch2 < 20) return;
+      const newCols = Math.max(10, Math.floor((cw2 - 10) / 8.5));
+      const newRows = Math.max(3, Math.floor(ch2 / 20));
+      wsXterm.resize(newCols, newRows);
+      // Send new size to server so tmux matches
+      if (wsTerm && wsTerm.readyState === WebSocket.OPEN) {
+        wsTerm.send(JSON.stringify({ type: "resize", cols: newCols, rows: newRows }));
+      }
+    });
+    ro.observe(container);
+    wsXterm._ro = ro;
+
+    wsXterm.write("\x1b[32mConnected — view only\x1b[0m\r\n");
+  }
+
+  createWhenReady();
+
+  const ro = new ResizeObserver(fitTerminal);
+  ro.observe(container);
+  wsXterm._ro = ro;
+
+  // Connect if not already
+  if (!wsTerm || wsTerm.readyState !== WebSocket.OPEN) {
+    wsConnect();
+  }
+
+  // Write welcome
+  wsXterm.write("\x1b[32mConnected — view only\x1b[0m\r\n");
+}
+
+function closeTerminal() {
+  const o = document.getElementById("liveOverlay");
+  if (o) o.classList.remove("open");
+  document.getElementById("page-wrap").style.display = "";
+  if (wsXterm) {
+    if (wsXterm._ro) wsXterm._ro.disconnect();
+    try { wsXterm.dispose(); } catch {}
+    wsXterm = null;
+  }
+}
+
+// Wire up buttons
+document.getElementById("terminalBtn").onclick = _topen;
+document.getElementById("tclose").onclick = _tclose;
+document.getElementById("liveBtn").onclick = openLiveTerminal;
+document.getElementById("liveClose").onclick = closeTerminal;
+
+// Start background keepalive — auto-reconnects every 5s
+startKeepalive();
+
+// Try connecting immediately at page load
+wsConnect();
+
+// F2 toggles the original terminal
+document.addEventListener("keydown", (e) => {
+  if (e.key === "F2") {
+    e.preventDefault();
+    const o = document.getElementById("toverlay");
+    if (o && o.classList.contains("open")) {
+      _tclose();
+    } else {
+      _topen();
+    }
+  }
+});
+
 </script>
-</body>
+<script src="https://cdn.jsdelivr.net/npm/xterm/lib/xterm.min.js"></script>
 </html>
