@@ -755,15 +755,20 @@ function firstImage(post) {
     return post['photo-url-500'] || post['photo-url-250'] || null;
   }
   if (post.type === 'regular') {
-    const img = (post['regular-body'] || '').match(/<img[^>]+src=["']([^"']+)/);
+    const body = post['regular-body'] || '';
+    const img = body.match(/<img[^>]+src=["']([^"']+)/);
     if (img) return img[1];
-    const ytId = extractYoutubeId(post['regular-body'] || '');
+    const poster = body.match(/poster=["']([^"']+)/);
+    if (poster) return poster[1];
+    const ytId = extractYoutubeId(body);
     if (ytId) return 'https://img.youtube.com/vi/' + ytId + '/hqdefault.jpg';
     return null;
   }
   if (post.type === 'video') {
     const ytId = extractYoutubeId(post['video-source'] || post['video-player'] || '');
     if (ytId) return 'https://img.youtube.com/vi/' + ytId + '/hqdefault.jpg';
+    const poster = (post['video-player'] || '').match(/poster=["']([^"']+)/);
+    if (poster) return poster[1];
     return null;
   }
   return null;
@@ -1050,7 +1055,7 @@ function renderModal(post) {
         <span>${notes} notes</span>
       </div>
     </div>
-    ${img && post.type !== 'video' ? `<img class="modal-img" src="${img}" alt="" loading="lazy">` : ''}
+    ${img ? `<img class="modal-img" src="${img}" alt="" loading="lazy">` : ''}
     <div class="modal-body">${bodyHtml}</div>
     ${tags.length ? `<div class="modal-tags">${tags.map(t => `<a href="https://${BLOG}.tumblr.com/tagged/${encodeURIComponent(t)}" target="_blank">#${escHtml(t)}</a>`).join('')}</div>` : ''}
     <div class="modal-footer">
