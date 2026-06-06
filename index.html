@@ -530,7 +530,8 @@ body {
 }
 .modal-body h1, .modal-body h2, .modal-body h3 { color: var(--text); margin: 16px 0 8px; }
 .modal-body hr { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
-.modal-body iframe {
+.modal-body iframe,
+.modal-body video {
   max-width: 100%;
   aspect-ratio: 16/9;
   height: auto;
@@ -538,6 +539,7 @@ body {
   border-radius: 6px;
   margin: 8px 0;
   display: block;
+  background: #000;
 }
 
 .modal-tags {
