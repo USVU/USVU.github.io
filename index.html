@@ -714,8 +714,13 @@ body {
       <span>⚔ Bushido Blade</span>
       <button class="tclose" id="gameClose">&times;</button>
     </div>
-    <div id="gameWrap" style="flex:1;position:relative;overflow:hidden;background:#000;display:flex;align-items:center;justify-content:center;padding:0">
-  <iframe src="./samurai.html" style="width:100%;height:100%;border:none" title="Bushido Blade"></iframe>
+    <div id="gameWrap" style="flex:1;position:relative;overflow:hidden;background:#1a1a0a;display:flex;align-items:center;justify-content:center;padding:0">
+  <iframe id="gameFrame" src="./samurai.html" style="width:100%;height:100%;border:none" title="Bushido Blade"
+    onerror="this.style.display='none';this.nextSibling.style.display='flex'"></iframe>
+  <div style="display:none;flex-direction:column;align-items:center;color:#666;font-family:monospace;font-size:13px;gap:8px">
+    <span>⚠ Could not load samurai.html</span>
+    <span style="font-size:11px;color:#444">Place both files in the same directory</span>
+  </div>
 </div>
   </div>
 </div>
@@ -2418,12 +2423,15 @@ var cl=document.getElementById('gameClose');
 console.log('wireup: btn='+!!btn+' ov='+!!ov);
 if(!btn||!ov){console.log('wireup: missing elements');return;}
 console.log('wireup: attaching');
-btn.addEventListener('click',function(){ov.classList.add('open');});
+btn.addEventListener('click',function(){ov.classList.add('open');setTimeout(function(){var f=ov.querySelector('iframe');if(f)f.focus();},100);});
 if(cl)cl.onclick=function(){ov.classList.remove('open');};
 document.addEventListener('keydown',function(e){
   if(e.key==='Escape'&&ov.classList.contains('open')){ov.classList.remove('open');e.preventDefault();}
 });
 })();
+document.getElementById('gameOverlay').addEventListener('click',function(e){
+  if(e.target===this||e.target.closest('.twindow')){var f=this.querySelector('iframe');if(f&&document.activeElement!==f)f.focus();}
+});
 </script>
 
 

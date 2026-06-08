@@ -135,7 +135,7 @@ body{
 <script>
 const canvas=document.getElementById('c'),ctx=canvas.getContext('2d');
 const W=960,H=540;
-canvas.width=W;canvas.height=H;
+canvas.width=W;canvas.height=H;canvas.tabIndex=0;canvas.focus();document.addEventListener('click',function(){try{canvas.focus()}catch(e){}});
 
 // === CONFIG ===
 const MAP_W=50,MAP_H=50,T=1;
@@ -467,7 +467,7 @@ function getSpriteCanvas(type){
     // Knee guards
     g.fillStyle='#5a5a5a';g.fillRect(cx-9,44,8,5);g.fillRect(cx+1,44,8,5);
 
-  }else{ // ninja
+  }else if(type==='ninja'){
     // Dark body suit
     g.fillStyle='#111122';
     g.fillRect(cx-11,20,22,28);
@@ -591,7 +591,7 @@ function getSpriteCanvas(type){
     // Knee guards
     g.fillStyle='#5a5a5a';g.fillRect(cx-8,44,7,4);g.fillRect(cx+1,44,7,4);
     
-  }else{ // ninja
+  }else if(type==='ninja'){
     // Body suit
     g.fillStyle='#1a1a2a';
     g.fillRect(cx-10,20,20,26);
@@ -622,6 +622,18 @@ function getSpriteCanvas(type){
     g.fillStyle='#1a1a2a';g.fillRect(cx-7,56,5,3);g.fillRect(cx+2,56,5,3);
     // Leg wraps
     for(let i=0;i<4;i++){g.fillStyle='rgba(255,255,255,0.03)';g.fillRect(cx-8,42+i*4,16,1);}
+  }else if(type==='player'){
+    g.fillStyle='#1a3a6a';g.fillRect(cx-10,20,20,28);
+    g.fillStyle='rgba(255,255,255,0.05)';g.fillRect(cx-8,22,16,24);
+    g.fillStyle='#d4a440';g.fillRect(cx-12,26,24,2);g.fillRect(cx-12,44,24,1);
+    g.fillStyle='#2a4a8a';g.fillRect(cx-14,18,8,14);g.fillRect(cx+6,18,8,14);
+    g.fillStyle='#f5d0a9';g.beginPath();g.arc(cx,12,8,0,Math.PI*2);g.fill();
+    g.fillStyle='#0a0a0a';g.beginPath();g.ellipse(cx,4,3,5,0,0,Math.PI*2);g.fill();
+    g.fillStyle='#1a1a1a';g.fillRect(cx-5,10,4,2);g.fillRect(cx+1,10,4,2);
+    g.fillStyle='#c0c0c0';g.fillRect(cx+12,24,16,2);
+    g.fillStyle='#2a1a0a';g.fillRect(cx+10,23,6,4);
+    g.fillStyle='#d4a440';g.fillRect(cx+12,22,2,6);
+    g.fillStyle='#1a0a00';g.fillRect(cx-14,34,5,16);
   }
   spriteCache[type]=c;return c;
 }
@@ -1117,7 +1129,51 @@ function render(){
     ctx.fillRect(0,0,W,H);
   }
   drawMinimap();
+  renderRemotePlayers();
   ctx.restore();
+}
+
+// === REMOTE PLAYERS ===
+function renderRemotePlayers(){
+  var zOff=Math.floor(pl.z*50);
+  Object.keys(mp.players).forEach(pid=>{
+    if(pid===mp.myId)return;
+    var p=mp.players[pid];
+    if(!p||!p.alive)return;
+    var dx=p.x-pl.x,dy=p.y-pl.y,d=Math.hypot(dx,dy);
+    if(d>30||d<0.3)return;
+    var ang=Math.atan2(dy,dx);
+    var invDet=1/(pl.planeX*Math.sin(pl.dir)-Math.cos(pl.dir)*pl.planeY);
+    var tx=invDet*(Math.sin(pl.dir)*dx-Math.cos(pl.dir)*dy);
+    var ty=invDet*(-pl.planeY*dx+pl.planeX*dy);
+    if(ty<=0)return;
+    var sx=Math.floor(W/2*(1+tx/ty));
+    var sh=Math.abs(Math.floor(H/ty));
+    var sy=Math.floor(-sh/2+H/2+zOff);
+    var sc=getSpriteCanvas('player');
+    var flash=p.hurtTmr>0&&p.hurtTmr%2===0;
+    if(!flash){
+      ctx.drawImage(sc,Math.floor(sx-sh/2),sy,Math.max(1,sh),Math.max(1,sh));
+    }
+    // Name tag
+    ctx.fillStyle='rgba(255,255,255,0.4)';ctx.font='9px sans-serif';ctx.textAlign='center';
+    ctx.fillText(pid.substring(0,6),sx,sy-6);
+    // Health bar
+    if(p.hp<p.maxHp){
+      var bw=Math.min(40,sh),barY=sy-10;
+      ctx.fillStyle='rgba(0,0,0,0.5)';ctx.fillRect(sx-bw/2-1,barY-1,bw+2,4);
+      ctx.fillStyle=p.hp>1?'#44cc44':'#ff4444';ctx.fillRect(sx-bw/2,barY,Math.floor(bw*(p.hp||0)/(p.maxHp||5)),3);
+    }
+    // Slash arc
+    if(p.slashTmr>0){
+      var ap=1-p.slashTmr/8;
+      ctx.save();ctx.globalAlpha=ap*0.4;
+      ctx.strokeStyle='rgba(170,200,255,0.5)';ctx.lineWidth=1+ap*2;
+      var r=18+ty*8;
+      ctx.beginPath();ctx.arc(sx,sy+sh*0.3,r,-0.6-ap*0.8,0.6+ap*0.8);ctx.stroke();
+      ctx.restore();
+    }
+  });
 }
 
 // === UPDATE ===
@@ -1230,6 +1286,7 @@ function update(){
   });
   particles=particles.filter(p=>p.life>0);
   if(tick%4===0)updateUI();
+  if(tick%5===0&&mp.connected)mpBroadcast();
 }
 
 // === INIT ===
@@ -1324,15 +1381,66 @@ canvas.addEventListener('contextmenu',e=>e.preventDefault());
 
 // === START ===
 loadScores();
-const saved=localStorage.getItem('bushido_save');
-if(saved){
-  map=[];for(let y=0;y<MAP_H;y++){map[y]=[];for(let x=0;x<MAP_W;x++)map[y][x]=0;}
-  const loaded=loadState();
-  if(!loaded)initGame();
-}else{
-  initGame();
-}
+localStorage.removeItem('bushido_save');
+initGame();
+const mp={peer:null,conns:{},players:{},myId:null,isHost:false,hostId:null,connected:false,init:false};
 loop();
+
+// === MULTIPLAYER ===
+
+function mpInit(){
+  if(mp.init)return;
+  mp.init=true;
+  if(typeof Peer==='undefined'){console.log('mp: PeerJS not loaded');return;}
+  mp.myId='p'+Math.random().toString(36).slice(2,8);
+  mpConnect();
+}
+function mpConnect(){
+  if(mp.peer)mp.peer.destroy();
+  mp.peer=new Peer(mp.myId);
+  mp.peer.on('open',id=>{mp.myId=id;mpTryConnect();});
+  mp.peer.on('connection',conn=>{
+    conn.on('data',d=>mpHandle(conn.peer,d));
+    conn.on('close',()=>mpLeave(conn.peer));
+    mp.conns[conn.peer]=conn;
+    Object.keys(mp.players).forEach(pid=>{if(pid!==conn.peer)conn.send({t:'pjoin',id,state:mp.players[pid]});});
+  });
+  mp.peer.on('disconnected',()=>setTimeout(mpConnect,3000));
+}
+function mpTryConnect(){
+  var hid=mp.hostId||'bushido-main',conn=mp.peer.connect(hid,{timeout:5000});
+  var to=setTimeout(()=>{conn.close();mpTryHost();},2000);
+  conn.on('open',()=>{clearTimeout(to);mp.hostId=hid;mp.conns[hid]=conn;mp.connected=true;conn.send({t:'join',id:mp.myId,state:mpGetState()});});
+  conn.on('error',()=>{clearTimeout(to);mpTryHost();});
+}
+function mpTryHost(){
+  if(mp.hostId==='bushido-main'&&mp.conns['bushido-main'])return;
+  var p=new Peer('bushido-main');
+  var to=setTimeout(()=>{p.destroy();setTimeout(mpTryConnect,3000);},2000);
+  p.on('open',()=>{clearTimeout(to);mp.isHost=true;mp.hostId='bushido-main';mp.peer=p;mp.connected=true;
+    p.on('connection',conn=>{conn.on('data',d=>mpHandle(conn.peer,d));conn.on('close',()=>mpLeave(conn.peer));mp.conns[conn.peer]=conn;
+      Object.keys(mp.players).forEach(pid=>{if(pid!==conn.peer)conn.send({t:'pjoin',id:pid,state:mp.players[pid]});});});});
+  p.on('error',()=>{clearTimeout(to);setTimeout(mpTryConnect,3000);});
+}
+function mpGetState(){return{x:pl.x,y:pl.y,dir:pl.dir,z:pl.z,hp:pl.hp,maxHp:pl.maxHp,slashTmr:pl.slashTmr,slashType:pl.slashType,hurtTmr:pl.hurtTmr,alive:pl.alive};}
+function mpBroadcast(){
+  if(!mp.connected)return;
+  var s=mpGetState();mp.players[mp.myId]=s;
+  Object.values(mp.conns).forEach(c=>{try{c.send({t:'state',id:mp.myId,state:s});}catch(e){}});
+}
+function mpSendAll(d){Object.values(mp.conns).forEach(c=>{try{c.send(d);}catch(e){}});}
+function mpHandle(pid,d){
+  if(d.t==='join'){mp.players[pid]=d.state;if(mp.isHost)mpSendAll({t:'pjoin',id:pid,state:d.state});}
+  else if(d.t==='state'){mp.players[pid]=d.state;}
+  else if(d.t==='pjoin'){mp.players[d.id]=d.state;}
+}
+function mpLeave(pid){
+  delete mp.players[pid];delete mp.conns[pid];
+  if(pid===mp.hostId){mp.hostId=null;mp.connected=false;setTimeout(mpTryHost,3000);}
+}
+
+// Start multiplayer after a short delay
+setTimeout(mpInit,1000);
 </script>
-</body>
+<script src="https://unpkg.com/peerjs@1.5.1/dist/peerjs.min.js"></script>
 </html>
