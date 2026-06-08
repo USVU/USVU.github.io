@@ -27,9 +27,10 @@ async function boot() {
   FS.mkdirTree('/dojical/scripts');
   FS.mkdirTree('/dojical/scripts/data');
 
+  FS.writeFile('/dojical/__init__.py', '# dojical\n');
+  FS.writeFile('/dojical/scripts/__init__.py', 'import sys\nimport os\nsys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))\n');
+
   var srcUrl = [
-    ['dojical/__init__.py', ''],
-    ['dojical/scripts/__init__.py', ''],
     ['dojical/scripts/session.py', ''],
     ['dojical/scripts/data_loader.py', ''],
     ['dojical/scripts/keys.py', ''],
@@ -55,14 +56,15 @@ async function boot() {
       var r = await fetch(url);
       if (r.ok) FS.writeFile(path, await r.text());
       else post('stderr', 'fetch fail: ' + url + ' ' + r.status);
-    } catch(e) {}
+    } catch(e) { post('stderr', 'fetch error: ' + url + ' ' + (e.message || e)); }
   }
   for (var j = 0; j < jsonFiles.length; j++) {
     var jurl = 'dojical/scripts/data/' + jsonFiles[j] + '.json';
     try {
       var r2 = await fetch(jurl);
       if (r2.ok) FS.writeFile('/' + jurl, await r2.text());
-    } catch(e) {}
+      else post('stderr', 'fetch fail: ' + jurl + ' ' + r2.status);
+    } catch(e) { post('stderr', 'fetch error: ' + jurl + ' ' + (e.message || e)); }
   }
 
   pyodide.registerJsModule('_stdin_bridge', {
@@ -110,7 +112,7 @@ async function boot() {
   post('stdout', 'Dojical — type in bottom field, press Enter');
   post('stdout', '');
 
-  pyodide.runPython('import sys; sys.path.insert(0, "/"); from dojical.scripts.dojical_web import start; start()');
+  pyodide.runPython('import sys; sys.path.insert(0, "/"); sys.path.insert(0, "/dojical/scripts"); from dojical.scripts.dojical_web import start; start()');
 }
 
 boot().catch(function(e) { post('stderr', 'FATAL: ' + e.message); });

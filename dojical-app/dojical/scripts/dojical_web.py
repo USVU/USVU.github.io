@@ -6,18 +6,18 @@ signal.signal = lambda *a: None
 
 threading.Thread.start = lambda self, *a, **kw: builtins.print("[Web] threading disabled")
 
-import version_checker as _vc
+import dojical.scripts.version_checker as _vc
 _vc.check_for_update = lambda: (None, False)
 _vc.perform_update = lambda: None
 _vc.restart_app = lambda: None
 
-import keys
+import dojical.scripts.keys as keys
 keys.load_keys = lambda: {}
 keys.save_keys = lambda k: None
 keys.configure_keys = lambda: None
 keys.get_or_prompt_key = lambda *a, **kw: ''
 
-import data_loader as _dl
+import dojical.scripts.data_loader as _dl
 
 def _web_input(prompt=''):
     import _stdin_bridge

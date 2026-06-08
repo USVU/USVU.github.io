@@ -892,7 +892,7 @@ function jsonp(url) {
     window[cb] = data => { delete window[cb]; resolve(data); };
     const s = document.createElement('script');
     s.src = url + '&callback=' + cb;
-    s.onerror = () => { delete window[cb]; reject(new Error('JSONP failed')); };
+    s.onerror = (e) => { console.error('JSONP failed for', url, e); delete window[cb]; reject(new Error('JSONP failed')); };
     document.head.appendChild(s);
   });
 }
@@ -986,7 +986,8 @@ async function fetchPage(page, append) {
     } else {
       renderPagination();
     }
-  } catch {
+  } catch (e) {
+    console.error('fetchPage failed:', e);
     loading = false;
     if (!append) $('grid').innerHTML = '<div class="error">Failed to load posts. Try again.</div>';
   }
@@ -2290,7 +2291,7 @@ function wsConnect() {
       if (msg.type === "output" && msg.data) {
         wsXterm.write(msg.data);
       }
-    } catch {}
+  } catch (e) { console.error('fetchSinglePost failed for', id, e); }
   };
 }
 
@@ -2444,9 +2445,7 @@ document.addEventListener("keydown", (e) => {
 
 
 </script>
-<script src="https://cdn.jsdelivr.net/npm/xterm/lib/xterm.min.js">
-
-</script>
+<script src="https://cdn.jsdelivr.net/npm/xterm/lib/xterm.min.js"></script>
 <script>
 (function(){
 console.log('wireup: start');
@@ -2480,6 +2479,8 @@ document.getElementById('boyGameOverlay').addEventListener('click',function(e){
   if(e.target===this||e.target.closest('.twindow')){var f=this.querySelector('iframe');if(f&&document.activeElement!==f)f.focus();}
 });
 </script>
+
+</body>
 
 
 
