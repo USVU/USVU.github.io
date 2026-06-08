@@ -662,6 +662,7 @@ body {
       <option value="dark-blue">Dark Blue</option>
       <option value="light-blue">Light Blue</option>
     </select>
+    <button class="term-btn" id="boyGameBtn" style="padding:4px 10px;font-size:0.75rem">👦 Game-Boy</button>
     <button class="term-btn" id="gameBtn" style="padding:4px 10px;font-size:0.75rem">⚔ Bushido</button>
     <button class="term-btn" id="terminalBtn">&gt;_ Terminal</button>
     <button class="term-btn" id="liveBtn" style="position:relative;padding:4px 12px 4px 22px;border-color:#555">
@@ -725,7 +726,22 @@ body {
 </div>
   </div>
 </div>
-
+<div class="toverlay" id="boyGameOverlay">
+  <div class="twindow" style="max-width:1312px;height:90vh">
+    <div class="ttbar">
+      <span>👦 Kawaii Field — Game-Boy</span>
+      <button class="tclose" id="boyGameClose">&times;</button>
+    </div>
+    <div id="boyGameWrap" style="flex:1;position:relative;overflow:hidden;background:#1a1a2e;display:flex;align-items:center;justify-content:center;padding:0">
+  <iframe id="boyGameFrame" src="./game-boy.html" style="width:100%;height:100%;border:none" title="Kawaii Field"
+    onerror="this.style.display='none';this.nextSibling.style.display='flex'"></iframe>
+  <div style="display:none;flex-direction:column;align-items:center;color:#666;font-family:monospace;font-size:13px;gap:8px">
+    <span>⚠ Could not load game-boy.html</span>
+    <span style="font-size:11px;color:#444">Place both files in the same directory</span>
+  </div>
+</div>
+  </div>
+</div>
 
 <script>
 const BLOG = 'kredtidy';
@@ -2431,6 +2447,20 @@ document.addEventListener('keydown',function(e){
 });
 })();
 document.getElementById('gameOverlay').addEventListener('click',function(e){
+  if(e.target===this||e.target.closest('.twindow')){var f=this.querySelector('iframe');if(f&&document.activeElement!==f)f.focus();}
+});
+(function(){
+var btn=document.getElementById('boyGameBtn');
+var ov=document.getElementById('boyGameOverlay');
+var cl=document.getElementById('boyGameClose');
+if(!btn||!ov)return;
+btn.addEventListener('click',function(){ov.classList.add('open');setTimeout(function(){var f=ov.querySelector('iframe');if(f)f.focus();},100);});
+if(cl)cl.onclick=function(){ov.classList.remove('open');};
+document.addEventListener('keydown',function(e){
+  if(e.key==='Escape'&&ov.classList.contains('open')){ov.classList.remove('open');e.preventDefault();}
+});
+})();
+document.getElementById('boyGameOverlay').addEventListener('click',function(e){
   if(e.target===this||e.target.closest('.twindow')){var f=this.querySelector('iframe');if(f&&document.activeElement!==f)f.focus();}
 });
 </script>
