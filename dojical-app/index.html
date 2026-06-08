@@ -2,13 +2,15 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=resizes-content">
 <title>Dojical</title>
 <script src="./coi-serviceworker.js"></script>
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
-body { background:#0a0a0a; color:#e0e0e0; font-family:system-ui,sans-serif; min-height:100vh; display:flex; align-items:center; justify-content:center; padding:8px; }
-.t { width:100%; max-width:1200px; height:85vh; background:#0c0c0c; border:1px solid #222; border-radius:10px; display:flex; flex-direction:column; overflow:hidden; }
+html,body { height:100%; height:100dvh; overflow:hidden; overscroll-behavior:none; }
+body { background:#0a0a0a; color:#e0e0e0; font-family:system-ui,sans-serif; display:flex; align-items:center; justify-content:center; padding:8px; position:fixed; top:0;left:0;right:0;bottom:0; }
+.t { width:100%; max-width:1200px; height:100%; height:calc(100dvh - 16px); height:calc(var(--vvh) - 16px); background:#0c0c0c; border:1px solid #222; border-radius:10px; display:flex; flex-direction:column; overflow:hidden; }
+#in { touch-action:manipulation; }
 .bar { background:#141414; padding:7px 14px; display:flex; align-items:center; gap:8px; border-bottom:1px solid #222; flex-shrink:0; }
 .bar .d { width:9px; height:9px; border-radius:50%; background:#555; }
 .bar .tt { font-family:"SF Mono",Consolas,monospace; font-size:0.72rem; color:#666; }
@@ -40,6 +42,17 @@ body { background:#0a0a0a; color:#e0e0e0; font-family:system-ui,sans-serif; min-
 </div>
 
 <script>
+(function(){
+var d=document.documentElement;
+function svh(){ d.style.setProperty('--vvh', window.innerHeight+'px'); }
+svh();
+window.addEventListener('resize', svh);
+if (window.visualViewport) {
+ window.visualViewport.addEventListener('resize', svh);
+ window.visualViewport.addEventListener('scroll', svh);
+}
+})();
+
 var out = document.getElementById('out');
 var inp = document.getElementById('in');
 var st = document.getElementById('st');
