@@ -174,7 +174,7 @@ const pl={
 pl.dir=-Math.PI/2;
 pl.planeX=Math.cos(pl.dir+Math.PI/2)*Math.tan(FOV/2);
 pl.planeY=Math.sin(pl.dir+Math.PI/2)*Math.tan(FOV/2);
-let map=[],enemies=[],particles=[],decorations=[],pickups=[],zBuffer=[];
+let map=[],enemies=[],particles=[],decorations=[],pickups=[],zBuffer=[],_eid=0;
 let keys={},tick=0;
 
 // === MAP ===
@@ -869,9 +869,10 @@ function doSlash(type){
     while(diff<-Math.PI)diff+=2*Math.PI;
     if(Math.abs(diff)>arc/2+0.2)return;
     hitAny=true;
+    // In multiplayer, non-host sends hit to host
+    if(mp.connected&&!mp.isHost){mpSendHit(e._eid,dmg);return;}
     e.hp-=dmg;e.hurtTmr=8;
     e.x+=Math.cos(ang)*0.3;e.y+=Math.sin(ang)*0.3;
-    // Hit particles
     for(let i=0;i<6;i++){
       const a=ang+rand(-.6,.6),sp=rand(.02,.05);
       particles.push({x:e.x,y:e.y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,
@@ -925,7 +926,7 @@ function spawnEnemy(){
   const atkR=type==='ninja'?1.5:1.8;
   const atkCd=type==='ninja'?50:type==='ronin'?70:90;
   const atkDmg=type==='ninja'?1:type==='ronin'?1:2;
-  enemies.push({x,y,hp,maxHp:hp,type,spd,dir:0,
+  enemies.push({_eid:++_eid,x,y,hp,maxHp:hp,type,spd,dir:0,
     atkR,atkCd,atkDmg,atkTmr:randInt(30,atkCd),
     hurtTmr:0,stunTmr:0,attackAnim:0});
   state.enemyTypes[type]++;
@@ -995,7 +996,7 @@ function saveState(){
     map:map.map(row=>[...row]),
     pl:{x:pl.x,y:pl.y,dir:pl.dir,hp:pl.hp,z:pl.z,iFrames:pl.iFrames},
     state:{score:state.score,combo:state.combo,comboTimer:state.comboTimer,totalKills:state.totalKills,difficulty:state.difficulty,wave:state.wave,time:state.time},
-    enemies:enemies.filter(e=>e.hp>0).map(e=>({x:e.x,y:e.y,hp:e.hp,maxHp:e.maxHp,type:e.type,spd:e.spd,dir:e.dir,atkR:e.atkR,atkCd:e.atkCd,atkDmg:e.atkDmg,atkTmr:e.atkTmr})),
+    enemies:enemies.filter(e=>e.hp>0).map(e=>({_eid:e._eid,x:e.x,y:e.y,hp:e.hp,maxHp:e.maxHp,type:e.type,spd:e.spd,dir:e.dir,atkR:e.atkR,atkCd:e.atkCd,atkDmg:e.atkDmg,atkTmr:e.atkTmr})),
     timestamp:Date.now()
   };
   localStorage.setItem('bushido_save',JSON.stringify(data));
@@ -1017,7 +1018,7 @@ function loadState(){
     pl.planeX=Math.cos(pl.dir+Math.PI/2)*Math.tan(FOV/2);
     pl.planeY=Math.sin(pl.dir+Math.PI/2)*Math.tan(FOV/2);
     enemies.length=0;
-    data.enemies.forEach(e=>enemies.push({...e,stunTmr:0,hurtTmr:0}));
+    data.enemies.forEach(e=>enemies.push({...e,_eid:++_eid,stunTmr:0,hurtTmr:0}));
     state.paused=true;state.gameOver=false;state.retired=false;
     pl.alive=true;pl.hurtTmr=0;pl.slashTmr=0;pl.slashType=null;
     pl.bob=0;pl.zVel=0;
@@ -1243,31 +1244,35 @@ function update(){
     pickups=pickups.filter(p=>p.life>0);
     if(state.comboTimer>0)state.comboTimer--;else state.combo=0;
   }
-  // Enemy AI
-  enemies.forEach(e=>{
-    if(e.hp<=0)return;
-    if(e.hurtTmr>0)e.hurtTmr--;
-    if(e.attackAnim>0)e.attackAnim--;
-    if(e.stunTmr>0){e.stunTmr--;return;}
-    const d=dist(pl,e);
-    if(d>25){e.hp=0;return;}
-    const ang=Math.atan2(pl.y-e.y,pl.x-e.x);
-    e.dir=ang;
-    if(d>e.atkR){
-      const sp=e.spd;
-      const nx=e.x+Math.cos(ang)*sp,ny=e.y+Math.sin(ang)*sp;
-      if(walkable(nx,ny)){e.x=nx;e.y=ny;}
-    }
-    if(e.atkTmr>0)e.atkTmr--;
-    if(d<=e.atkR+0.3&&e.atkTmr===0&&pl.alive){
-      e.atkTmr=e.atkCd;
-      e.attackAnim=10;
-      if(Math.random()<.6&&d<e.atkR+0.2)playerHit(e.atkDmg);
-    }
-  });
-  enemies=enemies.filter(e=>e.hp>0);
-  // Spawning
-  state.spawnTimer--;
+  // Enemy AI (host only in multiplayer)
+  if(!mp.connected||mp.isHost){
+    enemies.forEach(e=>{
+      if(e.hp<=0)return;
+      if(e.hurtTmr>0)e.hurtTmr--;
+      if(e.attackAnim>0)e.attackAnim--;
+      if(e.stunTmr>0){e.stunTmr--;return;}
+      const d=dist(pl,e);
+      if(d>25){e.hp=0;return;}
+      const ang=Math.atan2(pl.y-e.y,pl.x-e.x);
+      e.dir=ang;
+      if(d>e.atkR){
+        const sp=e.spd;
+        const nx=e.x+Math.cos(ang)*sp,ny=e.y+Math.sin(ang)*sp;
+        if(walkable(nx,ny)){e.x=nx;e.y=ny;}
+      }
+      if(e.atkTmr>0)e.atkTmr--;
+      if(d<=e.atkR+0.3&&e.atkTmr===0&&pl.alive){
+        e.atkTmr=e.atkCd;
+        e.attackAnim=10;
+        if(Math.random()<.6&&d<e.atkR+0.2)playerHit(e.atkDmg);
+      }
+    });
+    enemies=enemies.filter(e=>e.hp>0);
+  }
+  // Spawning (host only in multiplayer)
+  if(!mp.connected||mp.isHost){
+    state.spawnTimer--;
+    if(state.spawnTimer<=0&&pl.alive){
   if(state.spawnTimer<=0&&pl.alive){
     const base=Math.max(25,ENEMY_BASE_SPAWN-state.difficulty*8);
     state.spawnTimer=base+randInt(0,30);
@@ -1396,51 +1401,129 @@ function mpInit(){
   mpConnect();
 }
 function mpConnect(){
-  if(mp.peer)mp.peer.destroy();
+  if(mp.peer)try{mp.peer.destroy();}catch(e){}
   mp.peer=new Peer(mp.myId);
-  mp.peer.on('open',id=>{mp.myId=id;mpTryConnect();});
+  mp.peer.on('open',id=>{mp.myId=id;console.log('mp: connected as',id);mpRetryConnect(0);});
   mp.peer.on('connection',conn=>{
     conn.on('data',d=>mpHandle(conn.peer,d));
     conn.on('close',()=>mpLeave(conn.peer));
     mp.conns[conn.peer]=conn;
-    Object.keys(mp.players).forEach(pid=>{if(pid!==conn.peer)conn.send({t:'pjoin',id,state:mp.players[pid]});});
+    console.log('mp: incoming from',conn.peer);
+    Object.keys(mp.players).forEach(pid=>{if(pid!==conn.peer)try{conn.send({t:'pjoin',id:pid,state:mp.players[pid]});}catch(e){}});
   });
-  mp.peer.on('disconnected',()=>setTimeout(mpConnect,3000));
+  mp.peer.on('error',e=>console.log('mp: error',e.type||e));
+  mp.peer.on('disconnected',()=>setTimeout(mpConnect,5000));
 }
-function mpTryConnect(){
-  var hid=mp.hostId||'bushido-main',conn=mp.peer.connect(hid,{timeout:5000});
-  var to=setTimeout(()=>{conn.close();mpTryHost();},2000);
-  conn.on('open',()=>{clearTimeout(to);mp.hostId=hid;mp.conns[hid]=conn;mp.connected=true;conn.send({t:'join',id:mp.myId,state:mpGetState()});});
-  conn.on('error',()=>{clearTimeout(to);mpTryHost();});
+function mpRetryConnect(n){
+  if(n>5){console.log('mp: trying to become host');mpTryHost();return;}
+  var hid='bushido-main';
+  var conn=mp.peer.connect(hid,{timeout:8000});
+  var to=setTimeout(()=>{try{conn.close()}catch(e){};mpRetryConnect(n+1);},3000);
+  conn.on('open',()=>{
+    clearTimeout(to);mp.connected=true;mp.conns[hid]=conn;
+    console.log('mp: connected to host');
+    conn.send({t:'join',id:mp.myId,state:mpGetState()});
+  });
+  conn.on('error',()=>{clearTimeout(to);mpRetryConnect(n+1);});
 }
 function mpTryHost(){
-  if(mp.hostId==='bushido-main'&&mp.conns['bushido-main'])return;
   var p=new Peer('bushido-main');
-  var to=setTimeout(()=>{p.destroy();setTimeout(mpTryConnect,3000);},2000);
-  p.on('open',()=>{clearTimeout(to);mp.isHost=true;mp.hostId='bushido-main';mp.peer=p;mp.connected=true;
-    p.on('connection',conn=>{conn.on('data',d=>mpHandle(conn.peer,d));conn.on('close',()=>mpLeave(conn.peer));mp.conns[conn.peer]=conn;
-      Object.keys(mp.players).forEach(pid=>{if(pid!==conn.peer)conn.send({t:'pjoin',id:pid,state:mp.players[pid]});});});});
-  p.on('error',()=>{clearTimeout(to);setTimeout(mpTryConnect,3000);});
+  var to=setTimeout(()=>{try{p.destroy()}catch(e){};mpRetryConnect(0);},3000);
+  p.on('open',()=>{
+    clearTimeout(to);mp.isHost=true;mp.peer=p;mp.connected=true;
+    console.log('mp: became host (bushido-main)');
+    p.on('connection',conn=>{
+      conn.on('data',d=>mpHandle(conn.peer,d));
+      conn.on('close',()=>mpLeave(conn.peer));
+      mp.conns[conn.peer]=conn;
+      console.log('mp: client joined',conn.peer);
+      Object.keys(mp.players).forEach(pid=>{if(pid!==conn.peer)try{conn.send({t:'pjoin',id:pid,state:mp.players[pid]});}catch(e){}});
+    });
+  });
+  p.on('error',()=>{clearTimeout(to);setTimeout(()=>mpRetryConnect(0),3000);});
 }
 function mpGetState(){return{x:pl.x,y:pl.y,dir:pl.dir,z:pl.z,hp:pl.hp,maxHp:pl.maxHp,slashTmr:pl.slashTmr,slashType:pl.slashType,hurtTmr:pl.hurtTmr,alive:pl.alive};}
 function mpBroadcast(){
   if(!mp.connected)return;
   var s=mpGetState();mp.players[mp.myId]=s;
   Object.values(mp.conns).forEach(c=>{try{c.send({t:'state',id:mp.myId,state:s});}catch(e){}});
+  // Host broadcasts enemies
+  if(mp.isHost)mpBroadcastEnemies();
+}
+function mpBroadcastEnemies(){
+  var list=enemies.filter(e=>e.hp>0).map(e=>({i:e._eid,x:e.x,y:e.y,h:e.hp,t:e.type,d:e.dir,k:e.atkTmr,an:e.attackAnim}));
+  mpSendAll({t:'enemies',list});
+}
+var _mpLastEnemyIds={};
+function mpApplyEnemies(list){
+  var ids={};
+  list.forEach(ed=>{
+    ids[ed.i]=true;
+    var existing=enemies.find(e=>e._eid===ed.i);
+    if(existing){
+      // Track death for particles
+      if(existing.hp>0&&ed.h<=0){
+        for(var k=0;k<16;k++){
+          particles.push({x:existing.x+Math.random()-.5,y:existing.y+Math.random()-.5,
+            vx:(Math.random()-.5)*.04,vy:(Math.random()-.5)*.04,
+            life:15+Math.random()*20,max:35,sz:2+Math.random()*4,col:'#ff6644',ty:'die'});
+        }
+      }
+      existing.x=ed.x;existing.y=ed.y;existing.hp=ed.h;existing.dir=ed.d;existing.atkTmr=ed.k;existing.attackAnim=ed.an;
+    }else if(ed.t){
+      var hp=ed.t==='ronin'?4:ed.t==='samurai'?8:3;
+      var spd=ed.t==='ninja'?0.035:ed.t==='ronin'?0.02:0.015;
+      enemies.push({_eid:ed.i,x:ed.x,y:ed.y,hp:ed.h,maxHp:hp,type:ed.t,spd,dir:ed.d,atkRange:1.5,atkCd:60,atkDmg:1,atkTmr:ed.k||0,hurtTmr:0,stunTmr:0,attackAnim:ed.an||0});
+    }
+  });
+  // Detect deaths (enemies missing from broadcast)
+  Object.keys(_mpLastEnemyIds).forEach(function(id){
+    if(!ids[id]){
+      var dead=enemies.find(function(e){return e._eid===id;});
+      if(dead&&dead.hp>0){
+        dead.hp=0;
+        for(var k=0;k<16;k++){
+          particles.push({x:dead.x+Math.random()-.5,y:dead.y+Math.random()-.5,
+            vx:(Math.random()-.5)*.04,vy:(Math.random()-.5)*.04,
+            life:15+Math.random()*20,max:35,sz:2+Math.random()*4,col:'#ff6644',ty:'die'});
+        }
+      }
+    }
+  });
+  _mpLastEnemyIds=ids;
 }
 function mpSendAll(d){Object.values(mp.conns).forEach(c=>{try{c.send(d);}catch(e){}});}
 function mpHandle(pid,d){
-  if(d.t==='join'){mp.players[pid]=d.state;if(mp.isHost)mpSendAll({t:'pjoin',id:pid,state:d.state});}
+  if(d.t==='join'){mp.players[pid]=d.state;console.log('mp: player joined',pid);if(mp.isHost){mpSendAll({t:'pjoin',id:pid,state:d.state});mpBroadcastEnemies();}}
   else if(d.t==='state'){mp.players[pid]=d.state;}
   else if(d.t==='pjoin'){mp.players[d.id]=d.state;}
+  else if(d.t==='enemies'&&!mp.isHost){mpApplyEnemies(d.list);}
+  else if(d.t==='hit'&&mp.isHost){
+    var e=enemies.find(x=>x._eid===d.eid);
+    if(e&&e.hp>0){
+      e.hp-=d.d||1;e.hurtTmr=8;mpBroadcastEnemies();
+      if(e.hp<=0){
+        e.hp=0;for(var k=0;k<16;k++){
+          particles.push({x:e.x+Math.random()-.5,y:e.y+Math.random()-.5,
+            vx:(Math.random()-.5)*.04,vy:(Math.random()-.5)*.04,
+            life:15+Math.random()*20,max:35,sz:2+Math.random()*4,col:'#ff6644',ty:'die'});
+        }
+        mpBroadcastEnemies();
+      }
+    }
+  }
+}
+function mpSendHit(eid,dmg){
+  if(!mp.connected)return;
+  Object.values(mp.conns).forEach(c=>{try{c.send({t:'hit',eid,dmg});}catch(e){}});
 }
 function mpLeave(pid){
-  delete mp.players[pid];delete mp.conns[pid];
-  if(pid===mp.hostId){mp.hostId=null;mp.connected=false;setTimeout(mpTryHost,3000);}
+  delete mp.players[pid];delete mp.conns[pid];console.log('mp: player left',pid);
+  if(pid===mp.hostId){mp.hostId=null;mp.connected=false;setTimeout(()=>mpRetryConnect(0),3000);}
 }
 
-// Start multiplayer after a short delay
-setTimeout(mpInit,1000);
+}}
+setTimeout(mpInit,2000);
 </script>
 <script src="https://unpkg.com/peerjs@1.5.1/dist/peerjs.min.js"></script>
 </html>
