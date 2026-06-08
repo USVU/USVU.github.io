@@ -1926,21 +1926,8 @@ _treg('tag', ['filter'], 'tag <name> [max]', function(a) {
   var max = null, qa = a;
   if (a.length && /^\d+$/.test(a[a.length - 1])) { max = parseInt(a.pop()); qa = a; }
   var q = qa.join(' ').trim();
-
   if (!q) { _tprt('usage: tag <name> [max]', 'twarn'); return; }
-  var results = [];
-  postCache.forEach(function(p) {
-    if (max && results.length >= max) return;
-    if ((p.tags || []).some(function(t) { return t.toLowerCase().indexOf(q) > -1; })) {
-      results.push(p);
-    }
-  });
-  if (!results.length) { _tprt('no posts found with tag "' + _tesc(q) + '"', 'tdim'); return; }
-  results.sort(function(a, b) { return (b['unix-timestamp'] || 0) - (a['unix-timestamp'] || 0); });
-  _tprt('found ' + results.length + ' posts with tag "' + _tesc(q) + '":');
-  results.forEach(function(p) {
-    _tprt('  ' + formatDate(p['date-gmt'] || p.date) + '  [' + p.type + ']  #' + p.id);
-  });
+  _searchAll(q, true, 'tag "' + q + '"', max);
 });
 
 _treg('date-search', ['posts-by', 'filter-date', 'by-date'], 'date-search <YYYY> or <YYYY-MM> or <YYYY-MM-DD> [max]', function(a) {
@@ -2430,9 +2417,7 @@ document.addEventListener("keydown", (e) => {
 
 
 </script>
-<script src="https://cdn.jsdelivr.net/npm/xterm/lib/xterm.min.js">
-
-</script>
+<script src="https://cdn.jsdelivr.net/npm/xterm/lib/xterm.min.js"></script>
 <script>
 (function(){
 console.log('wireup: start');
