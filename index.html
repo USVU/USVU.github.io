@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Web Pipe — AAP Liwanag 19.91</title>
-<script src="./coi-serviceworker.js"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/xterm/css/xterm.min.css">
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -742,22 +741,6 @@ body {
     <span style="font-size:11px;color:#444">Place both files in the same directory</span>
   </div>
 </div>
-  </div>
-</div>
-<div class="toverlay" id="dojicalOverlay">
-  <div class="twindow" style="max-width:1200px;height:85vh">
-    <div class="ttbar">
-      <span>🐰 Dojical — NEONBUNNY</span>
-      <button class="tclose" id="dojicalClose">&times;</button>
-    </div>
-    <div id="dojicalWrap" style="flex:1;position:relative;overflow:hidden;background:#0c0c0c;display:flex;align-items:center;justify-content:center;padding:0">
-      <iframe id="dojicalFrame" src="./dojical-app/index.html" style="width:100%;height:100%;border:none" title="Dojical"
-        onerror="this.style.display='none';this.nextSibling.style.display='flex'"></iframe>
-      <div style="display:none;flex-direction:column;align-items:center;color:#666;font-family:monospace;font-size:13px;gap:8px">
-        <span>⚠ Could not load dojical-app/index.html</span>
-        <span style="font-size:11px;color:#444">Ensure dojical-app/ folder is deployed alongside this file</span>
-      </div>
-    </div>
   </div>
 </div>
 
@@ -2169,8 +2152,6 @@ _treg('matrix', ['hack'], 'matrix rain', function(a) {
         if (_searchActive) { ++_searchGen; _searchActive = false; _tprt('search cancelled.', 'tdim'); return; }
         _tclose(); return;
       }
-      var dj = document.getElementById('dojicalOverlay');
-      if (dj && dj.classList.contains('open')) { closeDojical(); return; }
       if ($('modal').classList.contains('open')) closePermalink();
     }
   });
@@ -2184,10 +2165,6 @@ _treg('matrix', ['hack'], 'matrix rain', function(a) {
     var tb = $('terminalBtn'); if (tb) tb.addEventListener('click', _topen);
     var tc = $('tclose'); if (tc) tc.addEventListener('click', _tclose);
     var to = $('toverlay'); if (to) to.addEventListener('click', function(e) { if (e.target === to) _tclose(); });
-    var djo = $('dojicalOverlay'); if (djo) djo.addEventListener('click', function(e) {
-      if (e.target === djo) { closeDojical(); return; }
-      setTimeout(function() { var f = $('dojicalFrame'); try { if (f && f.contentDocument) { var inp = f.contentDocument.getElementById('in'); if (inp) inp.focus(); } } catch(e) {} }, 50);
-    });
     var ti = $('tinput');
     if (ti) { ti.addEventListener('keydown', function(e) {
       if (e.key === 'Enter') { e.preventDefault(); _trun(this.value); this.value = ''; }
@@ -2427,38 +2404,14 @@ function closeTerminal() {
 }
 
 function openDojical() {
-  var o = document.getElementById('dojicalOverlay');
-  if (!o) return;
-  o.classList.add('open');
-  setTimeout(function() {
-    var f = document.getElementById('dojicalFrame');
-    try {
-      if (f && f.contentDocument) {
-        var inp = f.contentDocument.getElementById('in');
-        if (inp) { inp.focus(); return; }
-      }
-    } catch(e) {}
-    if (f && f.contentWindow) f.contentWindow.focus();
-  }, 400);
+  window.open('./dojical-app/index.html', '_blank');
 }
 
-function closeDojical() {
-  var o = document.getElementById('dojicalOverlay');
-  if (o) o.classList.remove('open');
-}
+function closeDojical() {}
 
 function toggleDojical() {
-  var o = document.getElementById('dojicalOverlay');
-  if (o && o.classList.contains('open')) closeDojical();
-  else openDojical();
+  window.open('./dojical-app/index.html', '_blank');
 }
-
-window.addEventListener('message', function(e) {
-  if (e.data && e.data.type === 'dojical-key') {
-    if (e.data.key === 'Escape') closeDojical();
-    else if (e.data.key === 'F3') toggleDojical();
-  }
-});
 
 // Wire up buttons
 document.getElementById("terminalBtn").onclick = _topen;
@@ -2466,7 +2419,6 @@ document.getElementById("tclose").onclick = _tclose;
 document.getElementById("liveBtn").onclick = openLiveTerminal;
 document.getElementById("liveClose").onclick = closeTerminal;
 document.getElementById("dojicalBtn").onclick = openDojical;
-document.getElementById("dojicalClose").onclick = closeDojical;
 
 // Start background keepalive — auto-reconnects every 5s
 startKeepalive();
