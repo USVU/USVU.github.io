@@ -530,8 +530,7 @@ body {
 }
 .modal-body h1, .modal-body h2, .modal-body h3 { color: var(--text); margin: 16px 0 8px; }
 .modal-body hr { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
-.modal-body iframe,
-.modal-body video {
+.modal-body iframe {
   max-width: 100%;
   aspect-ratio: 16/9;
   height: auto;
@@ -539,7 +538,6 @@ body {
   border-radius: 6px;
   margin: 8px 0;
   display: block;
-  background: #000;
 }
 
 .modal-tags {
@@ -662,15 +660,11 @@ body {
       <option value="dark-blue">Dark Blue</option>
       <option value="light-blue">Light Blue</option>
     </select>
-    <button class="term-btn" id="boyGameBtn" style="padding:4px 10px;font-size:0.75rem">👦 Game-Boy</button>
-    <button class="term-btn" id="gameBtn" style="padding:4px 10px;font-size:0.75rem">⚔ Bushido</button>
     <button class="term-btn" id="terminalBtn">&gt;_ Terminal</button>
     <button class="term-btn" id="liveBtn" style="position:relative;padding:4px 12px 4px 22px;border-color:#555">
       <span id="liveDot" style="position:absolute;left:7px;top:50%;transform:translateY(-50%);width:8px;height:8px;border-radius:50%;background:#555;display:inline-block;transition:background 0.3s"></span>
       <span id="liveLabel" style="font-family:system-ui,sans-serif;font-size:0.75rem">Offline</span>
     </button>
-    <a class="term-btn" href="https://github.com/USVU/hackintossh" target="_blank" style="text-decoration:none;display:inline-flex;align-items:center">USVU/hackintossh</a>
-    <button class="term-btn" id="dojicalBtn" style="padding:4px 10px;font-size:0.75rem">🐰 Dojical</button>
   </div>
 </div>
 
@@ -709,38 +703,6 @@ body {
       <button class="tclose" id="liveClose">&times;</button>
     </div>
     <div id="xterm-container"></div>
-  </div>
-</div>
-<div class="toverlay" id="gameOverlay">
-  <div class="twindow" style="max-width:1312px;height:90vh">
-    <div class="ttbar">
-      <span>⚔ Bushido Blade</span>
-      <button class="tclose" id="gameClose">&times;</button>
-    </div>
-    <div id="gameWrap" style="flex:1;position:relative;overflow:hidden;background:#1a1a0a;display:flex;align-items:center;justify-content:center;padding:0">
-  <iframe id="gameFrame" src="./samurai.html" style="width:100%;height:100%;border:none" title="Bushido Blade"
-    onerror="this.style.display='none';this.nextSibling.style.display='flex'"></iframe>
-  <div style="display:none;flex-direction:column;align-items:center;color:#666;font-family:monospace;font-size:13px;gap:8px">
-    <span>⚠ Could not load samurai.html</span>
-    <span style="font-size:11px;color:#444">Place both files in the same directory</span>
-  </div>
-</div>
-  </div>
-</div>
-<div class="toverlay" id="boyGameOverlay">
-  <div class="twindow" style="max-width:1312px;height:90vh">
-    <div class="ttbar">
-      <span>👦 Kawaii Field — Game-Boy</span>
-      <button class="tclose" id="boyGameClose">&times;</button>
-    </div>
-    <div id="boyGameWrap" style="flex:1;position:relative;overflow:hidden;background:#1a1a2e;display:flex;align-items:center;justify-content:center;padding:0">
-  <iframe id="boyGameFrame" src="./game-boy.html" style="width:100%;height:100%;border:none" title="Kawaii Field"
-    onerror="this.style.display='none';this.nextSibling.style.display='flex'"></iframe>
-  <div style="display:none;flex-direction:column;align-items:center;color:#666;font-family:monospace;font-size:13px;gap:8px">
-    <span>⚠ Could not load game-boy.html</span>
-    <span style="font-size:11px;color:#444">Place both files in the same directory</span>
-  </div>
-</div>
   </div>
 </div>
 
@@ -793,20 +755,15 @@ function firstImage(post) {
     return post['photo-url-500'] || post['photo-url-250'] || null;
   }
   if (post.type === 'regular') {
-    const body = post['regular-body'] || '';
-    const img = body.match(/<img[^>]+src=["']([^"']+)/);
+    const img = (post['regular-body'] || '').match(/<img[^>]+src=["']([^"']+)/);
     if (img) return img[1];
-    const poster = body.match(/poster=["']([^"']+)/);
-    if (poster) return poster[1];
-    const ytId = extractYoutubeId(body);
+    const ytId = extractYoutubeId(post['regular-body'] || '');
     if (ytId) return 'https://img.youtube.com/vi/' + ytId + '/hqdefault.jpg';
     return null;
   }
   if (post.type === 'video') {
     const ytId = extractYoutubeId(post['video-source'] || post['video-player'] || '');
     if (ytId) return 'https://img.youtube.com/vi/' + ytId + '/hqdefault.jpg';
-    const poster = (post['video-player'] || '').match(/poster=["']([^"']+)/);
-    if (poster) return poster[1];
     return null;
   }
   return null;
@@ -892,7 +849,7 @@ function jsonp(url) {
     window[cb] = data => { delete window[cb]; resolve(data); };
     const s = document.createElement('script');
     s.src = url + '&callback=' + cb;
-    s.onerror = (e) => { console.error('JSONP failed for', url, e); delete window[cb]; reject(new Error('JSONP failed')); };
+    s.onerror = (e) => { console.error('JSONP failed', url, e); delete window[cb]; reject(new Error('JSONP failed')); };
     document.head.appendChild(s);
   });
 }
@@ -1094,7 +1051,7 @@ function renderModal(post) {
         <span>${notes} notes</span>
       </div>
     </div>
-    ${img ? `<img class="modal-img" src="${img}" alt="" loading="lazy">` : ''}
+    ${img && post.type !== 'video' ? `<img class="modal-img" src="${img}" alt="" loading="lazy">` : ''}
     <div class="modal-body">${bodyHtml}</div>
     ${tags.length ? `<div class="modal-tags">${tags.map(t => `<a href="https://${BLOG}.tumblr.com/tagged/${encodeURIComponent(t)}" target="_blank">#${escHtml(t)}</a>`).join('')}</div>` : ''}
     <div class="modal-footer">
@@ -2131,8 +2088,6 @@ _treg('random', ['rand', 'rnd'], 'random [n] - show random post(s)', function(a)
   });
 });
 
-_treg('dojical', [], 'open Dojical NEONBUNNY terminal', function() { openDojical(); });
-
 _treg('matrix', ['hack'], 'matrix rain', function(a) {
   var cs = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789';
   for (var i = 0; i < (parseInt(a[0]) || 10); i++) { var L = ''; for (var j = 0; j < 50; j++) L += cs[Math.floor(Math.random() * cs.length)]; _tprt(L, 'tbold'); }
@@ -2174,7 +2129,7 @@ _treg('matrix', ['hack'], 'matrix rain', function(a) {
       else if (e.key === 'Tab') { e.preventDefault(); var v = this.value.trim().toLowerCase(); var m = Object.keys(_tcmds).filter(function(k) { return k.indexOf(v) === 0; }); if (m.length === 1) this.value = m[0] + ' '; }
     });
     ti.addEventListener('focus', function() { setTimeout(_tadj, 300); }); }
-  } catch(e) {}
+  } catch(e) { console.error('init error:', e); }
 
   var saved = localStorage.getItem('wp-theme') || 'dark-green';
   document.body.dataset.theme = saved;
@@ -2291,7 +2246,7 @@ function wsConnect() {
       if (msg.type === "output" && msg.data) {
         wsXterm.write(msg.data);
       }
-  } catch (e) { console.error('fetchSinglePost failed for', id, e); }
+  } catch (e) { console.error('fetchSinglePost failed:', id, e); }
   };
 }
 
@@ -2404,22 +2359,11 @@ function closeTerminal() {
   }
 }
 
-function openDojical() {
-  window.open('./dojical-app/index.html', '_blank');
-}
-
-function closeDojical() {}
-
-function toggleDojical() {
-  window.open('./dojical-app/index.html', '_blank');
-}
-
 // Wire up buttons
 document.getElementById("terminalBtn").onclick = _topen;
 document.getElementById("tclose").onclick = _tclose;
 document.getElementById("liveBtn").onclick = openLiveTerminal;
 document.getElementById("liveClose").onclick = closeTerminal;
-document.getElementById("dojicalBtn").onclick = openDojical;
 
 // Start background keepalive — auto-reconnects every 5s
 startKeepalive();
@@ -2428,63 +2372,19 @@ startKeepalive();
 wsConnect();
 
 // F2 toggles the original terminal
-// F3 toggles Dojical
 document.addEventListener("keydown", (e) => {
   if (e.key === "F2") {
     e.preventDefault();
-    var o = document.getElementById("toverlay");
-    if (o && o.classList.contains("open")) { _tclose(); }
-    else { _topen(); }
-  }
-  if (e.key === "F3") {
-    e.preventDefault();
-    toggleDojical();
+    const o = document.getElementById("toverlay");
+    if (o && o.classList.contains("open")) {
+      _tclose();
+    } else {
+      _topen();
+    }
   }
 });
-
-
 
 </script>
 <script src="https://cdn.jsdelivr.net/npm/xterm/lib/xterm.min.js"></script>
-<script>
-(function(){
-console.log('wireup: start');
-var btn=document.getElementById('gameBtn');
-var ov=document.getElementById('gameOverlay');
-var cl=document.getElementById('gameClose');
-console.log('wireup: btn='+!!btn+' ov='+!!ov);
-if(!btn||!ov){console.log('wireup: missing elements');return;}
-console.log('wireup: attaching');
-btn.addEventListener('click',function(){ov.classList.add('open');setTimeout(function(){var f=ov.querySelector('iframe');if(f)f.focus();},100);});
-if(cl)cl.onclick=function(){ov.classList.remove('open');};
-document.addEventListener('keydown',function(e){
-  if(e.key==='Escape'&&ov.classList.contains('open')){ov.classList.remove('open');e.preventDefault();}
-});
-})();
-document.getElementById('gameOverlay').addEventListener('click',function(e){
-  if(e.target===this||e.target.closest('.twindow')){var f=this.querySelector('iframe');if(f&&document.activeElement!==f)f.focus();}
-});
-(function(){
-var btn=document.getElementById('boyGameBtn');
-var ov=document.getElementById('boyGameOverlay');
-var cl=document.getElementById('boyGameClose');
-if(!btn||!ov)return;
-btn.addEventListener('click',function(){ov.classList.add('open');setTimeout(function(){var f=ov.querySelector('iframe');if(f)f.focus();},100);});
-if(cl)cl.onclick=function(){ov.classList.remove('open');};
-document.addEventListener('keydown',function(e){
-  if(e.key==='Escape'&&ov.classList.contains('open')){ov.classList.remove('open');e.preventDefault();}
-});
-})();
-document.getElementById('boyGameOverlay').addEventListener('click',function(e){
-  if(e.target===this||e.target.closest('.twindow')){var f=this.querySelector('iframe');if(f&&document.activeElement!==f)f.focus();}
-});
-</script>
-
 </body>
-
-
-
-
-
-
 </html>
