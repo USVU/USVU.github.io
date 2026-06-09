@@ -3,12 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Web Pipe — AAP Liwanag 19.91</title>
+<title>USVirtualUni — Web Pipe — AAP Liwanag 19.91</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/xterm/css/xterm.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
-:root, [data-theme="dark-green"] {
+[data-theme="dark-green"] {
   --bg: #0a0a0a;
   --card-bg: #141414;
   --card-bg-alt: #1a1a1a;
@@ -136,10 +139,202 @@
   --play-border: #fff;
 }
 
+[data-theme="dark-purple"] {
+  --bg: #0d0a14;
+  --card-bg: #181422;
+  --card-bg-alt: #1e1a2a;
+  --border: #2a1f3d;
+  --border-2: #352848;
+  --border-3: #403358;
+  --accent: #b366ff;
+  --accent-light: rgba(179,102,255,0.12);
+  --text: #e8ddf4;
+  --text-body: #d8cce8;
+  --text-sec: #a890c8;
+  --text-tert: #8a6aab;
+  --text-dim: #755590;
+  --text-muted: #604480;
+  --text-quote: #9a7ab8;
+  --modal-bg: #181422;
+  --img-bg: #1e1a2a;
+  --modimg-bg: #0d0a14;
+  --btn-bg: #181422;
+  --btn-color: #a890c8;
+  --toggle-bg: #2a1f3d;
+  --toggle-border: #352848;
+  --toggle-dot: #8a6aab;
+  --meta-bg: #1e1a2a;
+  --meta-border: #352848;
+  --meta-color: #8a6aab;
+  --text-inverse: #000;
+  --play-bg: rgba(0,0,0,0.7);
+  --play-border: #fff;
+}
+
+[data-theme="dark-red"] {
+  --bg: #140a0a;
+  --card-bg: #1c1010;
+  --card-bg-alt: #241515;
+  --border: #3a1a1a;
+  --border-2: #4a2020;
+  --border-3: #5a2828;
+  --accent: #ff5555;
+  --accent-light: rgba(255,85,85,0.12);
+  --text: #f4dddd;
+  --text-body: #e8cccc;
+  --text-sec: #c89090;
+  --text-tert: #ab7676;
+  --text-dim: #905e5e;
+  --text-muted: #804a4a;
+  --text-quote: #b88080;
+  --modal-bg: #1c1010;
+  --img-bg: #241515;
+  --modimg-bg: #140a0a;
+  --btn-bg: #1c1010;
+  --btn-color: #c89090;
+  --toggle-bg: #3a1a1a;
+  --toggle-border: #4a2020;
+  --toggle-dot: #ab7676;
+  --meta-bg: #241515;
+  --meta-border: #4a2020;
+  --meta-color: #ab7676;
+  --text-inverse: #000;
+  --play-bg: rgba(0,0,0,0.7);
+  --play-border: #fff;
+}
+
+:root, [data-theme="dark-cyan"] {
+  --bg: #0a1414;
+  --card-bg: #141f1f;
+  --card-bg-alt: #1a2a2a;
+  --border: #1f3a3a;
+  --border-2: #264848;
+  --border-3: #305858;
+  --accent: #40e0d0;
+  --accent-light: rgba(64,224,208,0.12);
+  --text: #ddf4f1;
+  --text-body: #cce8e5;
+  --text-sec: #90c8c2;
+  --text-tert: #76aba5;
+  --text-dim: #5e908b;
+  --text-muted: #4a807a;
+  --text-quote: #80b8b2;
+  --modal-bg: #141f1f;
+  --img-bg: #1a2a2a;
+  --modimg-bg: #0a1414;
+  --btn-bg: #141f1f;
+  --btn-color: #90c8c2;
+  --toggle-bg: #1f3a3a;
+  --toggle-border: #264848;
+  --toggle-dot: #76aba5;
+  --meta-bg: #1a2a2a;
+  --meta-border: #264848;
+  --meta-color: #76aba5;
+  --text-inverse: #000;
+  --play-bg: rgba(0,0,0,0.7);
+  --play-border: #fff;
+}
+
+[data-theme="dark-amber"] {
+  --bg: #14100a;
+  --card-bg: #1f1a14;
+  --card-bg-alt: #2a231a;
+  --border: #3d3020;
+  --border-2: #4d3d28;
+  --border-3: #5d4a30;
+  --accent: #ffaa40;
+  --accent-light: rgba(255,170,64,0.12);
+  --text: #f4e8dd;
+  --text-body: #e8d9cc;
+  --text-sec: #c8b090;
+  --text-tert: #ab9576;
+  --text-dim: #907d5e;
+  --text-muted: #806a4a;
+  --text-quote: #b8a080;
+  --modal-bg: #1f1a14;
+  --img-bg: #2a231a;
+  --modimg-bg: #14100a;
+  --btn-bg: #1f1a14;
+  --btn-color: #c8b090;
+  --toggle-bg: #3d3020;
+  --toggle-border: #4d3d28;
+  --toggle-dot: #ab9576;
+  --meta-bg: #2a231a;
+  --meta-border: #4d3d28;
+  --meta-color: #ab9576;
+  --text-inverse: #000;
+  --play-bg: rgba(0,0,0,0.7);
+  --play-border: #fff;
+}
+
+[data-theme="light-warm"] {
+  --bg: #faf6f0;
+  --card-bg: #fff;
+  --card-bg-alt: #f8efe0;
+  --border: #e0d5c5;
+  --border-2: #d5c8b5;
+  --border-3: #c8baa5;
+  --accent: #8b5e3c;
+  --accent-light: rgba(139,94,60,0.1);
+  --text: #2a1f15;
+  --text-body: #3a2a1a;
+  --text-sec: #705540;
+  --text-tert: #907060;
+  --text-dim: #a08878;
+  --text-muted: #b09888;
+  --text-quote: #806050;
+  --modal-bg: #fff;
+  --img-bg: #f8efe0;
+  --modimg-bg: #faf6f0;
+  --btn-bg: #f8efe0;
+  --btn-color: #705540;
+  --toggle-bg: #e0d5c5;
+  --toggle-border: #d5c8b5;
+  --toggle-dot: #a08878;
+  --meta-bg: #f8efe0;
+  --meta-border: #e0d5c5;
+  --meta-color: #705540;
+  --text-inverse: #fff;
+  --play-bg: rgba(0,0,0,0.5);
+  --play-border: #fff;
+}
+
+[data-theme="light-mint"] {
+  --bg: #f0faf5;
+  --card-bg: #fff;
+  --card-bg-alt: #e0f8ed;
+  --border: #c8e0d5;
+  --border-2: #b8d5c8;
+  --border-3: #a5c8ba;
+  --accent: #2d8a6e;
+  --accent-light: rgba(45,138,110,0.1);
+  --text: #152a22;
+  --text-body: #1f3a30;
+  --text-sec: #4a7062;
+  --text-tert: #609080;
+  --text-dim: #78a898;
+  --text-muted: #88b8a8;
+  --text-quote: #558070;
+  --modal-bg: #fff;
+  --img-bg: #e0f8ed;
+  --modimg-bg: #f0faf5;
+  --btn-bg: #e0f8ed;
+  --btn-color: #4a7062;
+  --toggle-bg: #c8e0d5;
+  --toggle-border: #b8d5c8;
+  --toggle-dot: #78a898;
+  --meta-bg: #e0f8ed;
+  --meta-border: #c8e0d5;
+  --meta-color: #4a7062;
+  --text-inverse: #fff;
+  --play-bg: rgba(0,0,0,0.5);
+  --play-border: #fff;
+}
+
 body {
   background: var(--bg);
   color: var(--text);
-  font-family: system-ui, -apple-system, sans-serif;
+  font-family: 'Inconsolata', 'SF Mono', Consolas, monospace;
   min-height: 100vh;
 }
 
@@ -364,7 +559,7 @@ body {
   position: static; width: 100%; background: transparent; border: none;
   border-bottom: 1px solid var(--border); border-radius: 0;
   padding: 14px 4px 12px; overflow: visible;
-  font-family: "SF Mono", Consolas, monospace; font-size: 0.82rem; line-height: 1.5; cursor: pointer;
+  font-family: "Inconsolata", "SF Mono", Consolas, monospace; font-size: 0.82rem; line-height: 1.5; cursor: pointer;
 }
 .text-only .grid .tile:hover { border-color: var(--accent); box-shadow: none; background: var(--card-bg); }
 .text-only .tile-media-wrap, .text-only .tile-img { display: none; }
@@ -452,8 +647,8 @@ body {
   background: var(--modal-bg);
   border: 1px solid var(--border-3);
   border-radius: 12px;
-  max-width: 720px;
-  width: 100%;
+  max-width: 1100px;
+  width: 94%;
   max-height: 90vh;
   overflow-y: auto;
   position: relative;
@@ -587,7 +782,8 @@ body {
 .modal-footer a:hover { background: var(--accent); color: var(--text-inverse); }
 
 @media (max-width: 800px) {
-  .modal-content { padding: 24px 20px; }
+  .modal-overlay { padding: 12px; }
+  .modal-content { padding: 24px 16px; max-width: none; width: 100%; border-radius: 8px; }
   .modal-head .modal-title { font-size: 1.1rem; }
   .header { padding: 24px 16px 12px; }
   .header h1 { font-size: 1.4rem; }
@@ -597,7 +793,7 @@ body {
   padding: 4px 12px; border: 1px solid var(--border-3);
   border-radius: 5px; background: var(--card-bg);
   color: var(--text-sec); cursor: pointer;
-  font-size: 0.78rem; font-family: "SF Mono", Consolas, monospace;
+  font-size: 0.78rem; font-family: "Inconsolata", "SF Mono", Consolas, monospace;
   transition: all 0.15s;
 }
 .term-btn:hover { border-color: var(--accent); color: var(--accent); }
@@ -607,7 +803,7 @@ body {
 
 .twindow { width:100%; max-width:1200px; height:85vh; height:85dvh; background:#0c0c0c; border:1px solid #333; border-radius:8px; display:flex; flex-direction:column; overflow:hidden; box-shadow:0 0 60px rgba(32,255,32,0.08); }
 
-.ttbar { background:#1a1a1a; padding:8px 14px; display:flex; align-items:center; font-family:"SF Mono",Consolas,monospace; font-size:0.75rem; color:#777; border-bottom:1px solid #2a2a2a; user-select:none; flex-shrink:0; position:relative; z-index:10; }
+.ttbar { background:#1a1a1a; padding:8px 14px; display:flex; align-items:center; font-family:"Inconsolata","SF Mono",Consolas,monospace; font-size:0.75rem; color:#777; border-bottom:1px solid #2a2a2a; user-select:none; flex-shrink:0; position:relative; z-index:10; }
 .ttbar span { flex:1; }
 .ttbar .tclose { background:none; border:none; color:#666; cursor:pointer; font-size:1.2rem; line-height:1; padding:0 4px; }
 .ttbar .tclose:hover { color:#ff5f57; }
@@ -622,7 +818,7 @@ body {
 #xterm-container .xterm-viewport { height: 100% !important; overflow-x: auto !important; overflow-y: hidden !important; }
 #xterm-container .xterm-helper-textarea { overflow: hidden !important; }
 
-.tbody { flex:1; overflow-y:auto; padding:10px 16px; font:0.8rem/1.55 "SF Mono",Consolas,monospace; color:#20ff20; background:#0c0c0c; white-space:pre-wrap; word-break:break-word; }
+.tbody { flex:1; overflow-y:auto; padding:10px 16px; font:0.8rem/1.55 "Inconsolata","SF Mono",Consolas,monospace; color:#20ff20; background:#0c0c0c; white-space:pre-wrap; word-break:break-word; }
 .tbody .to { margin-bottom:2px; }
 .tbody .tdim { color:#4a4; }
 .tbody .tbold { color:#20ff20; font-weight:bold; }
@@ -630,8 +826,8 @@ body {
 .tbody .twarn { color:#ffaa00; }
 
 .tinput { display:flex; align-items:center; background:#0c0c0c; border-top:1px solid #2a2a2a; padding:8px 16px; flex-shrink:0; }
-.tinput span { color:#20ff20; font-family:"SF Mono",Consolas,monospace; font-size:0.82rem; margin-right:6px; }
-.tinput input { flex:1; background:transparent; border:none; outline:none; color:#20ff20; font-family:"SF Mono",Consolas,monospace; font-size:0.82rem; caret-color:#20ff20; }
+.tinput span { color:#20ff20; font-family:"Inconsolata","SF Mono",Consolas,monospace; font-size:0.82rem; margin-right:6px; }
+.tinput input { flex:1; background:transparent; border:none; outline:none; color:#20ff20; font-family:"Inconsolata","SF Mono",Consolas,monospace; font-size:0.82rem; caret-color:#20ff20; }
 .tinput input::placeholder { color:#3a3; }
 
 @media (max-width: 800px) {
@@ -644,7 +840,7 @@ body {
 
 <div id="page-wrap">
   <div class="header">
-  <h1><a href="https://kredtidy.tumblr.com" target="_blank">Web Pipe — AAP Liwanag 19.91</a></h1>
+  <h1><a href="https://kredtidy.tumblr.com" target="_blank">USVirtualUni — Web Pipe — AAP Liwanag 19.91</a></h1>
   <div class="desc">Artist / MetaDeveloper / B.I.G.</div>
   <div class="total" id="total"></div>
   <div class="controls">
@@ -658,9 +854,15 @@ body {
     </label>
     <select class="theme-select" id="themeSelect">
       <option value="dark-green">Dark Green</option>
-      <option value="light">Light</option>
       <option value="dark-blue">Dark Blue</option>
+      <option value="dark-purple">Dark Purple</option>
+      <option value="dark-red">Dark Red</option>
+      <option value="dark-cyan">Dark Cyan</option>
+      <option value="dark-amber">Dark Amber</option>
+      <option value="light">Light</option>
       <option value="light-blue">Light Blue</option>
+      <option value="light-warm">Light Warm</option>
+      <option value="light-mint">Light Mint</option>
     </select>
     <button class="term-btn" id="boyGameBtn" style="padding:4px 10px;font-size:0.75rem">👦 Game-Boy</button>
     <button class="term-btn" id="gameBtn" style="padding:4px 10px;font-size:0.75rem">⚔ Bushido</button>
@@ -720,7 +922,7 @@ body {
     <div id="gameWrap" style="flex:1;position:relative;overflow:hidden;background:#1a1a0a;display:flex;align-items:center;justify-content:center;padding:0">
   <iframe id="gameFrame" src="./samurai.html" style="width:100%;height:100%;border:none" title="Bushido Blade"
     onerror="this.style.display='none';this.nextSibling.style.display='flex'"></iframe>
-  <div style="display:none;flex-direction:column;align-items:center;color:#666;font-family:monospace;font-size:13px;gap:8px">
+  <div style="display:none;flex-direction:column;align-items:center;color:#666;font-family:'Inconsolata',monospace;font-size:13px;gap:8px">
     <span>⚠ Could not load samurai.html</span>
     <span style="font-size:11px;color:#444">Place both files in the same directory</span>
   </div>
@@ -736,7 +938,7 @@ body {
     <div id="boyGameWrap" style="flex:1;position:relative;overflow:hidden;background:#1a1a2e;display:flex;align-items:center;justify-content:center;padding:0">
   <iframe id="boyGameFrame" src="./game-boy.html" style="width:100%;height:100%;border:none" title="Kawaii Field"
     onerror="this.style.display='none';this.nextSibling.style.display='flex'"></iframe>
-  <div style="display:none;flex-direction:column;align-items:center;color:#666;font-family:monospace;font-size:13px;gap:8px">
+  <div style="display:none;flex-direction:column;align-items:center;color:#666;font-family:'Inconsolata',monospace;font-size:13px;gap:8px">
     <span>⚠ Could not load game-boy.html</span>
     <span style="font-size:11px;color:#444">Place both files in the same directory</span>
   </div>
@@ -788,8 +990,9 @@ function extractYoutubeId(str) {
   return m ? m[1] : null;
 }
 
-function firstImage(post) {
+function firstImage(post, preferLarge) {
   if (post.type === 'photo') {
+    if (preferLarge) return post['photo-url-1280'] || post['photo-url-500'] || post['photo-url-250'] || null;
     return post['photo-url-500'] || post['photo-url-250'] || null;
   }
   if (post.type === 'regular') {
@@ -799,12 +1002,12 @@ function firstImage(post) {
     const poster = body.match(/poster=["']([^"']+)/);
     if (poster) return poster[1];
     const ytId = extractYoutubeId(body);
-    if (ytId) return 'https://img.youtube.com/vi/' + ytId + '/hqdefault.jpg';
+    if (ytId) return 'https://img.youtube.com/vi/' + ytId + (preferLarge ? '/maxresdefault.jpg' : '/hqdefault.jpg');
     return null;
   }
   if (post.type === 'video') {
     const ytId = extractYoutubeId(post['video-source'] || post['video-player'] || '');
-    if (ytId) return 'https://img.youtube.com/vi/' + ytId + '/hqdefault.jpg';
+    if (ytId) return 'https://img.youtube.com/vi/' + ytId + (preferLarge ? '/maxresdefault.jpg' : '/hqdefault.jpg');
     const poster = (post['video-player'] || '').match(/poster=["']([^"']+)/);
     if (poster) return poster[1];
     return null;
@@ -846,6 +1049,16 @@ function escHtml(s) {
   return d.innerHTML;
 }
 
+function getTileWidthClass(id) {
+  if (isTextOnly) return '';
+  var s = String(id), hash = 0;
+  for (var i = 0; i < s.length; i++) { hash = ((hash << 5) - hash) + s.charCodeAt(i); hash |= 0; }
+  var bucket = (Math.abs(hash) % 37);
+  if (bucket < 2) return ' tile-full';
+  if (bucket < 7) return ' tile-wide-2';
+  return '';
+}
+
 function tileHtml(post) {
   const title = extractTitle(post);
   const text = extractText(post);
@@ -853,9 +1066,10 @@ function tileHtml(post) {
   const date = formatDate(post['date-gmt'] || post.date);
   const time = isTextOnly ? formatTime(post['date-gmt'] || post.date) : '';
   const id = post.id;
+  const wideClass = isTextOnly ? '' : getTileWidthClass(id);
 
   if (isTextOnly) {
-    return `<div class="tile" data-post-id="${id}" onclick="openPermalink('${id}')">
+  return `<div class="tile${wideClass}" data-post-id="${id}" onclick="openPermalink('${id}')">
       <div class="tile-body">
         <span class="tile-date">${date} ${time} </span>
         <span class="tile-meta">[${post.type}]</span>
@@ -866,10 +1080,11 @@ function tileHtml(post) {
     </div>`;
   }
 
-  const img = firstImage(post);
+  const preferLarge = wideClass.includes('tile-full') || wideClass.includes('tile-wide-2');
+  const img = firstImage(post, preferLarge);
   const isVideo = isVideoPost(post);
 
-  return `<div class="tile" data-post-id="${id}" onclick="openPermalink('${id}')">
+  return `<div class="tile${wideClass}" data-post-id="${id}" onclick="openPermalink('${id}')">
     <div class="tile-inner">
       ${img ? `<div class="tile-media-wrap">${isVideo ? '<div class="tile-play"></div>' : ''}<img class="tile-img" src="${img}" alt="" loading="lazy"></div>` : ''}
       <div class="tile-body">
@@ -925,12 +1140,41 @@ function applyMasonry() {
   const heights = new Array(cols).fill(0);
 
   tiles.forEach(tile => {
-    const shortest = heights.indexOf(Math.min(...heights));
-    tile.style.position = 'absolute';
-    tile.style.width = cw + 'px';
-    tile.style.left = shortest * (cw + gap) + 'px';
-    tile.style.top = heights[shortest] + 'px';
-    heights[shortest] += tile.offsetHeight + gap;
+    let span = 1;
+    if (tile.classList.contains('tile-full')) span = cols;
+    else if (tile.classList.contains('tile-wide-2')) span = Math.min(2, cols);
+
+    if (span === cols) {
+      const maxH = Math.max(...heights);
+      tile.style.position = 'absolute';
+      tile.style.width = gw + 'px';
+      tile.style.left = '0px';
+      tile.style.top = maxH + 'px';
+      const newH = maxH + tile.offsetHeight + gap;
+      for (let i = 0; i < cols; i++) heights[i] = newH;
+    } else if (span > 1) {
+      let bestStart = 0;
+      let bestTop = Infinity;
+      for (let i = 0; i <= cols - span; i++) {
+        let maxInSpan = 0;
+        for (let j = i; j < i + span; j++) maxInSpan = Math.max(maxInSpan, heights[j]);
+        if (maxInSpan < bestTop) { bestTop = maxInSpan; bestStart = i; }
+      }
+      const tw = cw * span + gap * (span - 1);
+      tile.style.position = 'absolute';
+      tile.style.width = tw + 'px';
+      tile.style.left = (bestStart * (cw + gap)) + 'px';
+      tile.style.top = bestTop + 'px';
+      const newH = bestTop + tile.offsetHeight + gap;
+      for (let j = bestStart; j < bestStart + span; j++) heights[j] = newH;
+    } else {
+      const shortest = heights.indexOf(Math.min(...heights));
+      tile.style.position = 'absolute';
+      tile.style.width = cw + 'px';
+      tile.style.left = shortest * (cw + gap) + 'px';
+      tile.style.top = heights[shortest] + 'px';
+      heights[shortest] += tile.offsetHeight + gap;
+    }
   });
 
   grid.style.height = Math.max(...heights) + 'px';
@@ -2044,7 +2288,7 @@ _treg('nano', [], 'MProcs nano', function() { _tgen(); });
 _treg('history', ['hist'], 'cmd history', function() { _th.forEach(function(h, i) { _tprt((i+1) + '  ' + h); }); });
 _treg('reload', ['reboot'], 'reload page', function() { _tprt('reloading...', 'tdim'); setTimeout(function() { location.reload(); }, 400); });
 _treg('theme', [], 'theme <name>', function(a) {
-  var ts = ['dark-green', 'light', 'dark-blue', 'light-blue'], t = (a[0] || '').toLowerCase();
+  var ts = ['dark-green','dark-blue','dark-purple','dark-red','dark-cyan','dark-amber','light','light-blue','light-warm','light-mint'], t = (a[0] || '').toLowerCase();
   if (ts.indexOf(t) === -1) { _tprt('themes: ' + ts.join(', '), 'twarn'); return; }
   document.body.dataset.theme = t; localStorage.setItem('wp-theme', t);
   var sel = document.getElementById('themeSelect'); if (sel) sel.value = t;
@@ -2160,7 +2404,7 @@ _treg('matrix', ['hack'], 'matrix rain', function(a) {
     ti.addEventListener('focus', function() { setTimeout(_tadj, 300); }); }
   } catch(e) {}
 
-  var saved = localStorage.getItem('wp-theme') || 'dark-green';
+  var saved = localStorage.getItem('wp-theme') || 'dark-cyan';
   document.body.dataset.theme = saved;
   $('themeSelect').value = saved;
   $('themeSelect').addEventListener('change', function() {
@@ -2326,7 +2570,7 @@ function openLiveTerminal() {
       cursorBlink: true,
       cursorStyle: "block",
       fontSize: 14,
-      fontFamily: "Consolas, 'Courier New', monospace",
+      fontFamily: "'Inconsolata', Consolas, 'Courier New', monospace",
       theme: { background: "#0c0c0c", foreground: "#20ff20", cursor: "#20ff20", selectionBackground: "#20ff2040" },
       allowTransparency: false,
       cols,
