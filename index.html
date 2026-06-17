@@ -345,6 +345,25 @@ body {
   min-height: 100vh;
 }
 
+.banner {
+  max-width: 1400px;
+  margin: 0 auto;
+  overflow: hidden;
+  line-height: 0;
+}
+
+.banner img {
+  width: 100%;
+  height: 240px;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+
+@media (max-width: 800px) {
+  .banner img { height: 160px; }
+}
+
 .header {
   max-width: 1400px;
   margin: 0 auto;
@@ -846,6 +865,8 @@ body {
 <body>
 
 <div id="page-wrap">
+  <div style="height:32px"></div>
+  <div class="banner"><img src="usvu_banner.jpeg" alt="USVU Banner"></div>
   <div class="header">
   <h1><a href="https://kredtidy.tumblr.com" target="_blank">USVirtualUni — Web Pipe — AAPL 19.91 — "D Otomei"</a></h1>
   <div class="desc">Artist / MetaDeveloper / B.I.G.</div>
