@@ -114,7 +114,7 @@
 
   #log-panel {
     position: fixed; top: 0; left: 160px; right: 170px; height: 80px;
-    z-index: 45; display: flex; gap: 4px; padding: 2px 4px;
+    z-index: 45; display: flex; gap: 4px; padding: 2px 4px 10px;
     pointer-events: auto;
   }
   #log-panel > div {
@@ -128,8 +128,19 @@
   #log-panel > div::-webkit-scrollbar { width: 3px; }
   #log-panel > div::-webkit-scrollbar-thumb { background: #aaa; border-radius: 2px; }
   #log-panel .log-header { font-weight: bold; font-size: 9px; margin-bottom: 2px; opacity: 0.5; position: sticky; top: 0; background: inherit; }
-  #log-panel .entry { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  #log-panel .entry { white-space: pre-wrap; overflow: visible; }
   #log-panel .ts { opacity: 0.4; margin-right: 4px; }
+  #log-resize-handle {
+    position: absolute; bottom: -4px; left: 0; right: 0; height: 8px;
+    cursor: ns-resize; z-index: 46;
+    pointer-events: auto;
+  }
+  #log-resize-handle::after {
+    content: ''; position: absolute; bottom: 3px; left: 50%;
+    transform: translateX(-50%);
+    width: 40px; height: 3px; border-radius: 2px;
+    background: rgba(0,0,0,0.2);
+  }
   .nano { color: #ff69b4; }
   body.dark .nano { color: #00ff00; }
   #credit {
@@ -139,11 +150,96 @@
   }
   body.dark #log-panel > div { color: #00ff00; background: rgba(0,0,0,0.35); }
   body.dark #log-panel .ts { color: #448844; opacity: 0.7; }
+
+  #start-screen {
+    position: fixed; inset: 0; z-index: 200;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    background: #f0ede6; font-family: 'Courier New', monospace;
+    cursor: pointer; transition: opacity 0.6s;
+  }
+  body.dark #start-screen { background: #0a0a0a; }
+  #start-screen.hidden { opacity: 0; pointer-events: none; }
+  #start-screen h1 { font-size: 48px; color: #c00; margin-bottom: 8px; letter-spacing: 4px; }
+  body.dark #start-screen h1 { color: #00ff00; }
+  #start-screen p { font-size: 16px; color: #666; margin-bottom: 32px; }
+  body.dark #start-screen p { color: #448844; }
+  #start-btn {
+    font-family: 'Courier New', monospace; font-size: 20px;
+    padding: 12px 40px; border: 2px solid #c00; background: transparent;
+    color: #c00; cursor: pointer; border-radius: 4px;
+    transition: background 0.2s, color 0.2s;
+  }
+  body.dark #start-btn { border-color: #00ff00; color: #00ff00; }
+  #start-btn:hover { background: #c00; color: #fff; }
+  body.dark #start-btn:hover { background: #00ff00; color: #000; }
+
+  #mobile-controls {
+    position: fixed; inset: 0; z-index: 190; pointer-events: none;
+    display: none; touch-action: none;
+  }
+  #mobile-controls.show { display: block; }
+  #mobile-controls * { touch-action: none; }
+  #mc-toggle {
+    position: fixed; bottom: 60px; right: 8px; z-index: 195;
+    font-family: 'Courier New', monospace; font-size: 10px;
+    padding: 4px 8px; border: 1px solid #bbb;
+    background: #ddd; color: #666;
+    cursor: pointer; border-radius: 3px; pointer-events: auto;
+  }
+  body.dark #mc-toggle { background: #333; color: #999; border-color: #555; }
+  #mc-look { display: none; }
+  #mc-joystick {
+    position: fixed; left: 20px; bottom: 20px; width: 110px; height: 110px;
+    border-radius: 50%; pointer-events: auto; touch-action: none;
+    background: rgba(0,0,0,0.08); border: 2px solid rgba(0,0,0,0.15);
+  }
+  body.dark #mc-joystick { background: rgba(0,255,0,0.08); border-color: rgba(0,255,0,0.2); }
+  #mc-joystick-knob {
+    position: absolute; left: 50%; top: 50%; width: 40px; height: 40px;
+    margin: -20px 0 0 -20px; border-radius: 50%;
+    background: rgba(0,0,0,0.2); pointer-events: none;
+  }
+  body.dark #mc-joystick-knob { background: rgba(0,255,0,0.3); }
+  .mc-vert {
+    position: fixed; pointer-events: auto; touch-action: none;
+    font-family: 'Courier New', monospace; font-size: 16px; font-weight: bold;
+    width: 36px; height: 36px; border-radius: 50%; border: 1px solid #bbb;
+    background: #ddd; color: #666;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; user-select: none;
+  }
+  body.dark .mc-vert { background: #333; color: #999; border-color: #555; }
+  #mc-q { left: 20px; bottom: 140px; }
+  #mc-e { left: 68px; bottom: 140px; }
+  #mc-buttons {
+    position: fixed; right: 8px; bottom: 130px; display: flex;
+    flex-direction: column; gap: 4px; pointer-events: none;
+  }
+  #mc-buttons button {
+    font-family: 'Courier New', monospace; font-size: 11px;
+    padding: 6px 10px; border: 1px solid #bbb;
+    background: #ddd; color: #666;
+    cursor: pointer; border-radius: 3px; pointer-events: auto;
+    min-width: 52px; text-align: center;
+  }
+  body.dark #mc-buttons button { background: #333; color: #999; border-color: #555; }
+  #mc-buttons button.on { border-color: #c00; color: #c00; font-weight: bold; }
+  body.dark #mc-buttons button.on { border-color: #00ff00; color: #00ff00; }
+  #mc-buttons button.on { border-color: #c00; color: #c00; font-weight: bold; }
+  body.dark #mc-buttons button.on { border-color: #00ff00; color: #00ff00; }
+  .mc-row { display: flex; gap: 4px; }
 </style>
 </head>
 <body>
 
 <div id="container"></div>
+
+<div id="start-screen">
+  <h1>FP</h1>
+  <p>TERMINAL SPACE v0.2</p>
+  <button id="start-btn">START</button>
+</div>
 
 <div id="hud">
   <div>FP TERMINAL SPACE v0.2</div>
@@ -183,8 +279,32 @@
 <div id="log-panel">
   <div id="log-spawn"><div class="log-header">SPAWN</div></div>
   <div id="log-actions"><div class="log-header">ACTIONS</div></div>
+  <div id="log-resize-handle"></div>
 </div>
-<div id="credit">Powered by NeonBunny</div>
+<div id="credit">Powered by MProcs NeonBunny</div>
+
+<div id="mobile-controls">
+  <div id="mc-joystick"><div id="mc-joystick-knob"></div></div>
+  <div id="mc-q" class="mc-vert">Q</div>
+  <div id="mc-e" class="mc-vert">E</div>
+  <div id="mc-buttons">
+    <div class="mc-row">
+      <button id="mc-interact">INTRCT</button>
+      <button id="mc-term">TERM</button>
+      <button id="mc-ctrl">CTRL</button>
+    </div>
+    <div class="mc-row">
+      <button id="mc-tab">TAB</button>
+      <button id="mc-f">F</button>
+      <button id="mc-v">V</button>
+    </div>
+    <div class="mc-row">
+      <button id="mc-zoomout">−</button>
+      <button id="mc-zoomin">+</button>
+    </div>
+  </div>
+</div>
+<button id="mc-toggle">MOBILE</button>
 
 <div id="terminal">
   <div id="terminal-resize-handle"></div>
@@ -405,7 +525,7 @@ function spawnObjectOfType(typeLabel, pos) {
     const wt = WIREFRAME_TYPES.find(w => w.label === typeLabel);
     if (!wt) return null;
     color = 0xff6666;
-    baseSize = 1;
+    baseSize = randomRange(0.5, 4);
     const geo = wt.geo();
     const edges = new THREE.EdgesGeometry(geo);
     const mat = new THREE.LineBasicMaterial({ color: 0xff6666, transparent: true, opacity: 0.8 });
@@ -414,7 +534,8 @@ function spawnObjectOfType(typeLabel, pos) {
     mesh.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI);
     typeLabel = 'wire-' + typeLabel;
   }
-  mesh.scale.set(1, 1, 1);
+  const sf = typeLabel === 'square' || typeLabel === 'circle' ? 1 : randomRange(0.8, 5);
+  mesh.scale.set(sf, sf, sf);
   mesh.userData = {
     type: typeLabel,
     life: Infinity,
@@ -422,7 +543,7 @@ function spawnObjectOfType(typeLabel, pos) {
     rotSpeed: randomRange(-2, 2),
     floatOffset: Math.random() * Math.PI * 2,
     baseSize: baseSize,
-    scaleFactor: 1,
+    scaleFactor: sf,
     radical: false,
     persistent: true,
     isOutline: typeLabel.startsWith('wire-'),
@@ -449,7 +570,7 @@ function spawnObject(radical = false) {
     playSpawn();
     spawnWaveRing(mesh, mesh.material.color.getHex());
   }
-  logEvent(`spawn ${colorSpan(mesh)} ${mesh.userData.type} @ ${posStr(mesh.position)}`, 'spawn', mesh.material.color.getHex());
+  logEvent(`spawn ${colorSpan(mesh)} ${mesh.userData.type} @ ${posStr(mesh.position)}`, 'spawn', mesh.material.color.getHex(), mesh.userData, mesh.position);
   return mesh;
 }
 
@@ -503,7 +624,7 @@ function removeObjectByRef(obj) {
   const t = obj.userData?.type || 'object';
   const p = posStr(obj.position);
   const io = objects.indexOf(obj);
-  if (io !== -1) { logEvent(`terminate ${colorSpan(obj)} ${t} @ ${p}`, 'actions', obj.material.color.getHex()); despawnObject(obj); objects.splice(io, 1); return true; }
+  if (io !== -1) { logEvent(`terminate ${colorSpan(obj)} ${t} @ ${p}`, 'actions', obj.material.color.getHex(), obj.userData, obj.position); despawnObject(obj); objects.splice(io, 1); return true; }
   return false;
 }
 
@@ -512,6 +633,7 @@ function respawnAll() {
   objects = [];
   for (let i = 0; i < 25; i++) spawnObject();
   outlines.forEach(o => { o.position.set(randomRange(-12, 12), randomRange(1, 6), randomRange(-12, 12)); });
+  logEvent('shuffle — objects randomized', 'actions', null, null, null, true);
   showMsg('objects randomized');
 }
 
@@ -560,6 +682,10 @@ function updateObjects(dt) {
           canSpawn = true; break;
         }
       }
+      if (!canSpawn && objects.length > 0) {
+        despawnObject(objects[0]); objects.splice(0, 1);
+        canSpawn = true;
+      }
     }
     if (canSpawn) {
       const radical = radicalsEnabled && Math.random() < 0.15;
@@ -602,28 +728,63 @@ function colorSpan(m) {
   } catch { return '<b>[?]</b>'; }
 }
 
-function nearestOutlines(pos, count = 3, maxDist = 25) {
-  const withDist = outlines.map(o => ({ o, d: o.position.distanceTo(pos) }));
-  withDist.sort((a, b) => a.d - b.d);
-  return withDist.filter(x => x.d < maxDist).slice(0, count).map(x => ({
+function nearestOutlines(pos, count = 3, maxDist = 8) {
+  const withDist = outlines.map(o => {
+    const d = o.position.distanceTo(pos);
+    const r = (o.userData.boundRadius || 1) * o.scale.x;
+    return { o, d, surf: Math.max(0, d - r) };
+  });
+  withDist.sort((a, b) => a.surf - b.surf);
+  return withDist.filter(x => x.surf < maxDist).slice(0, count).map(x => ({
     type: 'wireframe',
-    dist: x.d,
+    label: x.o.userData.type.replace('wire-', ''),
+    size: x.o.userData.scaleFactor || 1,
+    dist: x.surf,
     pos: x.o.position.clone(),
   }));
 }
 
-function logEvent(msg, category = 'actions', colorHex = null) {
+function sizeStr(ud) {
+  if (!ud) return '';
+  if (ud.isOutline || ud.type?.startsWith('wire-')) {
+    return `[sz:${(ud.scaleFactor || 1).toFixed(2)}]`;
+  }
+  const s = (ud.baseSize || 0.5) * (ud.scaleFactor || 1);
+  return `[sz:${s.toFixed(2)}]`;
+}
+
+function insideWireframes(pos) {
+  const res = [];
+  for (const o of outlines) {
+    const d = pos.distanceTo(o.position);
+    if (d < 0.01) continue;
+    const r = (o.userData.boundRadius || 1) * o.scale.x;
+    if (d <= r + 0.5) {
+      res.push(o.userData.type.replace('wire-', ''));
+    }
+  }
+  return res;
+}
+
+function insideStr(pos) {
+  const ins = insideWireframes(pos);
+  return ins.length ? ` inside ${ins.join('+')}` : '';
+}
+
+function logEvent(msg, category = 'actions', colorHex = null, objUd = null, pos = null, noNear = false) {
   const now = new Date();
   const ts = now.toTimeString().slice(0, 8) + '.' + String(now.getMilliseconds()).padStart(3, '0');
-  const nearList = nearestOutlines(camera.position, 3);
-  const suffix = nearList.length ? ' <span style="opacity:0.5">' + nearList.map(n => `${n.type} ${n.dist.toFixed(1)}u`).join(' | ') + '</span>' : '';
-  const nearPlain = nearList.length ? ' | near: ' + nearList.map(n => `${n.type} ${posStr(n.pos)} (${n.dist.toFixed(1)}u)`).join('; ') : '';
+  const sz = objUd ? ' ' + sizeStr(objUd) : '';
+  const inside = pos ? insideStr(pos) : '';
+  const nearList = !noNear ? nearestOutlines(pos || camera.position, 3) : [];
+  const suffix = nearList.length ? ' <span style="opacity:0.5">' + nearList.map(n => `${n.label} ${n.dist.toFixed(1)} units close`).join(' | ') + '</span>' : '';
+  const nearPlain = nearList.length ? ' | near: ' + nearList.map(n => `${n.label} ${posStr(n.pos)} (${n.dist.toFixed(1)} units close)`).join('; ') : '';
   const plain = msg.replace(/<[^>]+>/g, '');
-  logEntries.push(`[${ts}] ${plain}${nearPlain}`);
+  logEntries.push(`[${ts}] ${plain}${sz}${inside}${nearPlain}`);
   const div = document.createElement('div');
   div.className = 'entry';
   const dot = colorHex ? `<b style="color:#${colorHex.toString(16).padStart(6,'0')}">●</b> ` : '';
-  div.innerHTML = `<span class="ts">${ts}</span>${dot}${msg}${suffix}`;
+  div.innerHTML = `<span class="ts">${ts}</span>${dot}${msg}${sz}${inside}${suffix}`;
   const target = category === 'spawn' ? logSpawn : logActions;
   target.appendChild(div);
   target.scrollTop = target.scrollHeight;
@@ -637,7 +798,9 @@ function makeOutline(geo, pos, scale, label) {
   const line = new THREE.LineSegments(edges, mat);
   line.position.copy(pos);
   line.scale.set(scale, scale, scale);
-  line.userData = { type: 'wire-' + label, scaleFactor: scale, isOutline: true, spawnHex: 0xff6666 };
+  if (!geo.boundingSphere) geo.computeBoundingSphere();
+  const br = geo.boundingSphere.radius;
+  line.userData = { type: 'wire-' + label, scaleFactor: scale, isOutline: true, spawnHex: 0xff6666, boundRadius: br };
   scene.add(line);
   outlines.push(line);
   return line;
@@ -702,6 +865,27 @@ function stopResize() {
   document.removeEventListener('pointerup', stopResize);
 }
 
+// ── Log panel resize ──
+const logPanel = document.getElementById('log-panel');
+const logResizeHandle = document.getElementById('log-resize-handle');
+let logResizeStartY = 0, logResizeStartH = 0;
+logResizeHandle.addEventListener('pointerdown', (e) => {
+  e.preventDefault();
+  logResizeStartY = e.clientY;
+  logResizeStartH = logPanel.offsetHeight;
+  document.addEventListener('pointermove', onLogResize);
+  document.addEventListener('pointerup', stopLogResize);
+});
+function onLogResize(e) {
+  const dh = e.clientY - logResizeStartY;
+  const newH = Math.max(40, Math.min(window.innerHeight * 0.5, logResizeStartH + dh));
+  logPanel.style.height = newH + 'px';
+}
+function stopLogResize() {
+  document.removeEventListener('pointermove', onLogResize);
+  document.removeEventListener('pointerup', stopLogResize);
+}
+
 renderer.domElement.addEventListener('wheel', (e) => {
   if (viewMode === 'topdown' && !terminalOpen && !e.ctrlKey) {
     e.preventDefault();
@@ -720,13 +904,18 @@ let rightLook = false;
 
 renderer.domElement.addEventListener('contextmenu', (e) => e.preventDefault());
 renderer.domElement.addEventListener('pointerdown', (e) => {
-  if (e.button === 0 && e.ctrlKey && !terminalOpen && interactiveMode && terminateMode) {
+  if (e.button === 0 && (e.ctrlKey || mcCtrlHeld) && !terminalOpen) {
     const hits = getIntersects(e.clientX, e.clientY);
-    if (hits.length > 0) {
-      const obj = hits[0].object;
-      if (obj.userData?.isOutline || obj.userData?.type?.startsWith('wire-')) {
-        const io = outlines.indexOf(obj);
-        if (io !== -1) { despawnObject(obj); outlines.splice(io, 1); showMsg('wireframe terminated', 600); return; }
+    const wfHit = hits.find(h => h.object.userData?.isOutline || h.object.userData?.type?.startsWith('wire-'));
+    if (wfHit) {
+      if (terminateMode) {
+        const io = outlines.indexOf(wfHit.object);
+        if (io !== -1) { despawnObject(wfHit.object); outlines.splice(io, 1); showMsg('wireframe terminated', 600); return; }
+      } else {
+        selectObject(wfHit.object);
+        wireframeHandled = true;
+        showMsg('wireframe selected', 600);
+        return;
       }
     }
   }
@@ -734,6 +923,14 @@ renderer.domElement.addEventListener('pointerdown', (e) => {
 });
 document.addEventListener('pointerup', (e) => {
   if (e.button === 2) rightLook = false;
+  if (isDragging && selectedObject && dragStartPos) {
+    const from = posStr(dragStartPos);
+    const to = posStr(selectedObject.position);
+    if (from !== to) {
+      logEvent(`move ${colorSpan(selectedObject)} ${selectedObject.userData?.type || 'object'} ${from} → ${to}`, 'actions', selectedObject.material.color.getHex(), selectedObject.userData, selectedObject.position);
+    }
+    dragStartPos = null;
+  }
   isDragging = false;
 });
 document.addEventListener('mousemove', (e) => {
@@ -809,6 +1006,8 @@ let isDragging = false;
 let dragPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
 let dragOffset = new THREE.Vector3();
 let intersectPoint = new THREE.Vector3();
+let dragStartPos = null;
+let wireframeHandled = false;
 
 const raycaster = new THREE.Raycaster();
 const pointer = new THREE.Vector2();
@@ -847,7 +1046,7 @@ function selectObject(mesh) {
     selectionOutline.scale.set((mesh.userData.baseSize || 1) / 0.7, (mesh.userData.baseSize || 1) / 0.7, (mesh.userData.baseSize || 1) / 0.7);
   }
   scene.add(selectionOutline);
-  logEvent(`select ${colorSpan(mesh)} ${mesh.userData?.type || 'object'} @ ${posStr(mesh.position)}`, 'actions', mesh.material.color.getHex());
+  logEvent(`select ${colorSpan(mesh)} ${mesh.userData?.type || 'object'} @ ${posStr(mesh.position)}`, 'actions', mesh.material.color.getHex(), mesh.userData, mesh.position);
   playSelect();
 }
 function deselectObject() {
@@ -873,16 +1072,27 @@ renderer.domElement.addEventListener('pointerdown', (e) => {
     }
     return;
   }
-  if (hits.length > 0) {
-    selectObject(hits[0].object);
+  const flatHit = hits.find(h => !h.object.userData?.isOutline && !h.object.userData?.type?.startsWith('wire-'));
+  if (flatHit) {
+    selectObject(flatHit.object);
     const camDir = new THREE.Vector3();
     camera.getWorldDirection(camDir);
-    dragPlane.setFromNormalAndCoplanarPoint(camDir, hits[0].point);
-    dragOffset.copy(hits[0].point).sub(hits[0].object.position);
+    dragPlane.setFromNormalAndCoplanarPoint(camDir, flatHit.point);
+    dragOffset.copy(flatHit.point).sub(flatHit.object.position);
+    dragStartPos = flatHit.object.position.clone();
     isDragging = true;
-  } else {
+  } else if (selectedObject && hits.some(h => h.object === selectedObject)) {
+    const hit = hits.find(h => h.object === selectedObject);
+    const camDir = new THREE.Vector3();
+    camera.getWorldDirection(camDir);
+    dragPlane.setFromNormalAndCoplanarPoint(camDir, hit.point);
+    dragOffset.copy(hit.point).sub(selectedObject.position);
+    dragStartPos = selectedObject.position.clone();
+    isDragging = true;
+  } else if (!wireframeHandled) {
     deselectObject();
   }
+  wireframeHandled = false;
 });
 renderer.domElement.addEventListener('pointermove', (e) => {
   if (!interactiveMode || terminalOpen) return;
@@ -900,13 +1110,14 @@ renderer.domElement.addEventListener('pointerup', () => { rightLook = false; });
 renderer.domElement.addEventListener('wheel', (e) => {
   if (!interactiveMode || terminalOpen || !selectedObject || !e.ctrlKey) return;
   e.preventDefault();
+  const oldNs = selectedObject.scale.x;
   const factor = e.deltaY > 0 ? 0.9 : 1.1;
-  const ns = selectedObject.scale.x * factor;
+  const ns = oldNs * factor;
   selectedObject.scale.set(ns, ns, ns);
   selectedObject.userData.scaleFactor = ns;
   if (selectionOutline) selectionOutline.scale.copy(selectedObject.scale);
   playResize();
-  logEvent(`resize ${colorSpan(selectedObject)} ${selectedObject.userData?.type || 'object'} to ${ns.toFixed(2)} @ ${posStr(selectedObject.position)}`, 'actions', selectedObject.material.color.getHex());
+  logEvent(`resize ${colorSpan(selectedObject)} ${selectedObject.userData?.type || 'object'} ${oldNs.toFixed(2)} → ${ns.toFixed(2)} @ ${posStr(selectedObject.position)}`, 'actions', selectedObject.material.color.getHex(), selectedObject.userData, selectedObject.position);
   showMsg(`scale: ${ns.toFixed(2)}`, 600);
 }, { passive: false });
 
@@ -932,10 +1143,9 @@ document.getElementById('btn-reset').addEventListener('click', () => {
   for (let i = objects.length - 1; i >= 0; i--) despawnObject(objects[i]);
   objects = [];
   for (let i = 0; i < 25; i++) spawnObject();
-  camera.position.set(0, 2, 8); euler.yaw = 0; euler.pitch = -0.15; moveSpeed = 4;
   document.getElementById('btn-interact').classList.remove('on');
   document.getElementById('btn-terminate').classList.remove('on');
-  logEvent('reset — scene reset');
+  logEvent('reset — scene reset', 'actions', null, null, null, true);
   showMsg('scene reset');
 });
 document.getElementById('btn-clearflat').addEventListener('click', () => {
@@ -945,7 +1155,7 @@ document.getElementById('btn-clearflat').addEventListener('click', () => {
       despawnObject(o); objects.splice(i, 1);
     }
   }
-  logEvent('clearflat — removed all flat objects');
+  logEvent('clearflat — removed all flat objects', 'actions', null, null, null, true);
   showMsg('flat objects cleared');
 });
 document.getElementById('btn-green').addEventListener('click', toggleGreen);
@@ -966,7 +1176,7 @@ document.getElementById('btn-add').addEventListener('click', () => {
   const mesh = spawnObjectOfType(type);
   if (mesh) {
     showMsg(`+1 ${type}`);
-    logEvent(`add ${colorSpan(mesh)} ${mesh.userData?.type || type} @ ${posStr(mesh.position)}`, 'actions', mesh.material.color.getHex());
+    logEvent(`add ${colorSpan(mesh)} ${mesh.userData?.type || type} @ ${posStr(mesh.position)}`, 'actions', mesh.material.color.getHex(), mesh.userData, mesh.position);
   }
 });
 
@@ -1022,9 +1232,10 @@ function helpCmd() {
   print('nano / enter         — MProcs nano (random text)');
   print('savelog              — save event log to timestamped file');
   print('clearlog             — clear the event log');
+  print('list / objects       — print all objects with type, pos, size');
   print('reset                — reset scene');
   print('── Right-click drag = look  |  WASD+Q/E move  |  F sprint  |  V view');
-  print('── Interact: left-click drag  |  Ctrl+scroll resize  |  terminate del');
+  print('── Interact: left-click drag  |  Ctrl+click wireframe  |  Ctrl+scroll resize  |  term+Ctrl = del wire');
 }
 
 function execCommand(raw) {
@@ -1100,7 +1311,7 @@ function execCommand(raw) {
         const o = objects[i];
         if (!o.userData.isOutline && !o.userData.type?.startsWith('wire-')) { despawnObject(o); objects.splice(i, 1); }
       }
-      logEvent('clearflat — removed all flat objects');
+  logEvent('clearflat — removed all flat objects', 'actions', null, null, null, true);
       showMsg('flat objects cleared');
       break;
     case 'maxobj':
@@ -1113,21 +1324,36 @@ function execCommand(raw) {
             removed = true; break;
           }
         }
-        if (!removed) break;
+        if (!removed) { despawnObject(objects[0]); objects.splice(0, 1); }
       }
       showMsg(`max objects set to ${MAX_OBJECTS}`);
       break;
     case 'randomize': case 'shuffle': respawnAll(); break;
     case 'recolor': recolorAll(); break;
     case 'sound': soundEnabled = args[0] !== 'off'; showMsg(`sound ${soundEnabled ? 'on' : 'off'}`); break;
+    case 'list': case 'objects': {
+      const all = [...objects, ...outlines];
+      logEvent(`── Objects: ${all.length} ──`, 'actions');
+      all.forEach(o => {
+        const ud = o.userData || {};
+        const t = ud.type || '?';
+        const p = posStr(o.position);
+        const s = sizeStr(ud);
+        const hex = o.material ? o.material.color.getHex() : 0;
+        const name = colorNames[hex] || '#' + hex.toString(16).padStart(6, '0');
+        const c = hex.toString(16).padStart(6, '0');
+        logEvent(`locate: <b style="color:#${c}">${name}</b> ${t} @ ${p} ${s}`, 'actions', hex, ud, o.position);
+      });
+      showMsg(`listed ${all.length} objects`);
+      break;
+    }
     case 'reset':
       if (interactiveMode) enableInteractive(false);
       for (let i = objects.length - 1; i >= 0; i--) despawnObject(objects[i]);
       objects = []; for (let i = 0; i < 25; i++) spawnObject();
-      camera.position.set(0, 2, 8); euler.yaw = 0; euler.pitch = -0.15; moveSpeed = 4;
       document.getElementById('btn-interact').classList.remove('on');
       document.getElementById('btn-terminate').classList.remove('on');
-      logEvent('reset — scene reset');
+      logEvent('reset — scene reset', 'actions', null, null, null, true);
       showMsg('scene reset');
       break;
     default: break;
@@ -1700,6 +1926,128 @@ inputEl.addEventListener('keydown', (e) => {
 
 const _tcmds = { help:1, move:1, speed:1, theme:1, fog:1, grid:1, clear:1, tp:1, randomize:1, shuffle:1, recolor:1, gravity:1, topdown:1, td:1, persp:1, perspective:1, fps:1, interact:1, interactive:1, terminate:1, sound:1, radical:1, bg:1, green:1, spawn:1, clearflat:1, savelog:1, clearlog:1, nano:1, enter:1, maxobj:1, reset:1, '?':1 };
 
+// ── Mobile Controls ──
+const mcEl = document.getElementById('mobile-controls');
+const mcToggle = document.getElementById('mc-toggle');
+const mcJoy = document.getElementById('mc-joystick');
+const mcKnob = document.getElementById('mc-joystick-knob');
+const mcCtrl = document.getElementById('mc-ctrl');
+let mcVisible = false;
+let mcJoyId = null;
+let mcCtrlHeld = false;
+
+function isTouchDevice() { return 'ontouchstart' in window && navigator.maxTouchPoints > 1; }
+
+if (isTouchDevice()) {
+  mcEl.classList.add('show');
+  mcVisible = true;
+  mcToggle.textContent = 'HIDE';
+}
+
+mcToggle.addEventListener('click', () => {
+  mcVisible = !mcVisible;
+  mcEl.classList.toggle('show', mcVisible);
+  mcToggle.textContent = mcVisible ? 'HIDE' : 'MOBILE';
+});
+
+// Joystick
+function joyDown(e) { e.preventDefault(); mcJoyId = e.changedTouches[0].identifier; joyMove(e); }
+function joyMove(e) {
+  e.preventDefault();
+  const t = Array.from(e.changedTouches).find(tc => tc.identifier === mcJoyId) || e.changedTouches[0];
+  if (!t) return;
+  const rect = mcJoy.getBoundingClientRect();
+  const cx = rect.left + rect.width / 2, cy = rect.top + rect.height / 2;
+  const dx = t.clientX - cx, dy = t.clientY - cy;
+  const maxR = rect.width / 2 - 10;
+  const dist = Math.sqrt(dx*dx + dy*dy);
+  const clamp = Math.min(dist, maxR) / maxR;
+  const angle = Math.atan2(dy, dx);
+  const cxv = Math.cos(angle) * clamp, cyv = Math.sin(angle) * clamp;
+  mcKnob.style.transform = `translate(${cxv * maxR}px, ${cyv * maxR}px)`;
+  keys.w = cyv < -0.25; keys.s = cyv > 0.25; keys.a = cxv < -0.25; keys.d = cxv > 0.25;
+}
+function joyUp(e) { e.preventDefault(); mcKnob.style.transform='translate(0,0)'; keys.w=keys.s=keys.a=keys.d=false; mcJoyId=null; }
+mcJoy.addEventListener('touchstart', joyDown, { passive: false });
+mcJoy.addEventListener('touchmove', joyMove, { passive: false });
+mcJoy.addEventListener('touchend', joyUp, { passive: false });
+mcJoy.addEventListener('touchcancel', joyUp, { passive: false });
+
+// Look (document-level touch when overlay is shown)
+let mcLastX = null, mcLastY = null, mcTouchId = null;
+document.addEventListener('touchstart', (e) => {
+  if (!mcVisible) return;
+  const t = e.changedTouches[0];
+  if (!t) return;
+  const rect = mcJoy.getBoundingClientRect();
+  if (t.clientX >= rect.left && t.clientX <= rect.right && t.clientY >= rect.top && t.clientY <= rect.bottom) return;
+  mcTouchId = t.identifier; mcLastX = t.clientX; mcLastY = t.clientY;
+}, { passive: true });
+document.addEventListener('touchmove', (e) => {
+  if (mcLastX == null || mcTouchId == null) return;
+  const t = Array.from(e.changedTouches).find(tc => tc.identifier === mcTouchId);
+  if (!t) return;
+  e.preventDefault();
+  rightLook = true;
+  euler.yaw -= (t.clientX - mcLastX) * 0.006;
+  euler.pitch -= (t.clientY - mcLastY) * 0.006;
+  euler.pitch = Math.max(-Math.PI/2 + 0.05, Math.min(Math.PI/2 - 0.05, euler.pitch));
+  camera.rotation.order = 'YXZ';
+  camera.rotation.y = euler.yaw;
+  camera.rotation.x = euler.pitch;
+  mcLastX = t.clientX; mcLastY = t.clientY;
+}, { passive: false });
+document.addEventListener('touchend', (e) => {
+  if (mcTouchId == null) return;
+  const t = Array.from(e.changedTouches).find(tc => tc.identifier === mcTouchId);
+  if (t) { rightLook = false; mcLastX = mcLastY = null; mcTouchId = null; }
+}, { passive: true });
+document.addEventListener('touchcancel', () => { rightLook = false; mcLastX = mcLastY = null; mcTouchId = null; }, { passive: true });
+
+// Buttons
+document.getElementById('mc-interact').addEventListener('click', () => {
+  document.getElementById('btn-interact').click();
+  document.getElementById('mc-interact').classList.toggle('on');
+});
+document.getElementById('mc-term').addEventListener('click', () => {
+  if (!interactiveMode) { showMsg('enable interact first', 1000); return; }
+  terminateMode = !terminateMode; updateHudMode();
+  document.getElementById('mc-term').classList.toggle('on');
+});
+mcCtrl.addEventListener('click', () => {
+  mcCtrlHeld = !mcCtrlHeld;
+  mcCtrl.classList.toggle('on', mcCtrlHeld);
+});
+document.getElementById('mc-tab').addEventListener('click', () => toggleTerminal());
+document.getElementById('mc-f').addEventListener('click', () => { moveSpeed = moveSpeed === 4 ? 10 : 4; showMsg(`speed ${moveSpeed}`); });
+document.getElementById('mc-v').addEventListener('click', () => { toggleView(); showMsg(viewMode.toUpperCase()); });
+document.getElementById('mc-q').addEventListener('touchstart', (e) => { e.preventDefault(); keys.q = true; });
+document.getElementById('mc-q').addEventListener('touchend', (e) => { e.preventDefault(); keys.q = false; });
+document.getElementById('mc-q').addEventListener('touchcancel', (e) => { keys.q = false; });
+document.getElementById('mc-q').addEventListener('mousedown', () => keys.q = true);
+document.getElementById('mc-q').addEventListener('mouseup', () => keys.q = false);
+document.getElementById('mc-e').addEventListener('touchstart', (e) => { e.preventDefault(); keys.e = true; });
+document.getElementById('mc-e').addEventListener('touchend', (e) => { e.preventDefault(); keys.e = false; });
+document.getElementById('mc-e').addEventListener('touchcancel', (e) => { keys.e = false; });
+document.getElementById('mc-e').addEventListener('mousedown', () => keys.e = true);
+document.getElementById('mc-e').addEventListener('mouseup', () => keys.e = false);
+document.getElementById('mc-zoomout').addEventListener('click', () => {
+  if (selectedObject && interactiveMode) {
+    renderer.domElement.dispatchEvent(new WheelEvent('wheel', { deltaY: 120, ctrlKey: true }));
+  } else if (viewMode === 'topdown') {
+    camera.position.y = Math.min(80, camera.position.y + 2);
+  }
+});
+document.getElementById('mc-zoomin').addEventListener('click', () => {
+  if (selectedObject && interactiveMode) {
+    renderer.domElement.dispatchEvent(new WheelEvent('wheel', { deltaY: -120, ctrlKey: true }));
+  } else if (viewMode === 'topdown') {
+    camera.position.y = Math.max(5, camera.position.y - 2);
+  }
+});
+
+// Only the first handler checks e.ctrlKey. Done.
+
 let prevTime = performance.now();
 let frameCount = 0;
 let fpsAccum = 0;
@@ -1731,8 +2079,12 @@ tick();
 
 print('────────────────────────────────', 'dim');
 print('FP v0.2   |   Tab = terminal  |  Right-drag = look around', 'info');
-print('Interact: left-click drag  |  Ctrl+scroll resize  |  terminate del', 'dim');
-inputEl.focus();
+print('Interact: left-click drag  |  Ctrl+click wireframe  |  Ctrl+scroll resize  |  term+Ctrl = del wire', 'dim');
+document.getElementById('start-btn').addEventListener('click', () => {
+  document.getElementById('start-screen').classList.add('hidden');
+  initAudio();
+  inputEl.focus();
+});
 </script>
 </body>
 </html>

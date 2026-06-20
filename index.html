@@ -913,6 +913,7 @@ body {
     </button>
     <a class="term-btn" href="https://github.com/USVU/hackintossh" target="_blank" style="text-decoration:none;display:inline-flex;align-items:center">USVU/hackintossh</a>
     <button class="term-btn" id="dojicalBtn" style="padding:4px 10px;font-size:0.75rem">🐰 Dojical</button>
+    <button class="term-btn" id="flashpointBtn">💠 FlashPoint</button>
   </div>
 </div>
 
@@ -983,6 +984,22 @@ body {
     <span style="font-size:11px;color:#444">Place both files in the same directory</span>
   </div>
 </div>
+  </div>
+</div>
+<div class="toverlay" id="flashpointOverlay">
+  <div class="twindow" style="max-width:98vw;width:98vw;height:98vh;height:98dvh">
+    <div class="ttbar">
+      <span>🔥 FlashPoint</span>
+      <button class="tclose" id="flashpointClose">&times;</button>
+    </div>
+    <div style="flex:1;position:relative;overflow:hidden;background:#000;display:flex;align-items:center;justify-content:center;padding:0">
+      <iframe src="./FlashPoint-NeonBunny.html" style="width:100%;height:100%;border:none" title="FlashPoint"
+        onerror="this.style.display='none';this.nextSibling.style.display='flex'"></iframe>
+      <div style="display:none;flex-direction:column;align-items:center;color:#666;font-family:'Inconsolata',monospace;font-size:13px;gap:8px">
+        <span>⚠ Could not load FlashPoint-NeonBunny.html</span>
+        <span style="font-size:11px;color:#444">Place FlashPoint-NeonBunny.html in the root directory</span>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -2730,6 +2747,20 @@ document.addEventListener('keydown',function(e){
 });
 })();
 document.getElementById('boyGameOverlay').addEventListener('click',function(e){
+  if(e.target===this||e.target.closest('.twindow')){var f=this.querySelector('iframe');if(f&&document.activeElement!==f)f.focus();}
+});
+(function(){
+var btn=document.getElementById('flashpointBtn');
+var ov=document.getElementById('flashpointOverlay');
+var cl=document.getElementById('flashpointClose');
+if(!btn||!ov)return;
+btn.addEventListener('click',function(){ov.classList.add('open');setTimeout(function(){var f=ov.querySelector('iframe');if(f)f.focus();},100);});
+if(cl)cl.onclick=function(){ov.classList.remove('open');};
+document.addEventListener('keydown',function(e){
+  if(e.key==='Escape'&&ov.classList.contains('open')){ov.classList.remove('open');e.preventDefault();}
+});
+})();
+document.getElementById('flashpointOverlay').addEventListener('click',function(e){
   if(e.target===this||e.target.closest('.twindow')){var f=this.querySelector('iframe');if(f&&document.activeElement!==f)f.focus();}
 });
 </script>
