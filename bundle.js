@@ -1,5 +1,5 @@
 var FP = (() => {
-  // FP-offline/FP-offline/three.module.min.js
+  // three.module.min.js
   var t = "160";
   var l = 1;
   var c = 2;
@@ -9383,7 +9383,7 @@ var FP = (() => {
   var Hm = new Ui();
   "undefined" != typeof __THREE_DEVTOOLS__ && __THREE_DEVTOOLS__.dispatchEvent(new CustomEvent("register", { detail: { revision: t } })), "undefined" != typeof window && (window.__THREE__ ? console.warn("WARNING: Multiple instances of Three.js being imported.") : window.__THREE__ = t);
 
-  // FP-offline/FP-offline/app-src.js
+  // app-src.js
   var container = document.getElementById("container");
   var terminalEl = document.getElementById("terminal");
   var outputEl = document.getElementById("terminal-output");
@@ -9807,6 +9807,8 @@ var FP = (() => {
     5822093: "lightgreen",
     16729156: "brightred"
   };
+  var colorHex = {};
+  for (const hex in colorNames) colorHex[colorNames[hex]] = Number(hex);
   function colorSpan(m) {
     try {
       const hex = m.userData?.spawnHex !== void 0 ? m.userData.spawnHex : m.material.color.getHex();
@@ -9855,7 +9857,7 @@ var FP = (() => {
     const ins = insideWireframes(pos);
     return ins.length ? ` inside ${ins.join("+")}` : "";
   }
-  function logEvent(msg, category = "actions", colorHex = null, objUd = null, pos = null, noNear = false) {
+  function logEvent(msg, category = "actions", colorHex2 = null, objUd = null, pos = null, noNear = false) {
     const now = /* @__PURE__ */ new Date();
     const ts2 = now.toTimeString().slice(0, 8) + "." + String(now.getMilliseconds()).padStart(3, "0");
     const sz = objUd ? " " + sizeStr(objUd) : "";
@@ -9867,7 +9869,7 @@ var FP = (() => {
     logEntries.push(`[${ts2}] ${plain}${sz}${inside}${nearPlain}`);
     const div = document.createElement("div");
     div.className = "entry";
-    const dot = colorHex ? `<b style="color:#${colorHex.toString(16).padStart(6, "0")}">\u25CF</b> ` : "";
+    const dot = colorHex2 ? `<b style="color:#${colorHex2.toString(16).padStart(6, "0")}">\u25CF</b> ` : "";
     div.innerHTML = `<span class="ts">${ts2}</span>${dot}${msg}${sz}${inside}${suffix}`;
     const target = category === "spawn" ? logSpawn : logActions;
     target.appendChild(div);
@@ -10267,17 +10269,23 @@ var FP = (() => {
     logEvent("reset \u2014 scene reset", "actions", null, null, null, true);
     showMsg("scene reset");
   });
-  document.getElementById("btn-clearflat").addEventListener("click", () => {
+  function clearFlat(...colorArgs) {
+    const hexFilters = colorArgs.map((c2) => colorHex[c2]).filter((h2) => h2 !== void 0);
+    let count = 0;
     for (let i = objects.length - 1; i >= 0; i--) {
       const o = objects[i];
-      if (!o.userData.isOutline && !o.userData.type?.startsWith("wire-")) {
-        despawnObject(o);
-        objects.splice(i, 1);
-      }
+      if (o.userData.isOutline || o.userData.type?.startsWith("wire-")) continue;
+      const ohex = o.material.color.getHex();
+      if (hexFilters.length > 0 && !hexFilters.includes(ohex)) continue;
+      logEvent(`clearflat remove ${colorSpan(o)} ${o.userData.type || "object"} @ ${posStr(o.position)}`, "actions", ohex, o.userData, o.position);
+      despawnObject(o);
+      objects.splice(i, 1);
+      count++;
     }
-    logEvent("clearflat \u2014 removed all flat objects", "actions", null, null, null, true);
-    showMsg("flat objects cleared");
-  });
+    const label = hexFilters.length ? colorArgs.join(" ") : "all";
+    showMsg(`cleared ${count} flat objects (${label})`);
+  }
+  document.getElementById("btn-clearflat").addEventListener("click", () => clearFlat());
   document.getElementById("btn-green").addEventListener("click", toggleGreen);
   document.getElementById("btn-spawn").addEventListener("click", () => {
     spawningEnabled = !spawningEnabled;
@@ -10366,7 +10374,7 @@ var FP = (() => {
     print("sound [on|off]       \u2014 toggle sound");
     print("radical [on|off]     \u2014 toggle radical spawning");
     print("bg                   \u2014 toggle light/dark background");
-    print("clearflat            \u2014 remove all squares & circles");
+    print("clearflat / cf [color..] \u2014 remove squares/circles, optionally by color name(s)");
     print("spawn [on|off]       \u2014 start/stop automatic object spawning");
     print("green                \u2014 toggle green monochrome mode");
     print("maxobj <n>           \u2014 set max concurrent objects (default 120)");
@@ -10495,16 +10503,9 @@ var FP = (() => {
         document.getElementById("btn-spawn").textContent = spawningEnabled ? "SPAWN: ON" : "SPAWN: OFF";
         showMsg(`spawning ${spawningEnabled ? "started" : "stopped"}`);
         break;
+      case "cf":
       case "clearflat":
-        for (let i = objects.length - 1; i >= 0; i--) {
-          const o = objects[i];
-          if (!o.userData.isOutline && !o.userData.type?.startsWith("wire-")) {
-            despawnObject(o);
-            objects.splice(i, 1);
-          }
-        }
-        logEvent("clearflat \u2014 removed all flat objects", "actions", null, null, null, true);
-        showMsg("flat objects cleared");
+        clearFlat(...args);
         break;
       case "maxobj":
         MAX_OBJECTS = Math.max(1, parseInt(args[0]) || 120);
@@ -37442,7 +37443,7 @@ var FP = (() => {
       if (cmds.length === 1) inputEl.value = cmds[0] + " ";
     }
   });
-  var _tcmds = { help: 1, move: 1, speed: 1, theme: 1, fog: 1, grid: 1, clear: 1, tp: 1, randomize: 1, shuffle: 1, recolor: 1, gravity: 1, topdown: 1, td: 1, persp: 1, perspective: 1, fps: 1, interact: 1, interactive: 1, terminate: 1, sound: 1, radical: 1, bg: 1, green: 1, spawn: 1, clearflat: 1, savelog: 1, clearlog: 1, nano: 1, enter: 1, maxobj: 1, reset: 1, "?": 1 };
+  var _tcmds = { help: 1, move: 1, speed: 1, theme: 1, fog: 1, grid: 1, clear: 1, tp: 1, randomize: 1, shuffle: 1, recolor: 1, gravity: 1, topdown: 1, td: 1, persp: 1, perspective: 1, fps: 1, interact: 1, interactive: 1, terminate: 1, sound: 1, radical: 1, bg: 1, green: 1, spawn: 1, clearflat: 1, cf: 1, savelog: 1, clearlog: 1, nano: 1, enter: 1, maxobj: 1, reset: 1, "?": 1 };
   var mcEl = document.getElementById("mobile-controls");
   var mcToggle = document.getElementById("mc-toggle");
   var mcJoy = document.getElementById("mc-joystick");
@@ -37639,7 +37640,7 @@ var FP = (() => {
   }
   tick();
   print("\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500", "dim");
-  print("FP v0.3   |   Tab = terminal  |  Right-drag = look around", "info");
+  print("FP v0.2   |   Tab = terminal  |  Right-drag = look around", "info");
   print("Interact: left-click drag  |  Ctrl+click wireframe  |  Ctrl+scroll resize  |  term+Ctrl = del wire", "dim");
   document.getElementById("start-btn").addEventListener("click", () => {
     document.getElementById("start-screen").classList.add("hidden");
