@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>USVirtualUni — Web Pipe — AAPL 19.91 — "D Otomei"</title>
-<meta property="og:title" content="USVirtualUni — Web Pipe — AAPL 19.91 — &quot;D Otomei&quot;">
+<title>Kredtidy — Web Pipe — AAPL 19.91 — "D Otomei"</title>
+<meta property="og:title" content="Kredtidy — Web Pipe — AAPL 19.91 — &quot;D Otomei&quot;">
 <meta property="og:description" content="Artist / MetaDeveloper / B.I.G. — Terminal-style tile dashboard with live market data, streaming pipes, and multi-theme UI.">
 <meta property="og:image" content="https://usvu.github.io/kredtidy-og-preview.png">
 <meta property="og:image:width" content="1200">
@@ -13,7 +13,7 @@
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://usvu.github.io/">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="USVirtualUni — Web Pipe — AAPL 19.91 — &quot;D Otomei&quot;">
+<meta name="twitter:title" content="Kredtidy — Web Pipe — AAPL 19.91 — &quot;D Otomei&quot;">
 <meta name="twitter:description" content="Artist / MetaDeveloper / B.I.G. — Terminal-style tile dashboard with live market data, streaming pipes, and multi-theme UI.">
 <meta name="twitter:image" content="https://usvu.github.io/kredtidy-og-preview.png">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
@@ -872,15 +872,148 @@ body {
   .toverlay { padding:0; }
   .twindow { max-width:none; border-radius:0; }
 }
+
+/* ── Splash / Entry Slideshow (Magnum Photos style) ── */
+.splash {
+  position: fixed; inset: 0; z-index: 9999;
+  background: #000;
+  display: flex; flex-direction: column;
+  opacity: 0; visibility: hidden;
+  transition: opacity 0.4s, visibility 0.4s;
+  overflow: hidden;
+}
+.splash.open { opacity: 1; visibility: visible; }
+.splash.closing { opacity: 0; }
+
+.splash-slide {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: #000;
+  opacity: 0;
+  transition: opacity 1.2s ease;
+  pointer-events: none;
+}
+.splash-slide.active { opacity: 1; pointer-events: auto; }
+.splash-slide img {
+  width: 100%; height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.splash-overlay {
+  position: absolute; inset: 0;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.splash-brand {
+  position: absolute; top: 28px; left: 32px;
+  color: #fff; font-family: 'Inconsolata', monospace;
+  font-size: 0.85rem; letter-spacing: 0.15em;
+  opacity: 0.8;
+  pointer-events: none;
+}
+
+.splash-counter {
+  position: absolute; bottom: 36px; left: 50%;
+  transform: translateX(-50%);
+  color: rgba(255,255,255,0.6); font-family: 'Inconsolata', monospace;
+  font-size: 0.75rem; letter-spacing: 0.1em;
+  pointer-events: none;
+}
+
+.splash-nav {
+  position: absolute; bottom: 28px; left: 50%;
+  transform: translateX(-50%);
+  display: flex; align-items: center; gap: 24px;
+  pointer-events: auto; z-index: 20;
+}
+.splash-nav button {
+  background: none; border: none; color: rgba(255,255,255,0.5);
+  font-size: 1.2rem; cursor: pointer; padding: 8px;
+  font-family: 'Inconsolata', monospace;
+  transition: color 0.2s;
+  line-height: 1;
+}
+.splash-nav button:hover { color: #fff; }
+.splash-nav .splash-play {
+  font-size: 1rem; width: 40px; height: 40px;
+  border: 1px solid rgba(255,255,255,0.25);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+}
+
+.splash-enter {
+  position: absolute; bottom: 80px; right: 32px;
+  pointer-events: auto; z-index: 20;
+}
+.splash-enter a {
+  display: inline-block;
+  color: #fff; font-family: 'Inconsolata', monospace;
+  font-size: 0.8rem; letter-spacing: 0.12em;
+  text-decoration: none;
+  border: 1px solid rgba(255,255,255,0.3);
+  padding: 10px 24px;
+  transition: all 0.25s;
+}
+.splash-enter a:hover {
+  background: #fff; color: #000; border-color: #fff;
+}
+
+.splash-loading {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  color: rgba(255,255,255,0.3);
+  font-family: 'Inconsolata', monospace;
+  font-size: 0.85rem;
+  letter-spacing: 0.1em;
+}
+.splash-loading::after {
+  content: ''; display: inline-block;
+  width: 16px; height: 16px;
+  border: 1px solid rgba(255,255,255,0.2);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: splashSpin 0.8s linear infinite;
+  margin-left: 10px;
+  vertical-align: middle;
+}
+@keyframes splashSpin { to { transform: rotate(360deg); } }
+
+@media (max-width: 800px) {
+  .splash-brand { top: 20px; left: 20px; font-size: 0.75rem; }
+  .splash-enter { bottom: 72px; right: 20px; }
+  .splash-enter a { padding: 8px 18px; font-size: 0.75rem; }
+  .splash-nav { gap: 16px; }
+  .splash-nav button { font-size: 1rem; }
+}
 </style>
 </head>
 <body>
+
+<div class="splash" id="splash">
+  <div class="splash-loading" id="splashLoading">Loading</div>
+  <div class="splash-slide" id="splashSlide0"></div>
+  <div class="splash-slide" id="splashSlide1"></div>
+  <div class="splash-overlay">
+    <div class="splash-brand">Kredtidy</div>
+    <div class="splash-counter" id="splashCounter"></div>
+    <div class="splash-nav">
+      <button id="splashPrev" aria-label="Previous">‹</button>
+      <button class="splash-play" id="splashPlay" aria-label="Play/Pause">⏸</button>
+      <button id="splashNext" aria-label="Next">›</button>
+    </div>
+    <div class="splash-enter">
+      <a href="#" id="splashEnter">Enter Site →</a>
+    </div>
+  </div>
+</div>
 
 <div id="page-wrap">
   <div style="height:32px"></div>
   <div class="banner"><img src="usvu_banner.jpeg" alt="USVU Banner"></div>
   <div class="header">
-  <h1><a href="https://kredtidy.tumblr.com" target="_blank">USVirtualUni — Web Pipe — AAPL 19.91 — "D Otomei"</a></h1>
+  <h1><a href="https://kredtidy.tumblr.com" target="_blank">Kredtidy — Web Pipe — AAPL 19.91 — "D Otomei"</a></h1>
   <div class="desc">Artist / MetaDeveloper / B.I.G.</div>
   <div class="total" id="total"></div>
   <div class="controls">
@@ -2699,6 +2832,172 @@ startKeepalive();
 
 // Try connecting immediately at page load
 wsConnect();
+
+/* ── Splash / Entry Slideshow (Infinite) ── */
+(function() {
+  const splash = document.getElementById('splash');
+  const loading = document.getElementById('splashLoading');
+  const slides = [document.getElementById('splashSlide0'), document.getElementById('splashSlide1')];
+  const counter = document.getElementById('splashCounter');
+  const playBtn = document.getElementById('splashPlay');
+  const prevBtn = document.getElementById('splashPrev');
+  const nextBtn = document.getElementById('splashNext');
+  const enterBtn = document.getElementById('splashEnter');
+
+  let photos = [];
+  let currentIdx = 0;
+  let activeSlide = 0;
+  let playing = true;
+  let timer = null;
+  let refilling = false;
+  let totalPosts = 0;
+  let seenIds = new Set();
+  const INTERVAL = 5000;
+  const REFILL_AT = 6; // refetch when this many remain
+
+  function showSplash() { splash.classList.add('open'); }
+  function hideSplash() {
+    splash.classList.add('closing');
+    setTimeout(() => { splash.classList.remove('open', 'closing'); }, 400);
+  }
+
+  function renderSlide(idx) {
+    const p = photos[idx];
+    if (!p) return;
+    const s = slides[activeSlide];
+    const src = p['photo-url-1280'] || p['photo-url-500'] || p['photo-url-250'] || '';
+    s.innerHTML = src ? `<img src="${src}" alt="">` : '';
+    counter.textContent = `${idx + 1} / ${photos.length}`;
+  }
+
+  function updateCounter() {
+    counter.textContent = `${currentIdx + 1} / ${photos.length}`;
+  }
+
+  function flipTo(idx) {
+    if (!photos.length) return;
+    if (idx < 0) idx = photos.length - 1;
+    if (idx >= photos.length) idx = 0;
+    currentIdx = idx;
+    const old = slides[activeSlide];
+    activeSlide = 1 - activeSlide;
+    const next = slides[activeSlide];
+    renderSlide(idx);
+    old.classList.remove('active');
+    next.classList.add('active');
+    resetTimer();
+    checkRefill();
+  }
+
+  function resetTimer() {
+    if (timer) { clearInterval(timer); timer = null; }
+    if (playing && photos.length > 1) {
+      timer = setInterval(() => flipTo(currentIdx + 1), INTERVAL);
+    }
+  }
+
+  function togglePlay() {
+    playing = !playing;
+    playBtn.textContent = playing ? '⏸' : '▶';
+    resetTimer();
+  }
+
+  nextBtn.addEventListener('click', () => flipTo(currentIdx + 1));
+  prevBtn.addEventListener('click', () => flipTo(currentIdx - 1));
+  playBtn.addEventListener('click', togglePlay);
+
+  enterBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    hideSplash();
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (!splash.classList.contains('open')) return;
+    if (e.key === 'ArrowRight') { flipTo(currentIdx + 1); e.preventDefault(); }
+    else if (e.key === 'ArrowLeft') { flipTo(currentIdx - 1); e.preventDefault(); }
+    else if (e.key === ' ' || e.key === 'Space') { togglePlay(); e.preventDefault(); }
+    else if (e.key === 'Escape') { hideSplash(); e.preventDefault(); }
+  });
+
+  function extractSplashPhotos(posts) {
+    const out = [];
+    for (const p of posts) {
+      if (seenIds.has(p.id)) continue;
+      seenIds.add(p.id);
+      if (p.type === 'photo') {
+        out.push(p);
+      } else if (p.type === 'regular') {
+        const body = p['regular-body'] || '';
+        const m = body.match(/<img[^>]+src=["']([^"']+)/);
+        if (m) out.push({ 'photo-url-1280': m[1], 'photo-url-500': m[1], type: 'photo' });
+      }
+    }
+    return out;
+  }
+
+  async function refillPool() {
+    if (refilling) return;
+    refilling = true;
+    try {
+      // Refresh total count
+      if (totalPosts < 1) {
+        try { const m = await jsonp(`https://${BLOG}.tumblr.com/api/read/json?num=1`); totalPosts = m['posts-total'] || 0; } catch {}
+      }
+      if (totalPosts < 1) { refilling = false; return; }
+
+      const BATCHES = 6;
+      const PER = 50;
+      const offsets = [];
+      const used = new Set();
+      for (let i = 0; i < BATCHES; i++) {
+        let off;
+        do { off = Math.floor(Math.random() * Math.max(1, totalPosts - PER + 1)); }
+        while (used.has(off) && used.size < Math.min(BATCHES, totalPosts));
+        used.add(off);
+        offsets.push(off);
+      }
+
+      const results = await Promise.allSettled(
+        offsets.map(off => jsonp(`https://${BLOG}.tumblr.com/api/read/json?num=${PER}&start=${off}`))
+      );
+
+      let newPhotos = [];
+      for (const r of results) {
+        if (r.status !== 'fulfilled') continue;
+        newPhotos = newPhotos.concat(extractSplashPhotos(r.value.posts || []));
+      }
+      newPhotos.sort(() => Math.random() - 0.5);
+      photos.push(...newPhotos);
+      updateCounter();
+    } catch {}
+    refilling = false;
+  }
+
+  function checkRefill() {
+    if (photos.length - currentIdx <= REFILL_AT && !refilling) {
+      refillPool();
+    }
+  }
+
+  (async function initSplash() {
+    showSplash();
+    await refillPool();
+    loading.style.display = 'none';
+    if (photos.length === 0) {
+      counter.textContent = 'No photos';
+      return;
+    }
+    renderSlide(0);
+    slides[activeSlide].classList.add('active');
+    if (photos.length > 1) {
+      const s2 = slides[1 - activeSlide];
+      const p2 = photos[1];
+      const src2 = p2['photo-url-1280'] || p2['photo-url-500'] || p2['photo-url-250'] || '';
+      s2.innerHTML = src2 ? `<img src="${src2}" alt="">` : '';
+    }
+    resetTimer();
+  })();
+})();
 
 // F2 toggles the original terminal
 document.addEventListener("keydown", (e) => {
