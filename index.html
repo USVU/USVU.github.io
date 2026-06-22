@@ -895,9 +895,11 @@ body {
 }
 .splash-slide.active { opacity: 1; pointer-events: auto; }
 .splash-slide img {
-  width: 100%; height: 100%;
-  object-fit: contain;
   display: block;
+  max-width: 100%;
+  max-height: 100vh;
+  width: auto;
+  height: auto;
 }
 
 .splash-overlay {
@@ -2853,7 +2855,8 @@ wsConnect();
   let totalPosts = 0;
   let seenIds = new Set();
   const INTERVAL = 5000;
-  const REFILL_AT = 6; // refetch when this many remain
+  const REFILL_AT = 6;
+  const PRELOAD_AHEAD = 5; // images to preload in advance
 
   function showSplash() { splash.classList.add('open'); }
   function hideSplash() {
@@ -2865,13 +2868,31 @@ wsConnect();
     const p = photos[idx];
     if (!p) return;
     const s = slides[activeSlide];
-    const src = p['photo-url-1280'] || p['photo-url-500'] || p['photo-url-250'] || '';
+    const src = photoUrl(p);
     s.innerHTML = src ? `<img src="${src}" alt="">` : '';
     counter.textContent = `${idx + 1} / ${photos.length}`;
   }
 
   function updateCounter() {
     counter.textContent = `${currentIdx + 1} / ${photos.length}`;
+  }
+
+  function photoUrl(p) {
+    return p && (p['photo-url-1280'] || p['photo-url-500'] || p['photo-url-250'] || '');
+  }
+
+  function preloadAhead(fromIdx) {
+    for (let i = 1; i <= PRELOAD_AHEAD; i++) {
+      const idx = (fromIdx + i) % photos.length;
+      const src = photoUrl(photos[idx]);
+      if (src) { const img = new Image(); img.src = src; }
+    }
+    // also preload a couple behind for backward nav
+    for (let i = 1; i <= 2; i++) {
+      const idx = (fromIdx - i + photos.length) % photos.length;
+      const src = photoUrl(photos[idx]);
+      if (src) { const img = new Image(); img.src = src; }
+    }
   }
 
   function flipTo(idx) {
@@ -2887,6 +2908,7 @@ wsConnect();
     next.classList.add('active');
     resetTimer();
     checkRefill();
+    preloadAhead(currentIdx);
   }
 
   function resetTimer() {
@@ -2969,6 +2991,11 @@ wsConnect();
       newPhotos.sort(() => Math.random() - 0.5);
       photos.push(...newPhotos);
       updateCounter();
+      // preload the newly added photos
+      for (const p of newPhotos) {
+        const src = photoUrl(p);
+        if (src) { const img = new Image(); img.src = src; }
+      }
     } catch {}
     refilling = false;
   }
@@ -2992,9 +3019,10 @@ wsConnect();
     if (photos.length > 1) {
       const s2 = slides[1 - activeSlide];
       const p2 = photos[1];
-      const src2 = p2['photo-url-1280'] || p2['photo-url-500'] || p2['photo-url-250'] || '';
+      const src2 = photoUrl(p2);
       s2.innerHTML = src2 ? `<img src="${src2}" alt="">` : '';
     }
+    preloadAhead(0);
     resetTimer();
   })();
 })();
