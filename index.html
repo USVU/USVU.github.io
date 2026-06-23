@@ -917,9 +917,8 @@ body {
 }
 
 .splash-counter {
-  position: absolute; bottom: 36px; left: 50%;
-  transform: translateX(-50%);
-  color: rgba(255,255,255,0.6); font-family: 'Inconsolata', monospace;
+  position: absolute; top: 30px; right: 32px;
+  color: rgba(255,255,255,0.5); font-family: 'Inconsolata', monospace;
   font-size: 0.75rem; letter-spacing: 0.1em;
   pointer-events: none;
 }
@@ -984,6 +983,7 @@ body {
 
 @media (max-width: 800px) {
   .splash-brand { top: 20px; left: 20px; font-size: 0.75rem; }
+  .splash-counter { top: 22px; right: 20px; font-size: 0.65rem; }
   .splash-enter { bottom: 72px; right: 20px; }
   .splash-enter a { padding: 8px 18px; font-size: 0.75rem; }
   .splash-nav { gap: 16px; }
@@ -1291,15 +1291,40 @@ function tileHtml(post) {
   </div>`;
 }
 
-function jsonp(url) {
+function jsonp(url, ms) {
   return new Promise((resolve, reject) => {
     const cb = '_jp' + Math.random().toString(36).slice(2);
-    window[cb] = data => { delete window[cb]; resolve(data); };
+    const t = setTimeout(() => { delete window[cb]; reject(new Error('timeout')); }, ms || 10000);
+    window[cb] = data => { clearTimeout(t); delete window[cb]; resolve(data); };
     const s = document.createElement('script');
     s.src = url + '&callback=' + cb;
-    s.onerror = () => { delete window[cb]; reject(new Error('JSONP failed')); };
+    s.onerror = () => { clearTimeout(t); delete window[cb]; reject(new Error('JSONP failed')); };
     document.head.appendChild(s);
   });
+}
+
+const PROXIES = [
+  'https://api.allorigins.win/raw?url=',
+  'https://corsproxy.io/?url='
+];
+
+async function fetchTumblr(path) {
+  const url = `https://${BLOG}.tumblr.com${path}`;
+  // Try JSONP first (fast path)
+  try {
+    return await jsonp(url + '&_t=' + Date.now(), 6000);
+  } catch {}
+  // Fallback: try CORS proxies with fetch
+  for (const proxy of PROXIES) {
+    try {
+      const r = await fetch(proxy + encodeURIComponent(url), { signal: AbortSignal.timeout(8000) });
+      if (!r.ok) continue;
+      const txt = await r.text();
+      const json = JSON.parse(txt.replace(/^[^(]*\(/, '').replace(/\)\s*;?\s*$/, ''));
+      if (json && json.posts) return json;
+    } catch {}
+  }
+  throw new Error('Tumblr API unreachable');
 }
 
 function getCols() {
@@ -1372,17 +1397,17 @@ function applyMasonry() {
   sentinel.style.top = (Math.max(...heights) - 1) + 'px';
 }
 
-async function fetchPage(page, append) {
-  if (loading) return;
+async function fetchPage(page, append, attempt) {
+  if (loading && attempt) return;
+  if (!attempt) { loading = true; attempt = 1; }
   const start = (page - 1) * PER_PAGE;
-  loading = true;
 
   if (!append) {
     $('grid').innerHTML = '<div class="loading">Loading…</div>';
   }
 
   try {
-    const data = await jsonp(`https://${BLOG}.tumblr.com/api/read/json?num=${PER_PAGE}&start=${start}`);
+    const data = await fetchTumblr(`/api/read/json?num=${PER_PAGE}&start=${start}`);
     totalPosts = data['posts-total'];
     $('total').textContent = totalPosts + ' posts total';
     loading = false;
@@ -1421,6 +1446,11 @@ async function fetchPage(page, append) {
       renderPagination();
     }
   } catch {
+    if (attempt < 3) {
+      const delay = Math.pow(2, attempt) * 1000;
+      await new Promise(r => setTimeout(r, delay));
+      return fetchPage(page, append, attempt + 1);
+    }
     loading = false;
     if (!append) $('grid').innerHTML = '<div class="error">Failed to load posts. Try again.</div>';
   }
@@ -1428,7 +1458,7 @@ async function fetchPage(page, append) {
 
 async function fetchSinglePost(id) {
   try {
-    const data = await jsonp(`https://${BLOG}.tumblr.com/api/read/json?id=${id}`);
+    const data = await fetchTumblr(`/api/read/json?id=${id}`);
     if (data.posts && data.posts.length) {
       const p = data.posts[0];
       postCache.set(p.id, p);
@@ -2963,7 +2993,7 @@ wsConnect();
     try {
       // Refresh total count
       if (totalPosts < 1) {
-        try { const m = await jsonp(`https://${BLOG}.tumblr.com/api/read/json?num=1`); totalPosts = m['posts-total'] || 0; } catch {}
+        try { const m = await fetchTumblr(`/api/read/json?num=1`); totalPosts = m['posts-total'] || 0; } catch {}
       }
       if (totalPosts < 1) { refilling = false; return; }
 
@@ -2980,7 +3010,7 @@ wsConnect();
       }
 
       const results = await Promise.allSettled(
-        offsets.map(off => jsonp(`https://${BLOG}.tumblr.com/api/read/json?num=${PER}&start=${off}`))
+        offsets.map(off => fetchTumblr(`/api/read/json?num=${PER}&start=${off}`).catch(() => null))
       );
 
       let newPhotos = [];
