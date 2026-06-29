@@ -1052,6 +1052,7 @@ body {
     <button class="term-btn" id="dojicalBtn" style="padding:4px 10px;font-size:0.75rem">🐰 Dojical</button>
     <button class="term-btn" id="flashpointBtn">💠 FlashPoint</button>
     <button class="term-btn" id="medicineBtn">📚 Medicine Textbook</button>
+    <button class="term-btn" id="agentBtn">📖 Agent Handbook</button>
   </div>
 </div>
 
@@ -1141,6 +1142,22 @@ body {
   </div>
 </div>
 
+<div class="toverlay" id="agentOverlay">
+  <div class="twindow" style="max-width:98vw;width:98vw;height:98vh;height:98dvh">
+    <div class="ttbar">
+      <span>📖 Agent Handbook</span>
+      <button class="tclose" id="agentClose">&times;</button>
+    </div>
+    <div style="flex:1;position:relative;overflow:hidden;background:#000;display:flex;align-items:center;justify-content:center;padding:0">
+      <iframe src="./A-HB.html" style="width:100%;height:100%;border:none" title="Agent Handbook"
+        onerror="this.style.display='none';this.nextSibling.style.display='flex'"></iframe>
+      <div style="display:none;flex-direction:column;align-items:center;color:#666;font-family:'Inconsolata',monospace;font-size:13px;gap:8px">
+        <span>⚠ Could not load A-HB.html</span>
+        <span style="font-size:11px;color:#444">Place A-HB.html in the root directory</span>
+      </div>
+    </div>
+  </div>
+</div>
 <div class="toverlay" id="medicineOverlay">
   <div class="twindow" style="max-width:98vw;width:98vw;height:98vh;height:98dvh">
     <div class="ttbar">
@@ -3213,6 +3230,20 @@ document.addEventListener('keydown',function(e){
 });
 })();
 document.getElementById('medicineOverlay').addEventListener('click',function(e){
+  if(e.target===this||e.target.closest('.twindow')){var f=this.querySelector('iframe');if(f&&document.activeElement!==f)f.focus();}
+});
+(function(){
+var btn=document.getElementById('agentBtn');
+var ov=document.getElementById('agentOverlay');
+var cl=document.getElementById('agentClose');
+if(!btn||!ov)return;
+btn.addEventListener('click',function(){ov.classList.add('open');setTimeout(function(){var f=ov.querySelector('iframe');if(f)f.focus();},100);});
+if(cl)cl.onclick=function(){ov.classList.remove('open');};
+document.addEventListener('keydown',function(e){
+  if(e.key==='Escape'&&ov.classList.contains('open')){ov.classList.remove('open');e.preventDefault();}
+});
+})();
+document.getElementById('agentOverlay').addEventListener('click',function(e){
   if(e.target===this||e.target.closest('.twindow')){var f=this.querySelector('iframe');if(f&&document.activeElement!==f)f.focus();}
 });
 </script>
