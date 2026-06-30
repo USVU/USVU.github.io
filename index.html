@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kredtidy — Web Pipe — AAPL 19.91 — "D Otomei"</title>
-<meta property="og:title" content="Kredtidy — Web Pipe — AAPL 19.91 — &quot;D Otomei&quot;">
+<title>USVirtualUni — Web Pipe — AAPL 19.91 — "D Otomei"</title>
+<meta property="og:title" content="USVirtualUni — Web Pipe — AAPL 19.91 — &quot;D Otomei&quot;">
 <meta property="og:description" content="Artist / MetaDeveloper / B.I.G. — Terminal-style tile dashboard with live market data, streaming pipes, and multi-theme UI.">
 <meta property="og:image" content="https://usvu.github.io/kredtidy-og-preview.png">
 <meta property="og:image:width" content="1200">
@@ -13,7 +13,7 @@
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://usvu.github.io/">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Kredtidy — Web Pipe — AAPL 19.91 — &quot;D Otomei&quot;">
+<meta name="twitter:title" content="USVirtualUni — Web Pipe — AAPL 19.91 — &quot;D Otomei&quot;">
 <meta name="twitter:description" content="Artist / MetaDeveloper / B.I.G. — Terminal-style tile dashboard with live market data, streaming pipes, and multi-theme UI.">
 <meta name="twitter:image" content="https://usvu.github.io/kredtidy-og-preview.png">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
@@ -1016,7 +1016,7 @@ body {
   <div style="height:32px"></div>
   <div class="banner"><img src="usvu_banner.jpeg" alt="USVU Banner"></div>
   <div class="header">
-  <h1><a href="https://kredtidy.tumblr.com" target="_blank">Kredtidy — Web Pipe — AAPL 19.91 — "D Otomei"</a></h1>
+  <h1><a href="https://kredtidy.tumblr.com" target="_blank">USVirtualUni — Web Pipe — AAPL 19.91 — "D Otomei"</a></h1>
   <div class="desc">Artist / MetaDeveloper / B.I.G.</div>
   <div class="total" id="total"></div>
   <div class="controls">
@@ -1178,6 +1178,16 @@ body {
 <script>
 const BLOG = 'kredtidy';
 const PER_PAGE = 20;
+
+function isMobileData() {
+  const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+  if (!conn) return false;
+  if (conn.type === 'cellular') return true;
+  if (conn.effectiveType && conn.effectiveType.match(/^(slow-)?2g|3g$/)) return true;
+  return false;
+}
+
+const MOBILE_MSG = '<div class="error">Blog posts won&#39;t show on your mobile data,<br>but other modules still work.<br>Return when you&#39;re on WiFi.<br><br><a href="https://kredtidy.tumblr.com" target="_blank" style="color:var(--accent);text-decoration:underline">Continue to Tumblr →</a></div>';
 let currentPage = 1;
 let totalPosts = 0;
 let isInfinite = true;
@@ -1496,7 +1506,7 @@ async function fetchPage(page, append) {
     }
   } catch {
     loading = false;
-    if (!append) $('grid').innerHTML = '<div class="error">Web Pipe doesn&#39;t work on mobile data.<br>Return when you&#39;re on WiFi.<br><br><a href="https://kredtidy.tumblr.com" target="_blank" style="color:var(--accent);text-decoration:underline">Continue to Tumblr →</a></div>';
+    if (!append) $('grid').innerHTML = MOBILE_MSG;
   }
 }
 
@@ -3137,7 +3147,7 @@ wsConnect();
       loading.style.textAlign = 'center';
       loading.style.lineHeight = '1.6';
       loading.style.fontSize = '0.9rem';
-      loading.innerHTML = 'Blog posts won&#39;t show on mobile data,<br>but other modules still work.<br><br><a href="https://kredtidy.tumblr.com" target="_blank" style="color:#fff;text-decoration:underline">Continue to Tumblr →</a>';
+      loading.innerHTML = 'Blog posts won&#39;t show on your mobile data,<br>but other modules still work.<br><br><a href="https://kredtidy.tumblr.com" target="_blank" style="color:#fff;text-decoration:underline">Continue to Tumblr →</a>';
       loading.style.display = 'flex';
       loading.style.flexDirection = 'column';
       return;
