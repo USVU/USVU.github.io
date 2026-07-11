@@ -1145,22 +1145,20 @@ function togglePad() {
   if (r) r.style.display = hidden ? 'flex' : 'none';
   b.textContent = hidden ? '-' : '+';
 }
-var touchId = null, touchMoved = false, touchOrigin = null;
+var touchId = null, touchMoved = false, touchStart = null;
 ren.domElement.addEventListener('touchstart', function(e) {
   if (e.touches.length === 1 && !state.trans) {
     touchId = e.touches[0].identifier;
-    touchOrigin = {x: e.touches[0].clientX, y: e.touches[0].clientY};
+    touchStart = {x: e.touches[0].clientX, y: e.touches[0].clientY};
     touchMoved = false;
   }
 }, {passive:true});
 ren.domElement.addEventListener('touchmove', function(e) {
   for (var i = 0; i < e.touches.length; i++) {
     if (e.touches[i].identifier === touchId) {
-      var dx = e.touches[i].clientX - touchOrigin.x;
-      var dy = e.touches[i].clientY - touchOrigin.y;
-      touchOrigin = {x: e.touches[i].clientX, y: e.touches[i].clientY};
-      yaw -= dx * 0.005;
-      pitch -= dy * 0.005;
+      yaw -= (e.touches[i].clientX - touchStart.x) * 0.005;
+      pitch -= (e.touches[i].clientY - touchStart.y) * 0.005;
+      touchStart = {x: e.touches[i].clientX, y: e.touches[i].clientY};
       if (pitch > 1.4) pitch = 1.4;
       if (pitch < -1.4) pitch = -1.4;
       touchMoved = true;
@@ -1172,56 +1170,21 @@ ren.domElement.addEventListener('touchend', function(e) {
   if (e.changedTouches.length === 1 && touchId !== null) {
     var t = e.changedTouches[0];
     if (t.identifier === touchId) {
-      if (!touchMoved) {
-        // Tap = left-click interaction
+      if (touchMoved) { e.preventDefault(); }
+      else {
         var rect = ren.domElement.getBoundingClientRect();
-        var mx = ((t.clientX - rect.left) / rect.width) * 2 - 1;
-        var my = -((t.clientY - rect.top) / rect.height) * 2 + 1;
-        ray.setFromCamera(new T.Vector2(mx, my), cam);
-        var hits = ray.intersectObjects(state.room ? state.room.clicks : []);
-        for (var hi = 0; hi < hits.length; hi++) {
-          var o = hits[hi].object;
-          if (o.userData.t === 'door') { enterDoor(o.userData.idx); return; }
-          if (o.userData.t === 'photo') { showPhoto(o.userData.idx); return; }
-        }
+      var mx = ((t.clientX - rect.left) / rect.width) * 2 - 1;
+      var my = -((t.clientY - rect.top) / rect.height) * 2 + 1;
+      ray.setFromCamera(new T.Vector2(mx, my), cam);
+      var hits = ray.intersectObjects(state.room ? state.room.clicks : []);
+      for (var hi = 0; hi < hits.length; hi++) {
+        var o = hits[hi].object;
+        if (o.userData.t === 'door') { enterDoor(o.userData.idx); return; }
+        if (o.userData.t === 'photo') { showPhoto(o.userData.idx); return; }
       }
-      touchId = null;
     }
+    touchId = null;
   }
-}, {passive:true});
-ren.domElement.addEventListener('touchmove', function(e) {
-  for (var i = 0; i < e.touches.length; i++) {
-    if (e.touches[i].identifier === touchId) {
-      var dx = e.touches[i].clientX - touchStart.x;
-      var dy = e.touches[i].clientY - touchStart.y;
-      touchStart = {x: e.touches[i].clientX, y: e.touches[i].clientY};
-      yaw -= dx * 0.005;
-      pitch -= dy * 0.005;
-      if (pitch > 1.4) pitch = 1.4;
-      if (pitch < -1.4) pitch = -1.4;
-      break;
-    }
-  }
-}, {passive:true});
-ren.domElement.addEventListener('touchend', function(e) {
-  if (e.changedTouches.length === 1 && touchId !== null) {
-    var t = e.changedTouches[0];
-    if (t.identifier === touchId) {
-      var dist = Math.abs(t.clientX - touchStart.x) + Math.abs(t.clientY - touchStart.y);
-      if (dist < 10) {
-        var rect = ren.domElement.getBoundingClientRect();
-        var mx = ((t.clientX - rect.left) / rect.width) * 2 - 1;
-        var my = -((t.clientY - rect.top) / rect.height) * 2 + 1;
-        ray.setFromCamera(new T.Vector2(mx, my), cam);
-        var hits = ray.intersectObjects(state.room ? state.room.clicks : []);
-        for (var hi = 0; hi < hits.length; hi++) {
-          var o = hits[hi].object;
-          if (o.userData.t === 'door') { enterDoor(o.userData.idx); return; }
-          if (o.userData.t === 'photo') { showPhoto(o.userData.idx); return; }
-        }
-      }
-      touchId = null;
-    }
   }
 }, {passive:true});
 document.querySelectorAll('#m-pad .m-btn').forEach(function(el) {
