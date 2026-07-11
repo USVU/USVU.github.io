@@ -1051,6 +1051,7 @@ function showPhs() {
       h += '<div class="name">' + p.title + '</div>';
       h += '<div class="sub">' + p.author + '</div>';
       h += '<button class="btn" onclick="event.stopPropagation();delPh(' + i + ')" style="position:absolute;top:2px;right:2px;font-size:9px;padding:1px 5px;border-color:#a00;color:#f00">X</button>';
+      h += '<button class="btn" onclick="event.stopPropagation();movePh(' + i + ')" style="position:absolute;bottom:2px;right:2px;font-size:8px;padding:1px 4px">MOVE</button>';
       h += '</div>';
     }
     h += '</div>';
@@ -1087,6 +1088,27 @@ window.delPh = function(idx) {
   if (!confirm('Delete this photo?')) return;
   ap.splice(idx, 1);
   saveCats();
+  showPhs();
+};
+window.movePh = function(idx) {
+  var ap = activePhotos();
+  if (idx < 0 || idx >= ap.length) return;
+  var cats = state.photoCatalogues;
+  var names = Object.keys(cats).filter(function(n){return n !== state.activeCat;});
+  if (names.length === 0) { toast('No other catalogues to move to.', 'warning'); return; }
+  var msg = 'Move to which catalogue?\n' + names.map(function(n,i){return ' [' + (i+1) + '] ' + n;}).join('\n');
+  var choice = prompt(msg);
+  if (!choice) return;
+  var ci = parseInt(choice) - 1;
+  var target = (!isNaN(ci) && ci >= 0 && ci < names.length) ? names[ci] : null;
+  if (!target) {
+    for (var ni = 0; ni < names.length; ni++) {
+      if (names[ni].toLowerCase().indexOf(choice.toLowerCase()) >= 0) { target = names[ni]; break; }
+    }
+  }
+  if (!target) { toast('Catalogue not found.', 'warning'); return; }
+  var photo = ap.splice(idx, 1)[0];
+  if (photo) { cats[target].photos.push(photo); saveCats(); }
   showPhs();
 };
 window.vwPh = function(i) {
