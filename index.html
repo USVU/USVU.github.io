@@ -3252,16 +3252,12 @@ window.addEventListener('offline', () => ssDisable());
 
 document.getElementById('downloadBtn').addEventListener('click', function() {
   this.blur();
-  var htmlContent = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
-  var blob = new Blob([htmlContent], {type:'text/html'});
-  var url = URL.createObjectURL(blob);
   var a = document.createElement('a');
-  a.href = url;
+  a.href = 'LoneGhost.Net.html';
   a.download = 'LoneGhost.Net.html';
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
-  URL.revokeObjectURL(url);
 });
 
 </script>
