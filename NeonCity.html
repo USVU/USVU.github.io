@@ -1256,11 +1256,7 @@ document.addEventListener('DOMContentLoaded',()=>{
     btn.addEventListener('touchstart',handler,{passive:false});
     btn.addEventListener('mousedown',handler);});
   
-  // Canvas click = fullscreen (all screen sizes)
-  const display=document.getElementById('display');
-  if(display){
-    display.addEventListener('click',()=>{try{toggleFS();}catch(e){}});
-    display.addEventListener('touchstart',e=>{e.preventDefault();try{toggleFS();}catch(ex){}},{passive:false});}
+  // Fullscreen via ⛶ button only — canvas click does nothing
   
   // Close button
   const closeBtn=document.getElementById('mob-close-btn');
@@ -1293,18 +1289,7 @@ document.addEventListener('DOMContentLoaded',()=>{
         document.dispatchEvent(new KeyboardEvent('keydown',{key:s[i]}));
       kbInput.value='';});}
   
-  // Auto-show mobile controls on small screens
-  if(window.innerWidth<768||window.innerHeight<600){
-    mobileVisible=true;
-    const mc=document.getElementById('mobile-controls');
-    const tf=document.getElementById('mob-toggle-fixed');
-    if(mc)mc.style.display='block';
-    if(tf){tf.textContent='✕';tf.style.background='rgba(255,50,50,0.4)';}
-    // Auto-show native keyboard on first field tap
-    const kbBtn=document.getElementById('mob-kb-btn');
-    if(kbBtn)kbBtn.textContent='⌨';
-    setTimeout(()=>{try{toggleFS();}catch(e){}},500);
-  }
+  // Mobile controls start hidden — user taps ⌨ to show them
 });
 
 // === INIT ===
