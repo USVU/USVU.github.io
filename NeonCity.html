@@ -133,6 +133,7 @@ body{background:#050510;color:#0f0;font-family:'Courier New',Consolas,monospace;
   </div>
 </div>
 <div id="mob-toggle-fixed">⌨</div>
+<input id="mob-kb-input" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" style="position:fixed;top:0;left:0;width:1px;height:1px;opacity:0.01">
 <style>
 /* Responsive: compact sidebars on small screens */
 @media(max-width:768px){
@@ -1241,56 +1242,41 @@ function toggleMobile(){
   tf.style.background=mobileVisible?'rgba(255,50,50,0.4)':'rgba(0,0,0,0.7)';}
 
 // Wire mobile buttons to dispatch keyboard events
-document.addEventListener('DOMContentLoaded',()=>{
-  function fireKey(k){
-    if(k==='enter')document.dispatchEvent(new KeyboardEvent('keydown',{key:'Enter'}));
-    else document.dispatchEvent(new KeyboardEvent('keydown',{key:k}));}
-  // D-pad (touch + click)
-  document.querySelectorAll('.dpad-btn').forEach(btn=>{
-    const handler=e=>{e.preventDefault();const map={'8':'w','2':'s','4':'a','6':'d','5':'.'};const k=map[btn.dataset.dir];if(k)fireKey(k);};
-    btn.addEventListener('touchstart',handler,{passive:false});
-    btn.addEventListener('mousedown',handler);});
-  // Action buttons (touch + click)
-  document.querySelectorAll('.act-btn').forEach(btn=>{
-    const handler=e=>{e.preventDefault();fireKey(btn.dataset.key);};
-    btn.addEventListener('touchstart',handler,{passive:false});
-    btn.addEventListener('mousedown',handler);});
-  
-  // Fullscreen via ⛶ button only — canvas click does nothing
-  
-  // Close button
-  const closeBtn=document.getElementById('mob-close-btn');
-  if(closeBtn){
-    closeBtn.addEventListener('click',e=>{e.preventDefault();toggleMobile();});
-    closeBtn.addEventListener('touchstart',e=>{e.preventDefault();toggleMobile();},{passive:false});}
-  
-  // Toggle button
-  const tfBtn=document.getElementById('mob-toggle-fixed');
-  if(tfBtn){
-    tfBtn.addEventListener('click',e=>{e.preventDefault();toggleMobile();});
-    tfBtn.addEventListener('touchstart',e=>{e.preventDefault();toggleMobile();},{passive:false});}
-  
-  // Fullscreen button
-  const fsBtn=document.getElementById('fs-btn');
-  if(fsBtn){
-    fsBtn.addEventListener('click',e=>{e.preventDefault();toggleFS();});
-    fsBtn.addEventListener('touchstart',e=>{e.preventDefault();toggleFS();},{passive:false});}
-  
-  // Mobile keyboard input (click + touch)
-  const kbInput=document.getElementById('mob-kb-input');
-  const kbBtn=document.getElementById('mob-kb-btn');
-  if(kbBtn&&kbInput){
-    const openKB=e=>{e.preventDefault();kbInput.value='';kbInput.focus();};
-    kbBtn.addEventListener('touchstart',openKB,{passive:false});
-    kbBtn.addEventListener('mousedown',openKB);
-    kbInput.addEventListener('input',()=>{
-      const s=kbInput.value;
-      for(let i=0;i<s.length;i++)
-        document.dispatchEvent(new KeyboardEvent('keydown',{key:s[i]}));
-      kbInput.value='';});}
-  
-  // Mobile controls start hidden — user taps ⌨ to show them
-});
+// Wire mobile controls (DOM already parsed — script is at end of body)
+function fireKey(k){
+  if(k==='enter')document.dispatchEvent(new KeyboardEvent('keydown',{key:'Enter'}));
+  else document.dispatchEvent(new KeyboardEvent('keydown',{key:k}));}
+document.querySelectorAll('.dpad-btn').forEach(btn=>{
+  const handler=e=>{e.preventDefault();const map={'8':'w','2':'s','4':'a','6':'d','5':'.'};const k=map[btn.dataset.dir];if(k)fireKey(k);};
+  btn.addEventListener('touchstart',handler,{passive:false});
+  btn.addEventListener('mousedown',handler);});
+document.querySelectorAll('.act-btn').forEach(btn=>{
+  const handler=e=>{e.preventDefault();fireKey(btn.dataset.key);};
+  btn.addEventListener('touchstart',handler,{passive:false});
+  btn.addEventListener('mousedown',handler);});
+
+['mob-close-btn','mob-toggle-fixed'].forEach(id=>{
+  const el=document.getElementById(id);
+  if(!el)return;
+  el.addEventListener('click',e=>{e.preventDefault();toggleMobile();});
+  el.addEventListener('touchstart',e=>{e.preventDefault();toggleMobile();},{passive:false});});
+
+const fsBtn=document.getElementById('fs-btn');
+if(fsBtn){
+  fsBtn.addEventListener('click',e=>{e.preventDefault();toggleFS();});
+  fsBtn.addEventListener('touchstart',e=>{e.preventDefault();toggleFS();},{passive:false});}
+
+const kbInput=document.getElementById('mob-kb-input');
+const kbBtn=document.getElementById('mob-kb-btn');
+if(kbBtn&&kbInput){
+  const openKB=e=>{e.preventDefault();kbInput.value='';kbInput.focus();};
+  kbBtn.addEventListener('touchstart',openKB,{passive:false});
+  kbBtn.addEventListener('mousedown',openKB);
+  kbInput.addEventListener('input',()=>{
+    const s=kbInput.value;
+    for(let i=0;i<s.length;i++)
+      document.dispatchEvent(new KeyboardEvent('keydown',{key:s[i]}));
+    kbInput.value='';});}
 
 // === INIT ===
 window.addEventListener('resize',()=>{setTimeout(()=>{recalcLayout();updateStats();render();},100);});
