@@ -107,6 +107,46 @@ body{background:#050510;color:#0f0;font-family:'Courier New',Consolas,monospace;
   </div>
 </div>
 <div id="overlay"><div id="overlay-box"></div></div>
+<div id="mobile-controls" style="display:none">
+  <button id="fs-btn" class="mob-btn fs-btn" ontouchstart="toggleFS();event.preventDefault()">⛶</button>
+  <div id="dpad">
+    <button class="dpad-btn" data-dir="8">▲</button>
+    <div class="dpad-row">
+      <button class="dpad-btn" data-dir="4">◀</button>
+      <button class="dpad-btn center-btn" data-dir="5">●</button>
+      <button class="dpad-btn" data-dir="6">▶</button>
+    </div>
+    <button class="dpad-btn" data-dir="2">▼</button>
+  </div>
+  <div id="act-bar">
+    <button class="act-btn" data-key="h">H</button>
+    <button class="act-btn" data-key="e">E</button>
+    <button class="act-btn" data-key="g">G</button>
+    <button class="act-btn" data-key="i">I</button>
+    <button class="act-btn" data-key="1">1</button>
+    <button class="act-btn" data-key="2">2</button>
+    <button class="act-btn" data-key="3">3</button>
+    <button class="act-btn" data-key=" ">⏎</button>
+    <button class="act-btn" data-key="enter">↵</button>
+    <button id="mob-kb-btn" class="act-btn" style="background:#333">⌨</button>
+  </div>
+</div>
+<input id="mob-kb-input" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" style="position:fixed;left:-200px;width:1px;height:1px;opacity:0;pointer-events:none">
+<div id="mob-toggle-fixed" ontouchstart="toggleMobile();event.preventDefault()">⌨</div>
+<style>
+#mobile-controls{position:fixed;top:0;left:0;width:100%;height:100%;z-index:200;pointer-events:none}
+#mobile-controls *{pointer-events:auto}
+#fs-btn{position:absolute;top:8px;right:8px;width:36px;height:36px;font-size:18px;border-radius:6px;z-index:210;background:rgba(0,0,0,0.6);color:#0ff;border:1px solid rgba(0,255,255,0.3)}
+#dpad{position:absolute;bottom:90px;left:10px;display:flex;flex-direction:column;align-items:center;gap:3px}
+.dpad-btn{width:50px;height:50px;font-size:18px;border-radius:8px;background:rgba(0,0,0,0.55);color:#0ff;border:1px solid rgba(0,255,255,0.25);touch-action:none;-webkit-touch-callout:none;user-select:none}
+.dpad-btn:active{background:rgba(0,255,255,0.2)}
+.dpad-row{display:flex;gap:3px}
+.center-btn{background:rgba(0,255,255,0.1)!important}
+#act-bar{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);display:flex;gap:4px;flex-wrap:wrap;justify-content:center;max-width:90vw}
+.act-btn{width:40px;height:40px;font-size:13px;border-radius:6px;background:rgba(0,0,0,0.55);color:#0ff;border:1px solid rgba(0,255,255,0.2);touch-action:none;-webkit-touch-callout:none;user-select:none;font-weight:bold;letter-spacing:0}
+.act-btn:active{background:rgba(0,255,255,0.2);color:#fff}
+#mob-toggle-fixed{position:fixed;bottom:55px;right:6px;width:36px;height:36px;font-size:16px;border-radius:18px;background:rgba(0,0,0,0.7);color:#0ff;border:1px solid rgba(0,255,255,0.3);z-index:300;display:flex;align-items:center;justify-content:center;cursor:pointer;touch-action:none;-webkit-touch-callout:none;user-select:none}
+</style>
 <script>
 // === CONFIG ===
 let CW=16,CH=20,VW=40,VH=22;
@@ -1152,6 +1192,66 @@ document.addEventListener('keydown',e=>{
     return;}
   
   if(key==='0'){player.hp=player.mhp;player.en=player.men;addMsg('DEBUG: healed','');updateStats();render();e.preventDefault();}
+});
+
+// === MOBILE CONTROLS ===
+function toggleFS(){
+  if(!document.fullscreenElement){const el=document.documentElement;if(el.requestFullscreen)el.requestFullscreen();else if(el.webkitRequestFullscreen)el.webkitRequestFullscreen();}
+  else{if(document.exitFullscreen)document.exitFullscreen();else if(document.webkitExitFullscreen)document.webkitExitFullscreen();}}
+
+let mobileVisible=false;
+function toggleMobile(){
+  mobileVisible=!mobileVisible;
+  const mc=document.getElementById('mobile-controls');
+  const tf=document.getElementById('mob-toggle-fixed');
+  if(!mc||!tf)return;
+  mc.style.display=mobileVisible?'block':'none';
+  tf.textContent=mobileVisible?'✕':'⌨';
+  tf.style.background=mobileVisible?'rgba(255,50,50,0.4)':'rgba(0,0,0,0.7)';}
+
+// Wire mobile buttons to dispatch keyboard events
+document.addEventListener('DOMContentLoaded',()=>{
+  // D-pad
+  document.querySelectorAll('.dpad-btn').forEach(btn=>{
+    btn.addEventListener('touchstart',e=>{
+      e.preventDefault();
+      const dir=btn.dataset.dir;
+      const map={'8':'w','2':'s','4':'a','6':'d','5':'.'};
+      const k=map[dir];
+      if(k)document.dispatchEvent(new KeyboardEvent('keydown',{key:k}));});});
+  // Action buttons
+  document.querySelectorAll('.act-btn').forEach(btn=>{
+    btn.addEventListener('touchstart',e=>{
+      e.preventDefault();
+      const k=btn.dataset.key;
+      if(k==='enter')document.dispatchEvent(new KeyboardEvent('keydown',{key:'Enter'}));
+      else document.dispatchEvent(new KeyboardEvent('keydown',{key:k}));});});
+  
+  // Mobile keyboard input
+  const kbInput=document.getElementById('mob-kb-input');
+  const kbBtn=document.getElementById('mob-kb-btn');
+  if(kbBtn&&kbInput){
+    kbBtn.addEventListener('touchstart',e=>{
+      e.preventDefault();
+      kbInput.value='';kbInput.focus();});
+    kbInput.addEventListener('input',()=>{
+      const s=kbInput.value;
+      for(let i=0;i<s.length;i++){
+        document.dispatchEvent(new KeyboardEvent('keydown',{key:s[i]}));}
+      kbInput.value='';});}
+  
+  // Auto-show mobile controls on small screens
+  if(window.innerWidth<768||window.innerHeight<600){
+    mobileVisible=true;
+    const mc=document.getElementById('mobile-controls');
+    const tf=document.getElementById('mob-toggle-fixed');
+    if(mc)mc.style.display='block';
+    if(tf){tf.textContent='✕';tf.style.background='rgba(255,50,50,0.4)';}
+    // Auto-show native keyboard on first field tap
+    const kbBtn=document.getElementById('mob-kb-btn');
+    if(kbBtn)kbBtn.textContent='⌨';
+    setTimeout(()=>{try{toggleFS();}catch(e){}},500);
+  }
 });
 
 // === INIT ===
