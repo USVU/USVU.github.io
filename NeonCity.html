@@ -50,6 +50,12 @@ body{background:#050510;color:#0f0;font-family:'Courier New',Consolas,monospace;
 .skill-row .sl{color:#888}
 .skill-row .sv{color:#0ff}
 .item-count{color:#666;font-size:9px}
+.fs-mode #sidebar-l,.fs-mode #sidebar-r{display:none!important}
+.fs-mode #game{width:100vw;height:100vh;border:none;border-radius:0;padding:0;gap:0;box-shadow:none;max-width:none}
+.fs-mode #center-col{gap:0}
+.fs-mode #title-bar{display:none}
+.fs-mode #msg-log{display:none}
+.fs-mode #display{border:none;border-radius:0}
 </style>
 </head>
 <body>
@@ -1194,10 +1200,25 @@ document.addEventListener('keydown',e=>{
   if(key==='0'){player.hp=player.mhp;player.en=player.men;addMsg('DEBUG: healed','');updateStats();render();e.preventDefault();}
 });
 
-// === MOBILE CONTROLS ===
+// === FULLSCREEN (canvas-only view) ===
 function toggleFS(){
-  if(!document.fullscreenElement){const el=document.documentElement;if(el.requestFullscreen)el.requestFullscreen();else if(el.webkitRequestFullscreen)el.webkitRequestFullscreen();}
-  else{if(document.exitFullscreen)document.exitFullscreen();else if(document.webkitExitFullscreen)document.webkitExitFullscreen();}}
+  const game=document.getElementById('game');
+  if(!document.fullscreenElement){
+    game.classList.add('fs-mode');
+    const el=document.documentElement;
+    if(el.requestFullscreen)el.requestFullscreen();
+    else if(el.webkitRequestFullscreen)el.webkitRequestFullscreen();
+    setTimeout(()=>{recalcLayout();render();},200);
+  }else{
+    game.classList.remove('fs-mode');
+    if(document.exitFullscreen)document.exitFullscreen();
+    else if(document.webkitExitFullscreen)document.webkitExitFullscreen();
+    setTimeout(()=>{recalcLayout();render();},200);}}
+// Listen for browser-initiated fullscreen exit (Escape key)
+document.addEventListener('fullscreenchange',()=>{
+  if(!document.fullscreenElement)document.getElementById('game').classList.remove('fs-mode');});
+document.addEventListener('webkitfullscreenchange',()=>{
+  if(!document.webkitFullscreenElement)document.getElementById('game').classList.remove('fs-mode');});
 
 let mobileVisible=false;
 function toggleMobile(){
@@ -1211,33 +1232,49 @@ function toggleMobile(){
 
 // Wire mobile buttons to dispatch keyboard events
 document.addEventListener('DOMContentLoaded',()=>{
-  // D-pad
+  function fireKey(k){
+    if(k==='enter')document.dispatchEvent(new KeyboardEvent('keydown',{key:'Enter'}));
+    else document.dispatchEvent(new KeyboardEvent('keydown',{key:k}));}
+  // D-pad (touch + click)
   document.querySelectorAll('.dpad-btn').forEach(btn=>{
-    btn.addEventListener('touchstart',e=>{
-      e.preventDefault();
-      const dir=btn.dataset.dir;
-      const map={'8':'w','2':'s','4':'a','6':'d','5':'.'};
-      const k=map[dir];
-      if(k)document.dispatchEvent(new KeyboardEvent('keydown',{key:k}));});});
-  // Action buttons
+    const handler=e=>{e.preventDefault();const map={'8':'w','2':'s','4':'a','6':'d','5':'.'};const k=map[btn.dataset.dir];if(k)fireKey(k);};
+    btn.addEventListener('touchstart',handler,{passive:false});
+    btn.addEventListener('mousedown',handler);});
+  // Action buttons (touch + click)
   document.querySelectorAll('.act-btn').forEach(btn=>{
-    btn.addEventListener('touchstart',e=>{
-      e.preventDefault();
-      const k=btn.dataset.key;
-      if(k==='enter')document.dispatchEvent(new KeyboardEvent('keydown',{key:'Enter'}));
-      else document.dispatchEvent(new KeyboardEvent('keydown',{key:k}));});});
+    const handler=e=>{e.preventDefault();fireKey(btn.dataset.key);};
+    btn.addEventListener('touchstart',handler,{passive:false});
+    btn.addEventListener('mousedown',handler);});
   
-  // Mobile keyboard input
+  // Canvas click = fullscreen (all screen sizes)
+  const display=document.getElementById('display');
+  if(display){
+    display.addEventListener('click',()=>{try{toggleFS();}catch(e){}});
+    display.addEventListener('touchstart',e=>{e.preventDefault();try{toggleFS();}catch(ex){}},{passive:false});}
+  
+  // Toggle button also works with click
+  const tfBtn=document.getElementById('mob-toggle-fixed');
+  if(tfBtn){
+    tfBtn.addEventListener('click',e=>{e.preventDefault();toggleMobile();});
+    tfBtn.addEventListener('touchstart',e=>{e.preventDefault();toggleMobile();},{passive:false});}
+  
+  // Fullscreen button
+  const fsBtn=document.getElementById('fs-btn');
+  if(fsBtn){
+    fsBtn.addEventListener('click',e=>{e.preventDefault();toggleFS();});
+    fsBtn.addEventListener('touchstart',e=>{e.preventDefault();toggleFS();},{passive:false});}
+  
+  // Mobile keyboard input (click + touch)
   const kbInput=document.getElementById('mob-kb-input');
   const kbBtn=document.getElementById('mob-kb-btn');
   if(kbBtn&&kbInput){
-    kbBtn.addEventListener('touchstart',e=>{
-      e.preventDefault();
-      kbInput.value='';kbInput.focus();});
+    const openKB=e=>{e.preventDefault();kbInput.value='';kbInput.focus();};
+    kbBtn.addEventListener('touchstart',openKB,{passive:false});
+    kbBtn.addEventListener('mousedown',openKB);
     kbInput.addEventListener('input',()=>{
       const s=kbInput.value;
-      for(let i=0;i<s.length;i++){
-        document.dispatchEvent(new KeyboardEvent('keydown',{key:s[i]}));}
+      for(let i=0;i<s.length;i++)
+        document.dispatchEvent(new KeyboardEvent('keydown',{key:s[i]}));
       kbInput.value='';});}
   
   // Auto-show mobile controls on small screens
