@@ -133,7 +133,6 @@ body{background:#050510;color:#0f0;font-family:'Courier New',Consolas,monospace;
   </div>
 </div>
 <div id="mob-toggle-fixed">⌨</div>
-<input id="mob-kb-input" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" style="position:fixed;top:0;left:0;width:1px;height:1px;opacity:0.01">
 <style>
 /* Responsive: compact sidebars on small screens */
 @media(max-width:768px){
@@ -1266,17 +1265,53 @@ if(fsBtn){
   fsBtn.addEventListener('click',e=>{e.preventDefault();toggleFS();});
   fsBtn.addEventListener('touchstart',e=>{e.preventDefault();toggleFS();},{passive:false});}
 
-const kbInput=document.getElementById('mob-kb-input');
+// Keyboard: visible bar appears, focuses (triggers keyboard), then hides to save space
+let kbDismissTimer=null;
 const kbBtn=document.getElementById('mob-kb-btn');
-if(kbBtn&&kbInput){
-  const openKB=e=>{e.preventDefault();kbInput.value='';kbInput.focus();};
-  kbBtn.addEventListener('touchstart',openKB,{passive:false});
-  kbBtn.addEventListener('mousedown',openKB);
-  kbInput.addEventListener('input',()=>{
-    const s=kbInput.value;
-    for(let i=0;i<s.length;i++)
-      document.dispatchEvent(new KeyboardEvent('keydown',{key:s[i]}));
-    kbInput.value='';});}
+const mkInput=()=>document.getElementById('mob-kb-float')||null;
+
+function ensureKB(){
+  let el=mkInput();
+  if(!el){
+    el=document.createElement('input');
+    el.id='mob-kb-float';
+    el.type='text';
+    el.autocomplete='off';el.autocorrect='off';el.autocapitalize='off';el.spellcheck=false;
+    el.style.cssText='position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;height:44px;z-index:9999;font-size:16px;background:#111;color:#0ff;border:2px solid #0ff;padding:8px 12px;outline:none;font-family:monospace;max-width:500px';
+    el.placeholder='type keys...';
+    document.body.appendChild(el);
+    el.addEventListener('input',()=>{
+      const s=el.value;
+      for(let i=0;i<s.length;i++)
+        document.dispatchEvent(new KeyboardEvent('keydown',{key:s[i]}));
+      el.value='';});
+    el.addEventListener('keydown',ev=>{if(ev.key==='Enter'||ev.key==='Escape'||ev.key==='Done')dismissKB();});
+    el.addEventListener('blur',()=>dismissKB());
+  }
+  el.value='';
+  el.style.display='block';
+  el.style.opacity='1';
+  el.style.height='44px';
+  el.focus();
+  // After keyboard is triggered, fade to invisible (but keep focus)
+  clearTimeout(kbDismissTimer);
+  setTimeout(()=>{
+    if(el===document.activeElement&&el.style.display!=='none'){
+      el.style.opacity='0';
+      el.style.height='1px';
+      el.style.border='none';
+      el.style.padding='0';
+    }},500);
+}
+
+function dismissKB(){
+  clearTimeout(kbDismissTimer);
+  const el=mkInput();
+  if(el&&el.parentNode)el.remove();}
+
+if(kbBtn){
+  kbBtn.addEventListener('touchstart',e=>{e.preventDefault();ensureKB();},{passive:false});
+  kbBtn.addEventListener('mousedown',e=>{e.preventDefault();ensureKB();});}
 
 // === INIT ===
 window.addEventListener('resize',()=>{setTimeout(()=>{recalcLayout();updateStats();render();},100);});
