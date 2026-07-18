@@ -114,7 +114,8 @@ body{background:#050510;color:#0f0;font-family:'Courier New',Consolas,monospace;
 </div>
 <div id="overlay"><div id="overlay-box"></div></div>
 <div id="mobile-controls" style="display:none">
-  <button id="fs-btn" class="mob-btn fs-btn" ontouchstart="toggleFS();event.preventDefault()">⛶</button>
+  <button id="mob-close-btn" class="mc-close">✕</button>
+  <button id="fs-btn" class="mc-fs">⛶</button>
   <div id="dpad">
     <button class="dpad-btn" data-dir="8">▲</button>
     <div class="dpad-row">
@@ -124,34 +125,43 @@ body{background:#050510;color:#0f0;font-family:'Courier New',Consolas,monospace;
     </div>
     <button class="dpad-btn" data-dir="2">▼</button>
   </div>
-  <div id="act-bar">
-    <button class="act-btn" data-key="h">H</button>
-    <button class="act-btn" data-key="e">E</button>
-    <button class="act-btn" data-key="g">G</button>
-    <button class="act-btn" data-key="i">I</button>
-    <button class="act-btn" data-key="1">1</button>
-    <button class="act-btn" data-key="2">2</button>
-    <button class="act-btn" data-key="3">3</button>
-    <button class="act-btn" data-key=" ">⏎</button>
-    <button class="act-btn" data-key="enter">↵</button>
-    <button id="mob-kb-btn" class="act-btn" style="background:#333">⌨</button>
+  <div id="act-col">
+    <div class="act-row"><button class="act-btn" data-key="h">H</button><button class="act-btn" data-key="e">E</button><button class="act-btn" data-key="g">G</button></div>
+    <div class="act-row"><button class="act-btn" data-key="1">1</button><button class="act-btn" data-key="2">2</button><button class="act-btn" data-key="3">3</button></div>
+    <div class="act-row"><button id="mob-kb-btn" class="act-btn" style="background:#444">⌨</button><button class="act-btn" data-key="i">I</button><button class="act-btn" data-key=" ">⏎</button></div>
+    <div class="act-row" style="justify-content:center"><button class="act-btn" data-key="enter" style="width:auto;padding:0 16px">↵</button></div>
   </div>
 </div>
-<input id="mob-kb-input" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" style="position:fixed;left:-200px;width:1px;height:1px;opacity:0;pointer-events:none">
-<div id="mob-toggle-fixed" ontouchstart="toggleMobile();event.preventDefault()">⌨</div>
+<div id="mob-toggle-fixed">⌨</div>
 <style>
-#mobile-controls{position:fixed;top:0;left:0;width:100%;height:100%;z-index:200;pointer-events:none}
+/* Responsive: compact sidebars on small screens */
+@media(max-width:768px){
+  #sidebar-l{width:80px;font-size:8px}
+  #sidebar-l .panel{padding:2px 3px;font-size:8px}
+  #sidebar-r{width:80px;font-size:8px}
+  #sidebar-r .panel{padding:2px 3px;font-size:8px}
+  #game{gap:2px;padding:3px}
+  #title-bar{font-size:8px;padding:1px 3px;gap:2px}
+  #title-bar .weapon-opt{padding:0 3px;font-size:7px}
+  #msg-log{height:50px;font-size:9px;padding:2px 4px}
+  .skill-row{font-size:7px}
+  .hp-bg{height:3px}
+  .en-bg{height:3px}}
+/* Mobile controls */
+#mobile-controls{position:fixed;top:0;left:0;width:100%;height:100%;z-index:800;pointer-events:none}
 #mobile-controls *{pointer-events:auto}
-#fs-btn{position:absolute;top:8px;right:8px;width:36px;height:36px;font-size:18px;border-radius:6px;z-index:210;background:rgba(0,0,0,0.6);color:#0ff;border:1px solid rgba(0,255,255,0.3)}
-#dpad{position:absolute;bottom:90px;left:10px;display:flex;flex-direction:column;align-items:center;gap:3px}
-.dpad-btn{width:50px;height:50px;font-size:18px;border-radius:8px;background:rgba(0,0,0,0.55);color:#0ff;border:1px solid rgba(0,255,255,0.25);touch-action:none;-webkit-touch-callout:none;user-select:none}
-.dpad-btn:active{background:rgba(0,255,255,0.2)}
-.dpad-row{display:flex;gap:3px}
-.center-btn{background:rgba(0,255,255,0.1)!important}
-#act-bar{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);display:flex;gap:4px;flex-wrap:wrap;justify-content:center;max-width:90vw}
-.act-btn{width:40px;height:40px;font-size:13px;border-radius:6px;background:rgba(0,0,0,0.55);color:#0ff;border:1px solid rgba(0,255,255,0.2);touch-action:none;-webkit-touch-callout:none;user-select:none;font-weight:bold;letter-spacing:0}
-.act-btn:active{background:rgba(0,255,255,0.2);color:#fff}
-#mob-toggle-fixed{position:fixed;bottom:55px;right:6px;width:36px;height:36px;font-size:16px;border-radius:18px;background:rgba(0,0,0,0.7);color:#0ff;border:1px solid rgba(0,255,255,0.3);z-index:300;display:flex;align-items:center;justify-content:center;cursor:pointer;touch-action:none;-webkit-touch-callout:none;user-select:none}
+.mc-close{position:absolute;top:2px;left:2px;width:28px;height:28px;font-size:14px;border-radius:4px;z-index:810;background:rgba(255,50,50,0.3);color:#f88;border:1px solid rgba(255,100,100,0.3);display:flex;align-items:center;justify-content:center}
+.mc-fs{position:absolute;top:2px;right:2px;width:28px;height:28px;font-size:14px;border-radius:4px;z-index:810;background:rgba(0,0,0,0.4);color:#0ff;border:1px solid rgba(0,255,255,0.2);display:flex;align-items:center;justify-content:center}
+#dpad{position:absolute;bottom:80px;left:8px;display:flex;flex-direction:column;align-items:center;gap:2px}
+.dpad-btn{width:48px;height:48px;font-size:16px;border-radius:6px;background:rgba(0,0,0,0.5);color:#0ff;border:1px solid rgba(0,255,255,0.2);touch-action:none;-webkit-user-select:none;user-select:none}
+.dpad-btn:active{background:rgba(0,255,255,0.15)}
+.dpad-row{display:flex;gap:2px}
+.center-btn{background:rgba(0,255,255,0.08)!important}
+#act-col{position:absolute;bottom:80px;right:8px;display:flex;flex-direction:column;gap:3px}
+.act-row{display:flex;gap:3px;justify-content:flex-end}
+.act-btn{width:42px;height:38px;font-size:12px;border-radius:5px;background:rgba(0,0,0,0.5);color:#0ff;border:1px solid rgba(0,255,255,0.18);touch-action:none;-webkit-user-select:none;user-select:none;font-weight:bold;letter-spacing:0}
+.act-btn:active{background:rgba(0,255,255,0.15);color:#fff}
+#mob-toggle-fixed{position:fixed;bottom:55px;right:6px;width:34px;height:34px;font-size:15px;border-radius:17px;background:rgba(0,0,0,0.6);color:#0ff;border:1px solid rgba(0,255,255,0.25);z-index:900;display:flex;align-items:center;justify-content:center;cursor:pointer;touch-action:none;-webkit-user-select:none;user-select:none}
 </style>
 <script>
 // === CONFIG ===
@@ -1252,7 +1262,13 @@ document.addEventListener('DOMContentLoaded',()=>{
     display.addEventListener('click',()=>{try{toggleFS();}catch(e){}});
     display.addEventListener('touchstart',e=>{e.preventDefault();try{toggleFS();}catch(ex){}},{passive:false});}
   
-  // Toggle button also works with click
+  // Close button
+  const closeBtn=document.getElementById('mob-close-btn');
+  if(closeBtn){
+    closeBtn.addEventListener('click',e=>{e.preventDefault();toggleMobile();});
+    closeBtn.addEventListener('touchstart',e=>{e.preventDefault();toggleMobile();},{passive:false});}
+  
+  // Toggle button
   const tfBtn=document.getElementById('mob-toggle-fixed');
   if(tfBtn){
     tfBtn.addEventListener('click',e=>{e.preventDefault();toggleMobile();});
