@@ -1048,6 +1048,7 @@ body {
     <button class="term-btn" id="agentBtn">📖 Agent Handbook</button>
     <button class="term-btn" id="lightkeepersBtn">🎨 LightKeepers</button>
     <button class="term-btn" id="neoncityBtn">🏙️ NeonCity</button>
+    <button class="term-btn" id="maptermBtn">🗺️ Mapterm</button>
   </div>
 </div>
 
@@ -2669,6 +2670,7 @@ _treg('matrix', ['hack'], 'matrix rain', function(a) {
   document.getElementById('terminalBtn').onclick = _topen;
   document.getElementById('tclose').onclick = _tclose;
   document.getElementById('dojicalBtn').onclick = function() { window.open('./dojical-app/index.html', '_blank'); };
+  document.getElementById('maptermBtn').onclick = function() { window.open('./mapterm.html', '_blank'); };
 })();
 
 // ── Live Terminal (WebSocket + xterm.js) ──────────────────────────

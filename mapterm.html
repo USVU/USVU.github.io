@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=resizes-content">
+<title>MapCrunch + Dojical — LoneGhost Terminal</title>
+<meta name="description" content="MapCrunch random street view + Dojical Python terminal — split-screen browser tool">
+<meta property="og:site_name" content="LoneGhost.Net">
+<meta property="og:title" content="MapCrunch + Dojical — LoneGhost Terminal">
+<meta property="og:description" content="MapCrunch random street view + Dojical Python terminal — split-screen browser tool">
+<meta property="og:image" content="https://raw.githubusercontent.com/loneghostnet/loneghostnet.github.io/main/og-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:type" content="image/png">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://loneghostnet.github.io/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@loneghostnet">
+<meta name="twitter:title" content="MapCrunch + Dojical — LoneGhost Terminal">
+<meta name="twitter:description" content="MapCrunch random street view + Dojical Python terminal — split-screen browser tool">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/loneghostnet/loneghostnet.github.io/main/og-card.png">
+<script>window.coi={coepCredentialless:()=>true}</script>
+<script src="./coi-serviceworker.js"></script>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+html,body { height:100%; height:100dvh; overflow:hidden; overscroll-behavior:none; }
+body { background:#0a0a0a; color:#e0e0e0; font-family:system-ui,sans-serif; position:fixed; top:0;left:0;right:0;bottom:0; display:flex; flex-direction:column; }
+
+#mapwrap { position:relative; height:50%; flex-shrink:0; transition:height .35s ease; overflow:hidden; }
+#mapwrap:hover { height:calc(100% - 30px); }
+body.term-closed #mapwrap { height:calc(100% - 30px); }
+body.term-closed #mapwrap:hover { height:calc(100% - 30px); }
+body.no-map-hover #mapwrap { height:50%; }
+body.no-map-hover #mapwrap:hover { height:50%; }
+body.term-closed .t { height:30px; }
+body.term-closed #out,
+body.term-closed .il { display:none; }
+#mapframe { width:100%; height:100%; border:none; display:block; }
+
+.t { width:100%; flex:1; background:#0c0c0c; border-top:1px solid #222; display:flex; flex-direction:column; overflow:hidden; }
+#in { touch-action:manipulation; }
+.bar { background:#141414; padding:7px 14px; display:flex; align-items:center; gap:8px; border-bottom:1px solid #222; flex-shrink:0; }
+.bar .d { width:9px; height:9px; border-radius:50%; background:#555; }
+.bar .tt { font-family:"SF Mono",Consolas,monospace; font-size:0.72rem; color:#666; }
+.bar .st { margin-left:auto; font-size:0.68rem; color:#444; font-family:"SF Mono",Consolas,monospace; }
+#out { flex:1; overflow-y:auto; padding:10px 14px; font:0.78rem/1.45 "SF Mono",Consolas,monospace; color:#20ff20; background:#0c0c0c; white-space:pre-wrap; word-break:break-word; }
+#out b { color:#20ff20; }
+.il { display:flex; align-items:center; background:#0c0c0c; border-top:1px solid #1a1a1a; padding:5px 12px; flex-shrink:0; }
+.il span { color:#20ff20; font-family:"SF Mono",Consolas,monospace; font-size:0.78rem; margin-right:6px; }
+.il input { flex:1; background:transparent; border:none; outline:none; color:#20ff20; font-family:"SF Mono",Consolas,monospace; font-size:0.78rem; caret-color:#20ff20; }
+#load { display:flex; align-items:center; justify-content:center; flex-direction:column; gap:12px; height:100%; color:#555; font-family:"SF Mono",Consolas,monospace; font-size:0.82rem; }
+.spin { width:20px; height:20px; border:2px solid #222; border-top-color:#20ff20; border-radius:50%; animation:sp .7s linear infinite; }
+@keyframes sp { to { transform:rotate(360deg); } }
+</style>
+</head>
+<body>
+
+<div id="mapwrap">
+  <iframe id="mapframe" src="https://www.mapcrunch.com/" credentialless allow="geolocation"></iframe>
+</div>
+
+<div class="t">
+  <div class="bar">
+    <span class="d" id="d"></span>
+    <span class="tt">dojical</span>
+    <span class="st" id="st">loading...</span>
+  </div>
+  <div id="out">
+    <div id="load"><div class="spin"></div><span>Starting...</span></div>
+  </div>
+  <div class="il">
+    <span id="prompt">$ </span>
+    <input id="in" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="type here then Enter">
+  </div>
+</div>
+
+<script>
+(function(){
+var d=document.documentElement;
+function svh(){ d.style.setProperty('--vvh', window.innerHeight+'px'); }
+svh();
+window.addEventListener('resize', svh);
+if (window.visualViewport) {
+ window.visualViewport.addEventListener('resize', svh);
+ window.visualViewport.addEventListener('scroll', svh);
+}
+})();
+
+var out = document.getElementById('out');
+var inp = document.getElementById('in');
+var st = document.getElementById('st');
+var dot = document.getElementById('d');
+var load = document.getElementById('load');
+
+function prt(text, cls) {
+  if (load) { load.remove(); load = null; }
+  var d = document.createElement('div');
+  d.textContent = text; if (cls) d.className = cls;
+  out.appendChild(d); out.scrollTop = out.scrollHeight;
+}
+function status(s, ok) { st.textContent = s; dot.style.background = ok ? '#20ff20' : (s==='err'?'#ff4444':'#555'); }
+
+var sab = new SharedArrayBuffer(8208);
+var flag = new Int32Array(sab, 0, 1);
+var data = new Uint8Array(sab, 4, 4096);
+
+var promptFlag = new Int32Array(sab, 4100, 1);
+var promptData = new Uint8Array(sab, 4104, 4096);
+var promptEl = document.getElementById('prompt');
+
+var interruptFlag = new Int32Array(sab, 8204, 1);
+
+setInterval(function() {
+  var plen = promptFlag[0];
+  if (plen > 0) {
+    var ptext = new TextDecoder().decode(promptData.slice(0, plen));
+    promptFlag[0] = 0;
+    promptEl.textContent = ptext + ' ';
+  }
+}, 25);
+
+var w = new Worker('./worker.js');
+w.postMessage({ type: 'init', sab: sab });
+
+function send(val) {
+  var enc = new TextEncoder();
+  var bytes = enc.encode(val);
+  data.set(bytes);
+  flag[0] = bytes.length;
+  Atomics.notify(flag, 0, 1);
+}
+
+inp.addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    var v = inp.value; inp.value = '';
+    if (v) prt(v);
+    send(v);
+    promptEl.textContent = '$ ';
+  }
+});
+
+w.onmessage = function(e) {
+  var m = e.data;
+  if (m.type === 'stdout') prt(m.text);
+  else if (m.type === 'stderr') prt(m.text, 'err');
+  else if (m.type === 'status') status(m.text);
+  else if (m.type === 'clear') { out.innerHTML = ''; load = null; }
+};
+
+var tEl = document.querySelector('.t');
+var mapwrap = document.getElementById('mapwrap');
+var mapframe = document.getElementById('mapframe');
+var termOpen = false;
+document.body.classList.add('term-closed');
+
+function suppressMapHover() {
+  document.body.classList.add('no-map-hover');
+  window.addEventListener('mousemove', clearHoverSuppress);
+}
+function clearHoverSuppress() {
+  document.body.classList.remove('no-map-hover');
+  window.removeEventListener('mousemove', clearHoverSuppress);
+}
+
+function toggleTerm(force) {
+  var wasOpen = termOpen;
+  termOpen = (force === undefined) ? !termOpen : force;
+  document.body.classList.toggle('term-closed', !termOpen);
+  if (termOpen) {
+    inp.focus();
+    suppressMapHover();
+  } else {
+    inp.blur();
+    clearHoverSuppress();
+    suppressAutoOpen = true;
+    setTimeout(function() { suppressAutoOpen = false; }, 500);
+  }
+}
+
+var suppressAutoOpen = false;
+var mapHover = false;
+mapwrap.addEventListener('mouseenter', function() { mapHover = true; });
+mapwrap.addEventListener('mouseleave', function() { mapHover = false; });
+
+tEl.addEventListener('mouseenter', function() { inp.focus(); });
+
+var bar = document.querySelector('.bar');
+bar.addEventListener('mouseenter', function() { if (!termOpen && !suppressAutoOpen) toggleTerm(true); });
+bar.addEventListener('click', function() { if (!termOpen) toggleTerm(true); });
+
+function stealFocus() {
+  if (!termOpen) return;
+  if (mapHover) return;
+  if (document.activeElement === mapframe) mapframe.blur();
+  window.focus();
+}
+mapframe.addEventListener('focus', function() { setTimeout(stealFocus, 0); });
+setInterval(stealFocus, 50);
+
+window.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    e.preventDefault();
+    if (termOpen) toggleTerm(false);
+    else window.parent.postMessage({ type: 'dojical-key', key: e.key }, '*');
+  }
+  if (e.key === 'F3') {
+    e.preventDefault();
+    window.parent.postMessage({ type: 'dojical-key', key: e.key }, '*');
+  }
+  var isCtrlTilde = e.ctrlKey && (e.key === '`' || e.key === '~');
+  var isShiftTilde = e.shiftKey && e.key === '~' && !termOpen;
+  if (isCtrlTilde || isShiftTilde) {
+    e.preventDefault();
+    toggleTerm();
+  }
+  if (e.ctrlKey && (e.key === 'c' || e.key === 'C')) {
+    interruptFlag[0] = 2;
+    Atomics.notify(flag, 0, 1);
+  }
+});
+</script>
+</body>
+</html>
