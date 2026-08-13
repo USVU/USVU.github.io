@@ -33,326 +33,439 @@
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
-[data-theme="dark-green"] {
-  --bg: #0a0a0a;
-  --card-bg: #141414;
-  --card-bg-alt: #1a1a1a;
-  --border: #222;
-  --border-2: #2a2a2a;
-  --border-3: #333;
-  --accent: #20ff20;
-  --accent-light: rgba(32,255,32,0.12);
-  --text: #e0e0e0;
-  --text-body: #ccc;
-  --text-sec: #aaa;
-  --text-tert: #888;
-  --text-dim: #666;
-  --text-muted: #555;
-  --text-quote: #999;
-  --modal-bg: #111;
-  --img-bg: #1a1a1a;
-  --modimg-bg: #0a0a0a;
-  --btn-bg: #141414;
-  --btn-color: #aaa;
-  --toggle-bg: #333;
-  --toggle-border: #444;
-  --toggle-dot: #888;
-  --meta-bg: #1a1a1a;
-  --meta-border: #2a2a2a;
-  --meta-color: #888;
-  --text-inverse: #000;
+/* ── Central terminal theme system ──────────────────────────── */
+/* Every color on the page flows from the palette variables below. */
+/* The theme picker / `theme` command switch these on <body>. */
+
+:root, [data-theme="dark-cyan"] {
+  --bg: #050a0a;
+  --card-bg: #0a1414;
+  --card-bg-alt: #0e1a1a;
+  --border: #124040;
+  --border-2: #185555;
+  --border-3: #247373;
+  --accent: #3fe0d0;
+  --accent-light: #0d2826;
+  --text: #baf5ef;
+  --text-body: #a4d9d4;
+  --text-sec: #80aaa6;
+  --text-tert: #5c7b78;
+  --text-dim: #3f5553;
+  --text-muted: #2d3e3c;
+  --text-quote: #258077;
+  --modal-bg: #050a0a;
+  --img-bg: #0e1a1a;
+  --modimg-bg: #050a0a;
+  --btn-bg: #0a1414;
+  --btn-color: #80aaa6;
+  --toggle-bg: #185555;
+  --toggle-border: #247373;
+  --toggle-dot: #5c7b78;
+  --meta-bg: #0e1a1a;
+  --meta-border: #185555;
+  --meta-color: #5c7b78;
+  --text-inverse: #000000;
   --play-bg: rgba(0,0,0,0.7);
-  --play-border: #fff;
+  --play-border: #3fe0d0;
+  --err: #ff5f57;
+  --warn: #ffb000;
+  --overlay: rgba(0,0,0,0.92);
+  --term-bg: #050a0a;
+  --term-panel: #0a1414;
+  --term-border: #185555;
+  --term-dim: #3f5553;
+  --lg-banner-bg: #113532;
+  --lg-banner-text: #3fe0d0;
+  --lg-accent: #3fe0d0;
+  --lg-dim: #3f5553;
 }
 
-[data-theme="light"] {
-  --bg: #f5f5f5;
-  --card-bg: #fff;
-  --card-bg-alt: #f0f0f0;
-  --border: #ddd;
-  --border-2: #e0e0e0;
-  --border-3: #ccc;
-  --accent: #111;
-  --accent-light: rgba(0,0,0,0.06);
-  --text: #222;
-  --text-body: #333;
-  --text-sec: #666;
-  --text-tert: #888;
-  --text-dim: #999;
-  --text-muted: #aaa;
-  --text-quote: #777;
-  --modal-bg: #fff;
-  --img-bg: #eee;
-  --modimg-bg: #f0f0f0;
-  --btn-bg: #f0f0f0;
-  --btn-color: #555;
-  --toggle-bg: #ddd;
-  --toggle-border: #ccc;
-  --toggle-dot: #999;
-  --meta-bg: #f0f0f0;
-  --meta-border: #ddd;
-  --meta-color: #666;
-  --text-inverse: #fff;
-  --play-bg: rgba(0,0,0,0.5);
-  --play-border: #fff;
+[data-theme="dark-green"] {
+  --bg: #050805;
+  --card-bg: #0a0f0a;
+  --card-bg-alt: #0e160e;
+  --border: #142a17;
+  --border-2: #1c3a20;
+  --border-3: #2a542e;
+  --accent: #20ff20;
+  --accent-light: #092b09;
+  --text: #b8f5b8;
+  --text-body: #a3d9a3;
+  --text-sec: #7fa97f;
+  --text-tert: #5b7a5b;
+  --text-dim: #3e543e;
+  --text-muted: #2c3c2c;
+  --text-quote: #149014;
+  --modal-bg: #050805;
+  --img-bg: #0e160e;
+  --modimg-bg: #050805;
+  --btn-bg: #0a0f0a;
+  --btn-color: #7fa97f;
+  --toggle-bg: #1c3a20;
+  --toggle-border: #2a542e;
+  --toggle-dot: #5b7a5b;
+  --meta-bg: #0e160e;
+  --meta-border: #1c3a20;
+  --meta-color: #5b7a5b;
+  --text-inverse: #000000;
+  --play-bg: rgba(0,0,0,0.7);
+  --play-border: #20ff20;
+  --err: #ff5f57;
+  --warn: #ffb000;
+  --overlay: rgba(0,0,0,0.92);
+  --term-bg: #050805;
+  --term-panel: #0a0f0a;
+  --term-border: #1c3a20;
+  --term-dim: #3e543e;
+  --lg-banner-bg: #0a390a;
+  --lg-banner-text: #20ff20;
+  --lg-accent: #20ff20;
+  --lg-dim: #3e543e;
 }
 
 [data-theme="dark-blue"] {
-  --bg: #060d17;
-  --card-bg: #0d1a2d;
-  --card-bg-alt: #122540;
-  --border: #1a3350;
-  --border-2: #204060;
-  --border-3: #255080;
-  --accent: #40a0ff;
-  --accent-light: rgba(64,160,255,0.12);
-  --text: #d8e6f4;
-  --text-body: #b8d0e8;
-  --text-sec: #88a8c8;
-  --text-tert: #6a8aab;
-  --text-dim: #557390;
-  --text-muted: #446080;
-  --text-quote: #7a9ab8;
-  --modal-bg: #0d1a2d;
-  --img-bg: #122540;
-  --modimg-bg: #060d17;
-  --btn-bg: #0d1a2d;
-  --btn-color: #88a8c8;
-  --toggle-bg: #1a3350;
-  --toggle-border: #204060;
-  --toggle-dot: #6a8aab;
-  --meta-bg: #122540;
-  --meta-border: #204060;
-  --meta-color: #6a8aab;
-  --text-inverse: #000;
+  --bg: #050a12;
+  --card-bg: #0a1420;
+  --card-bg-alt: #0e1a2a;
+  --border: #122a40;
+  --border-2: #183755;
+  --border-3: #244c74;
+  --accent: #4aa8ff;
+  --accent-light: #0f2033;
+  --text: #b8dcf5;
+  --text-body: #a3c3da;
+  --text-sec: #7f99ac;
+  --text-tert: #5b6f7f;
+  --text-dim: #3e4d5b;
+  --text-muted: #2c3844;
+  --text-quote: #2b6194;
+  --modal-bg: #050a12;
+  --img-bg: #0e1a2a;
+  --modimg-bg: #050a12;
+  --btn-bg: #0a1420;
+  --btn-color: #7f99ac;
+  --toggle-bg: #183755;
+  --toggle-border: #244c74;
+  --toggle-dot: #5b6f7f;
+  --meta-bg: #0e1a2a;
+  --meta-border: #183755;
+  --meta-color: #5b6f7f;
+  --text-inverse: #000000;
   --play-bg: rgba(0,0,0,0.7);
-  --play-border: #fff;
-}
-
-[data-theme="light-blue"] {
-  --bg: #f0f5fa;
-  --card-bg: #fff;
-  --card-bg-alt: #e8f0f8;
-  --border: #d0dae8;
-  --border-2: #c5d3e5;
-  --border-3: #b0c0d8;
-  --accent: #2a70cc;
-  --accent-light: rgba(42,112,204,0.1);
-  --text: #1a2a3a;
-  --text-body: #2a3a4a;
-  --text-sec: #556880;
-  --text-tert: #778899;
-  --text-dim: #8899aa;
-  --text-muted: #99aabb;
-  --text-quote: #667788;
-  --modal-bg: #fff;
-  --img-bg: #e8f0f8;
-  --modimg-bg: #f0f5fa;
-  --btn-bg: #e8f0f8;
-  --btn-color: #556880;
-  --toggle-bg: #d0dae8;
-  --toggle-border: #c5d3e5;
-  --toggle-dot: #8899aa;
-  --meta-bg: #e8f0f8;
-  --meta-border: #d0dae8;
-  --meta-color: #556880;
-  --text-inverse: #fff;
-  --play-bg: rgba(0,0,0,0.5);
-  --play-border: #fff;
+  --play-border: #4aa8ff;
+  --err: #ff5f57;
+  --warn: #ffb000;
+  --overlay: rgba(0,0,0,0.92);
+  --term-bg: #050a12;
+  --term-panel: #0a1420;
+  --term-border: #183755;
+  --term-dim: #3e4d5b;
+  --lg-banner-bg: #132a41;
+  --lg-banner-text: #4aa8ff;
+  --lg-accent: #4aa8ff;
+  --lg-dim: #3e4d5b;
 }
 
 [data-theme="dark-purple"] {
-  --bg: #0d0a14;
-  --card-bg: #181422;
-  --card-bg-alt: #1e1a2a;
-  --border: #2a1f3d;
-  --border-2: #352848;
-  --border-3: #403358;
-  --accent: #b366ff;
-  --accent-light: rgba(179,102,255,0.12);
-  --text: #e8ddf4;
-  --text-body: #d8cce8;
-  --text-sec: #a890c8;
-  --text-tert: #8a6aab;
-  --text-dim: #755590;
-  --text-muted: #604480;
-  --text-quote: #9a7ab8;
-  --modal-bg: #181422;
-  --img-bg: #1e1a2a;
-  --modimg-bg: #0d0a14;
-  --btn-bg: #181422;
-  --btn-color: #a890c8;
-  --toggle-bg: #2a1f3d;
-  --toggle-border: #352848;
-  --toggle-dot: #8a6aab;
-  --meta-bg: #1e1a2a;
-  --meta-border: #352848;
-  --meta-color: #8a6aab;
-  --text-inverse: #000;
+  --bg: #0a0512;
+  --card-bg: #140a20;
+  --card-bg-alt: #1a0e2a;
+  --border: #2b1240;
+  --border-2: #391a55;
+  --border-3: #4e2674;
+  --accent: #c07bff;
+  --accent-light: #231633;
+  --text: #e2c8f5;
+  --text-body: #c8b1da;
+  --text-sec: #9d8aac;
+  --text-tert: #72637f;
+  --text-dim: #4f435b;
+  --text-muted: #3a3044;
+  --text-quote: #6e4694;
+  --modal-bg: #0a0512;
+  --img-bg: #1a0e2a;
+  --modimg-bg: #0a0512;
+  --btn-bg: #140a20;
+  --btn-color: #9d8aac;
+  --toggle-bg: #391a55;
+  --toggle-border: #4e2674;
+  --toggle-dot: #72637f;
+  --meta-bg: #1a0e2a;
+  --meta-border: #391a55;
+  --meta-color: #72637f;
+  --text-inverse: #000000;
   --play-bg: rgba(0,0,0,0.7);
-  --play-border: #fff;
+  --play-border: #c07bff;
+  --err: #ff5f57;
+  --warn: #ffb000;
+  --overlay: rgba(0,0,0,0.92);
+  --term-bg: #0a0512;
+  --term-panel: #140a20;
+  --term-border: #391a55;
+  --term-dim: #4f435b;
+  --lg-banner-bg: #2e1d41;
+  --lg-banner-text: #c07bff;
+  --lg-accent: #c07bff;
+  --lg-dim: #4f435b;
 }
 
 [data-theme="dark-red"] {
-  --bg: #140a0a;
-  --card-bg: #1c1010;
-  --card-bg-alt: #241515;
-  --border: #3a1a1a;
-  --border-2: #4a2020;
-  --border-3: #5a2828;
-  --accent: #ff5555;
-  --accent-light: rgba(255,85,85,0.12);
-  --text: #f4dddd;
-  --text-body: #e8cccc;
-  --text-sec: #c89090;
-  --text-tert: #ab7676;
-  --text-dim: #905e5e;
-  --text-muted: #804a4a;
-  --text-quote: #b88080;
-  --modal-bg: #1c1010;
-  --img-bg: #241515;
-  --modimg-bg: #140a0a;
-  --btn-bg: #1c1010;
-  --btn-color: #c89090;
-  --toggle-bg: #3a1a1a;
-  --toggle-border: #4a2020;
-  --toggle-dot: #ab7676;
-  --meta-bg: #241515;
-  --meta-border: #4a2020;
-  --meta-color: #ab7676;
-  --text-inverse: #000;
+  --bg: #120505;
+  --card-bg: #200a0a;
+  --card-bg-alt: #2a0e0e;
+  --border: #401212;
+  --border-2: #551a1a;
+  --border-3: #732626;
+  --accent: #ff6b5f;
+  --accent-light: #331312;
+  --text: #f5c6c0;
+  --text-body: #daafaa;
+  --text-sec: #ac8884;
+  --text-tert: #7f625f;
+  --text-dim: #5b4341;
+  --text-muted: #442f2e;
+  --text-quote: #943d37;
+  --modal-bg: #120505;
+  --img-bg: #2a0e0e;
+  --modimg-bg: #120505;
+  --btn-bg: #200a0a;
+  --btn-color: #ac8884;
+  --toggle-bg: #551a1a;
+  --toggle-border: #732626;
+  --toggle-dot: #7f625f;
+  --meta-bg: #2a0e0e;
+  --meta-border: #551a1a;
+  --meta-color: #7f625f;
+  --text-inverse: #000000;
   --play-bg: rgba(0,0,0,0.7);
-  --play-border: #fff;
-}
-
-:root, [data-theme="dark-cyan"] {
-  --bg: #0a1414;
-  --card-bg: #141f1f;
-  --card-bg-alt: #1a2a2a;
-  --border: #1f3a3a;
-  --border-2: #264848;
-  --border-3: #305858;
-  --accent: #40e0d0;
-  --accent-light: rgba(64,224,208,0.12);
-  --text: #ddf4f1;
-  --text-body: #cce8e5;
-  --text-sec: #90c8c2;
-  --text-tert: #76aba5;
-  --text-dim: #5e908b;
-  --text-muted: #4a807a;
-  --text-quote: #80b8b2;
-  --modal-bg: #141f1f;
-  --img-bg: #1a2a2a;
-  --modimg-bg: #0a1414;
-  --btn-bg: #141f1f;
-  --btn-color: #90c8c2;
-  --toggle-bg: #1f3a3a;
-  --toggle-border: #264848;
-  --toggle-dot: #76aba5;
-  --meta-bg: #1a2a2a;
-  --meta-border: #264848;
-  --meta-color: #76aba5;
-  --text-inverse: #000;
-  --play-bg: rgba(0,0,0,0.7);
-  --play-border: #fff;
+  --play-border: #ff6b5f;
+  --err: #ff5f57;
+  --warn: #ffb000;
+  --overlay: rgba(0,0,0,0.92);
+  --term-bg: #120505;
+  --term-panel: #200a0a;
+  --term-border: #551a1a;
+  --term-dim: #5b4341;
+  --lg-banner-bg: #411917;
+  --lg-banner-text: #ff6b5f;
+  --lg-accent: #ff6b5f;
+  --lg-dim: #5b4341;
 }
 
 [data-theme="dark-amber"] {
-  --bg: #14100a;
-  --card-bg: #1f1a14;
-  --card-bg-alt: #2a231a;
-  --border: #3d3020;
-  --border-2: #4d3d28;
-  --border-3: #5d4a30;
-  --accent: #ffaa40;
-  --accent-light: rgba(255,170,64,0.12);
-  --text: #f4e8dd;
-  --text-body: #e8d9cc;
-  --text-sec: #c8b090;
-  --text-tert: #ab9576;
-  --text-dim: #907d5e;
-  --text-muted: #806a4a;
-  --text-quote: #b8a080;
-  --modal-bg: #1f1a14;
-  --img-bg: #2a231a;
-  --modimg-bg: #14100a;
-  --btn-bg: #1f1a14;
-  --btn-color: #c8b090;
-  --toggle-bg: #3d3020;
-  --toggle-border: #4d3d28;
-  --toggle-dot: #ab9576;
-  --meta-bg: #2a231a;
-  --meta-border: #4d3d28;
-  --meta-color: #ab9576;
-  --text-inverse: #000;
+  --bg: #0a0805;
+  --card-bg: #14100a;
+  --card-bg-alt: #1a150e;
+  --border: #403212;
+  --border-2: #554318;
+  --border-3: #735c24;
+  --accent: #ffb04a;
+  --accent-light: #2c200f;
+  --text: #f5e6c0;
+  --text-body: #d9cbaa;
+  --text-sec: #aa9f84;
+  --text-tert: #7b735f;
+  --text-dim: #554f41;
+  --text-muted: #3e392e;
+  --text-quote: #91642b;
+  --modal-bg: #0a0805;
+  --img-bg: #1a150e;
+  --modimg-bg: #0a0805;
+  --btn-bg: #14100a;
+  --btn-color: #aa9f84;
+  --toggle-bg: #554318;
+  --toggle-border: #735c24;
+  --toggle-dot: #7b735f;
+  --meta-bg: #1a150e;
+  --meta-border: #554318;
+  --meta-color: #7b735f;
+  --text-inverse: #000000;
   --play-bg: rgba(0,0,0,0.7);
-  --play-border: #fff;
+  --play-border: #ffb04a;
+  --err: #ff5f57;
+  --warn: #ffb000;
+  --overlay: rgba(0,0,0,0.92);
+  --term-bg: #0a0805;
+  --term-panel: #14100a;
+  --term-border: #554318;
+  --term-dim: #554f41;
+  --lg-banner-bg: #3b2a13;
+  --lg-banner-text: #ffb04a;
+  --lg-accent: #ffb04a;
+  --lg-dim: #554f41;
+}
+
+[data-theme="light"] {
+  --bg: #e6e6e0;
+  --card-bg: #ffffff;
+  --card-bg-alt: #f1f1ec;
+  --border: #c2c2ba;
+  --border-2: #d0d0c8;
+  --border-3: #b0b0a6;
+  --accent: #111111;
+  --accent-light: #c8c8c3;
+  --text: #141414;
+  --text-body: #2d2d2c;
+  --text-sec: #575755;
+  --text-tert: #81817e;
+  --text-dim: #a3a39f;
+  --text-muted: #b8b8b3;
+  --text-quote: #71716e;
+  --modal-bg: #e6e6e0;
+  --img-bg: #f1f1ec;
+  --modimg-bg: #e6e6e0;
+  --btn-bg: #ffffff;
+  --btn-color: #575755;
+  --toggle-bg: #d0d0c8;
+  --toggle-border: #b0b0a6;
+  --toggle-dot: #81817e;
+  --meta-bg: #f1f1ec;
+  --meta-border: #d0d0c8;
+  --meta-color: #81817e;
+  --text-inverse: #ffffff;
+  --play-bg: rgba(0,0,0,0.35);
+  --play-border: #111111;
+  --err: #b00020;
+  --warn: #8a5a00;
+  --overlay: rgba(10,10,10,0.45);
+  --term-bg: #e6e6e0;
+  --term-panel: #ffffff;
+  --term-border: #d0d0c8;
+  --term-dim: #a3a39f;
+  --lg-banner-bg: #bbbbb7;
+  --lg-banner-text: #111111;
+  --lg-accent: #111111;
+  --lg-dim: #a3a39f;
+}
+
+[data-theme="light-blue"] {
+  --bg: #e2ecf4;
+  --card-bg: #ffffff;
+  --card-bg-alt: #edf4f9;
+  --border: #bcd0de;
+  --border-2: #ccdce8;
+  --border-3: #a6c0d2;
+  --accent: #16568f;
+  --accent-light: #c5d7e6;
+  --text: #162634;
+  --text-body: #2e3e4b;
+  --text-sec: #576571;
+  --text-tert: #808d98;
+  --text-dim: #a1adb7;
+  --text-muted: #b5c0ca;
+  --text-quote: #729abc;
+  --modal-bg: #e2ecf4;
+  --img-bg: #edf4f9;
+  --modimg-bg: #e2ecf4;
+  --btn-bg: #ffffff;
+  --btn-color: #576571;
+  --toggle-bg: #ccdce8;
+  --toggle-border: #a6c0d2;
+  --toggle-dot: #808d98;
+  --meta-bg: #edf4f9;
+  --meta-border: #ccdce8;
+  --meta-color: #808d98;
+  --text-inverse: #ffffff;
+  --play-bg: rgba(0,0,0,0.35);
+  --play-border: #16568f;
+  --err: #b00020;
+  --warn: #8a5a00;
+  --overlay: rgba(10,10,10,0.45);
+  --term-bg: #e2ecf4;
+  --term-panel: #ffffff;
+  --term-border: #ccdce8;
+  --term-dim: #a1adb7;
+  --lg-banner-bg: #b9cee0;
+  --lg-banner-text: #16568f;
+  --lg-accent: #16568f;
+  --lg-dim: #a1adb7;
 }
 
 [data-theme="light-warm"] {
-  --bg: #faf6f0;
-  --card-bg: #fff;
-  --card-bg-alt: #f8efe0;
-  --border: #e0d5c5;
-  --border-2: #d5c8b5;
-  --border-3: #c8baa5;
-  --accent: #8b5e3c;
-  --accent-light: rgba(139,94,60,0.1);
-  --text: #2a1f15;
-  --text-body: #3a2a1a;
-  --text-sec: #705540;
-  --text-tert: #907060;
-  --text-dim: #a08878;
-  --text-muted: #b09888;
-  --text-quote: #806050;
-  --modal-bg: #fff;
-  --img-bg: #f8efe0;
-  --modimg-bg: #faf6f0;
-  --btn-bg: #f8efe0;
-  --btn-color: #705540;
-  --toggle-bg: #e0d5c5;
-  --toggle-border: #d5c8b5;
-  --toggle-dot: #a08878;
-  --meta-bg: #f8efe0;
-  --meta-border: #e0d5c5;
-  --meta-color: #705540;
-  --text-inverse: #fff;
-  --play-bg: rgba(0,0,0,0.5);
-  --play-border: #fff;
+  --bg: #f0e9dd;
+  --card-bg: #fffdf8;
+  --card-bg-alt: #f5ede0;
+  --border: #d9ccb6;
+  --border-2: #e4d8c2;
+  --border-3: #c4b49a;
+  --accent: #7a4a24;
+  --accent-light: #dfd3c3;
+  --text: #241c13;
+  --text-body: #3c352b;
+  --text-sec: #655e54;
+  --text-tert: #8e877c;
+  --text-dim: #afa79c;
+  --text-muted: #c3bcb1;
+  --text-quote: #af9277;
+  --modal-bg: #f0e9dd;
+  --img-bg: #f5ede0;
+  --modimg-bg: #f0e9dd;
+  --btn-bg: #fffdf8;
+  --btn-color: #655e54;
+  --toggle-bg: #e4d8c2;
+  --toggle-border: #c4b49a;
+  --toggle-dot: #8e877c;
+  --meta-bg: #f5ede0;
+  --meta-border: #e4d8c2;
+  --meta-color: #8e877c;
+  --text-inverse: #ffffff;
+  --play-bg: rgba(0,0,0,0.35);
+  --play-border: #7a4a24;
+  --err: #b00020;
+  --warn: #8a5a00;
+  --overlay: rgba(10,10,10,0.45);
+  --term-bg: #f0e9dd;
+  --term-panel: #fffdf8;
+  --term-border: #e4d8c2;
+  --term-dim: #afa79c;
+  --lg-banner-bg: #d8c9b8;
+  --lg-banner-text: #7a4a24;
+  --lg-accent: #7a4a24;
+  --lg-dim: #afa79c;
 }
 
 [data-theme="light-mint"] {
-  --bg: #f0faf5;
-  --card-bg: #fff;
-  --card-bg-alt: #e0f8ed;
-  --border: #c8e0d5;
-  --border-2: #b8d5c8;
-  --border-3: #a5c8ba;
-  --accent: #2d8a6e;
-  --accent-light: rgba(45,138,110,0.1);
-  --text: #152a22;
-  --text-body: #1f3a30;
-  --text-sec: #4a7062;
-  --text-tert: #609080;
-  --text-dim: #78a898;
-  --text-muted: #88b8a8;
-  --text-quote: #558070;
-  --modal-bg: #fff;
-  --img-bg: #e0f8ed;
-  --modimg-bg: #f0faf5;
-  --btn-bg: #e0f8ed;
-  --btn-color: #4a7062;
-  --toggle-bg: #c8e0d5;
-  --toggle-border: #b8d5c8;
-  --toggle-dot: #78a898;
-  --meta-bg: #e0f8ed;
-  --meta-border: #c8e0d5;
-  --meta-color: #4a7062;
-  --text-inverse: #fff;
-  --play-bg: rgba(0,0,0,0.5);
-  --play-border: #fff;
+  --bg: #e6f0e9;
+  --card-bg: #ffffff;
+  --card-bg-alt: #edf7f0;
+  --border: #c0d8ca;
+  --border-2: #d0e2d6;
+  --border-3: #a4c4b2;
+  --accent: #1d6a48;
+  --accent-light: #caddd2;
+  --text: #13251c;
+  --text-body: #2c3d35;
+  --text-sec: #57665e;
+  --text-tert: #818f87;
+  --text-dim: #a2afa7;
+  --text-muted: #b8c3bc;
+  --text-quote: #77a690;
+  --modal-bg: #e6f0e9;
+  --img-bg: #edf7f0;
+  --modimg-bg: #e6f0e9;
+  --btn-bg: #ffffff;
+  --btn-color: #57665e;
+  --toggle-bg: #d0e2d6;
+  --toggle-border: #a4c4b2;
+  --toggle-dot: #818f87;
+  --meta-bg: #edf7f0;
+  --meta-border: #d0e2d6;
+  --meta-color: #818f87;
+  --text-inverse: #ffffff;
+  --play-bg: rgba(0,0,0,0.35);
+  --play-border: #1d6a48;
+  --err: #b00020;
+  --warn: #8a5a00;
+  --overlay: rgba(10,10,10,0.45);
+  --term-bg: #e6f0e9;
+  --term-panel: #ffffff;
+  --term-border: #d0e2d6;
+  --term-dim: #a2afa7;
+  --lg-banner-bg: #bed5c9;
+  --lg-banner-text: #1d6a48;
+  --lg-accent: #1d6a48;
+  --lg-dim: #a2afa7;
 }
-
 body {
   background: var(--bg);
   color: var(--text);
@@ -667,7 +780,7 @@ body {
 
 @keyframes spin { to { transform: rotate(360deg); } }
 
-.error { text-align: center; padding: 40px; color: #ff6b6b; }
+.error { text-align: center; padding: 40px; color: var(--err); }
 
 .modal-overlay {
   position: fixed;
@@ -843,34 +956,34 @@ body {
 .toverlay { position:fixed; inset:0; z-index:2000; background:rgba(0,0,0,0.92); display:none; align-items:center; justify-content:center; padding:8px; }
 .toverlay.open { display:flex; }
 
-.twindow { width:100%; max-width:1200px; height:85vh; height:85dvh; background:#0c0c0c; border:1px solid #333; border-radius:8px; display:flex; flex-direction:column; overflow:hidden; box-shadow:0 0 60px rgba(32,255,32,0.08); }
+.twindow { width:100%; max-width:1200px; height:85vh; height:85dvh; background:var(--term-bg); border:1px solid var(--term-border); border-radius:0; display:flex; flex-direction:column; overflow:hidden; }
 
-.ttbar { background:#1a1a1a; padding:8px 14px; display:flex; align-items:center; font-family:"Inconsolata","SF Mono",Consolas,monospace; font-size:0.75rem; color:#777; border-bottom:1px solid #2a2a2a; user-select:none; flex-shrink:0; position:relative; z-index:10; }
-.ttbar span { flex:1; }
-.ttbar .tclose { background:none; border:none; color:#666; cursor:pointer; font-size:1.2rem; line-height:1; padding:0 4px; }
-.ttbar .tclose:hover { color:#ff5f57; }
+.ttbar { background:var(--term-panel); padding:8px 14px; display:flex; align-items:center; font-family:"Inconsolata","SF Mono",Consolas,monospace; font-size:0.75rem; color:var(--term-dim); border-top:2px solid var(--accent); border-bottom:1px solid var(--term-border); user-select:none; flex-shrink:0; position:relative; z-index:10; }
+.ttbar span { flex:1; text-transform:uppercase; letter-spacing:0.08em; }
+.ttbar .tclose { background:none; border:none; color:var(--term-dim); cursor:pointer; font-size:1.2rem; line-height:1; padding:0 4px; }
+.ttbar .tclose:hover { color:var(--err); }
 
 #liveOverlay { padding: 8px; }
-#liveWindow { width:100%; max-width:1200px; height:85vh; height:85dvh; border-radius:8px; display:flex; flex-direction:column; overflow:hidden; }
+#liveWindow { width:100%; max-width:1200px; height:85vh; height:85dvh; border-radius:0; display:flex; flex-direction:column; overflow:hidden; }
 #liveWindow #xterm-container { flex: 1; min-height: 0; }
-#xterm-container { padding: 0; background: #0c0c0c; overflow: hidden !important; }
+#xterm-container { padding: 0; background: var(--term-bg); overflow: hidden !important; }
 #xterm-container .terminal { padding: 0; }
-#xterm-container .terminal-cursor { background: #20ff20; color: #000; }
+#xterm-container .terminal-cursor { background: var(--accent); color: #000; }
 #xterm-container .xterm { height: 100% !important; overflow: hidden !important; }
 #xterm-container .xterm-viewport { height: 100% !important; overflow-x: auto !important; overflow-y: hidden !important; }
 #xterm-container .xterm-helper-textarea { overflow: hidden !important; }
 
-.tbody { flex:1; overflow-y:auto; padding:10px 16px; font:0.8rem/1.55 "Inconsolata","SF Mono",Consolas,monospace; color:#20ff20; background:#0c0c0c; white-space:pre-wrap; word-break:break-word; }
+.tbody { flex:1; overflow-y:auto; padding:10px 16px; font:0.8rem/1.55 "Inconsolata","SF Mono",Consolas,monospace; color:var(--accent); background:var(--term-bg); white-space:pre-wrap; word-break:break-word; }
 .tbody .to { margin-bottom:2px; }
-.tbody .tdim { color:#4a4; }
-.tbody .tbold { color:#20ff20; font-weight:bold; }
-.tbody .terr { color:#ff4444; }
-.tbody .twarn { color:#ffaa00; }
+.tbody .tdim { color:var(--term-dim); }
+.tbody .tbold { color:var(--accent); font-weight:bold; }
+.tbody .terr { color:var(--err); }
+.tbody .twarn { color:var(--warn); }
 
-.tinput { display:flex; align-items:center; background:#0c0c0c; border-top:1px solid #2a2a2a; padding:8px 16px; flex-shrink:0; }
-.tinput span { color:#20ff20; font-family:"Inconsolata","SF Mono",Consolas,monospace; font-size:0.82rem; margin-right:6px; }
-.tinput input { flex:1; background:transparent; border:none; outline:none; color:#20ff20; font-family:"Inconsolata","SF Mono",Consolas,monospace; font-size:0.82rem; caret-color:#20ff20; }
-.tinput input::placeholder { color:#3a3; }
+.tinput { display:flex; align-items:center; background:var(--term-bg); border-top:1px solid var(--term-border); padding:8px 16px; flex-shrink:0; }
+.tinput span { color:var(--accent); font-family:"Inconsolata","SF Mono",Consolas,monospace; font-size:0.82rem; margin-right:6px; }
+.tinput input { flex:1; background:transparent; border:none; outline:none; color:var(--accent); font-family:"Inconsolata","SF Mono",Consolas,monospace; font-size:0.82rem; caret-color:var(--accent); }
+.tinput input::placeholder { color:var(--term-dim); }
 
 @media (max-width: 800px) {
   .toverlay { padding:0; }
@@ -987,27 +1100,237 @@ body {
 
 @media (max-width: 800px) {
   .splash-nav button { font-size: 1rem; }
+}
+
+/* ── Terminal / Console redesign ───────────────────────────────── */
+
+* { border-radius: 0 !important; box-shadow: none !important; text-shadow: none !important; }
+
+html, body,
+button, select, input, textarea,
+.theme-select, .term-btn, .tile, .modal-content, .modal-body,
+.twindow, .ttbar, .tbody, .tinput, .loneghost-wrap {
+  font-family: "JetBrains Mono", "Inconsolata", "SF Mono", Consolas,
+    "Noto Sans Mono CJK JP", "Noto Sans Mono CJK KR", "Noto Sans Mono CJK SC",
+    "Yu Gothic UI", "MS Gothic", "Malgun Gothic", "Apple SD Gothic Neo",
+    "SimHei", "Heiti SC", "Noto Sans CJK JP", "Noto Sans CJK KR", "Noto Sans CJK SC", monospace;
+}
+
+/* capsule (pill) controls */
+button, .theme-select, .term-btn,
+.pagination button, .pagination .page-btn,
+.modal-footer a, .modal-tags a, .tile-tag, .tile-permalink {
+  border-radius: 999px !important;
+}
+
+.controls-caption {
+  font-size: 0.72rem;
+  color: var(--text-dim);
+  letter-spacing: 0.1em;
+  margin-right: 4px;
+  user-select: none;
+}
+
+.header { position: relative; padding-right: 84px; }
+
+.hanko {
+  position: absolute;
+  top: 12px;
+  right: 20px;
+  width: 44px;
+  height: 44px;
+  background: var(--err);
+  color: #fff;
+  font-family: "Yu Mincho", "Noto Serif JP", "Noto Serif KR", "SimSun", "Batang", serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  line-height: 1.2;
+  font-size: 15px;
+  border: 2px solid rgba(255,255,255,0.35);
+  border-radius: 0;
+  user-select: none;
+  pointer-events: none;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.banner { display: none; }
+
+#page-wrap {
+  max-width: 1440px;
+  margin: 0 auto;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-top: none;
+}
+
+#page-wrap::before {
+  content: "USVIRTUALUNIVERSITY · 米国バーチャル大学\AACADEMIC REGISTRAR · 학사 등록처 · 教务注册处 · EST. MMXXIV";
+  display: block;
+  white-space: pre;
+  background: var(--term-panel);
+  color: var(--accent);
+  font-size: 12px;
+  text-transform: uppercase;
+  line-height: 1.5;
+  padding: 9px 14px;
+  border-top: 3px solid var(--accent);
+  border-bottom: 1px solid var(--accent);
+  letter-spacing: 0.05em;
+}
+
+#page-wrap::before::first-line { letter-spacing: 0.16em; }
+
+.academic-band {
+  height: 0;
+  border-top: 1px solid var(--border-2);
+  border-bottom: 2px solid var(--accent);
+}
+
+.header { padding: 18px 20px 12px; }
+
+.header h1 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--accent);
+  letter-spacing: 0.02em;
+}
+
+.header h1::before { content: "kredtidy@usvu:~$ ./admit --bulletin "; color: var(--text-dim); font-weight: 400; }
+.header .desc { color: var(--text-tert); font-size: 0.78rem; }
+.header .dept {
+  color: var(--text-dim);
+  font-size: 0.72rem;
+  margin-top: 6px;
+  letter-spacing: 0.04em;
+}
+.header .total { color: var(--text-muted); font-size: 0.72rem; }
+
+.controls {
+  gap: 8px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+.controls label { font-size: 0.75rem; color: var(--text-tert); }
+.theme-select, .term-btn {
+  font-size: 0.75rem;
+  padding: 4px 10px;
+  border: 1px solid var(--border-3);
+  background: var(--card-bg);
+  color: var(--text-sec);
+  border-radius: 0;
+}
+.theme-select:hover, .term-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+.academic-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 12px 20px 14px;
+  border-top: 2px solid var(--accent);
+  color: var(--text-dim);
+  font-size: 0.7rem;
+  letter-spacing: 0.04em;
+  background: var(--card-bg);
+}
+
+.grid { padding: 0 20px 20px; }
+
+.tile {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-top: 2px solid var(--accent);
+}
+.tile:hover { border-color: var(--accent); }
+.tile-title { font-size: 0.85rem; color: var(--accent); }
+.tile-text { font-size: 0.75rem; color: var(--text-sec); }
+.tile-meta { font-size: 0.68rem; color: var(--text-muted); }
+.tile-date { color: var(--text-dim); }
+.tile-tag {
+  font-size: 0.65rem;
+  background: var(--card-bg-alt);
+  color: var(--text-dim);
+  border-color: var(--border-2);
+}
+.tile-permalink { font-size: 0.6rem; border-radius: 0; }
+
+.loading { font-family: inherit; color: var(--text-dim); }
+.loading::after {
+  content: "█";
+  display: inline-block;
+  width: auto; height: auto;
+  border: none;
+  background: none;
+  border-radius: 0;
+  animation: blink 1s step-start infinite;
+  margin-left: 8px;
+  vertical-align: middle;
+}
+@keyframes blink { 50% { opacity: 0; } }
+
+.error { font-family: inherit; color: var(--err); }
+
+.pagination button, .pagination .page-btn {
+  font-size: 0.75rem;
+  border-color: var(--border-3);
+  background: var(--card-bg);
+  color: var(--text-sec);
+  border-radius: 0;
+}
+.pagination .page-btn.current { background: var(--accent); color: var(--text-inverse); border-color: var(--accent); }
+
+.modal-overlay { background: var(--overlay); }
+.modal-content { background: var(--modal-bg); border: 1px solid var(--border-3); border-top: 3px solid var(--accent); border-radius: 0; }
+.modal-close { font-size: 1.1rem; }
+.modal-head .modal-title { font-size: 1.05rem; color: var(--accent); }
+.modal-head { border-bottom: 1px solid var(--border); padding-bottom: 12px; }
+.modal-head .modal-meta span, .modal-tags a { font-size: 0.7rem; border-radius: 0; }
+.modal-body { font-size: 0.85rem; color: var(--text-body); }
+.modal-footer a { font-size: 0.75rem; border-radius: 0; }
+
+.loneghost-wrap {
+  font-family: "JetBrains Mono", "Inconsolata", monospace;
+  font-size: 13px;
+  color: var(--text-sec);
+}
+
 </style>
 <style>
 /* ── LoneGhost styles ── */
-.loneghost-wrap{position:relative;cursor:pointer;user-select:none;-webkit-user-select:none;color:#aaa;font-family:'Roboto',sans-serif;font-size:15px;line-height:1.5;max-width:1400px;margin:0 auto;min-height:500px;overflow:hidden;background:rgba(0,10,30,0.7)}
-.loneghost-wrap #output{position:absolute;top:56px;left:0;right:0;bottom:0;overflow-y:auto;padding:20px 20px 40px;z-index:10;white-space:pre-wrap;word-wrap:break-word}
-.loneghost-wrap .st{color:#888}
-.loneghost-wrap .sitch{color:#666}
-.loneghost-wrap .ts{color:#aaa}
-.loneghost-wrap .lg-banner{position:sticky;top:0;padding:20px 20px 14px;background:rgba(255,0,255,.7);color:#0ff;font-weight:bold;z-index:99;display:flex;justify-content:space-between;align-items:center}
-.loneghost-wrap #ssToggleBtn{background:none;border:1px solid rgba(0,0,0,.2);color:#0ff;font-size:16px;cursor:pointer;border-radius:4px;padding:2px 8px;line-height:1;margin-left:6px}
-.loneghost-wrap #ssToggleBtn:hover{border-color:#0ff}
-.loneghost-wrap #ssToggleBtn.off{color:#444;border-color:#333}
-.loneghost-wrap #clearBtn{background:none;border:1px solid rgba(0,0,0,.2);color:#0ff;font-size:12px;cursor:pointer;border-radius:4px;padding:2px 8px;line-height:1}
-.loneghost-wrap #clearBtn:hover{border-color:#0ff}
-.loneghost-wrap #downloadBtn{background:none;border:1px solid rgba(0,0,0,.2);color:#0ff;font-size:12px;cursor:pointer;border-radius:4px;padding:2px 8px;line-height:1;margin-left:8px}
-.loneghost-wrap #downloadBtn:hover{border-color:#0ff}
-.loneghost-wrap #nanoBtn{position:absolute;bottom:12px;right:12px;background:none;border:1px solid rgba(255,255,255,.15);color:#555;font-size:16px;cursor:pointer;border-radius:4px;padding:2px 12px;line-height:1.4;z-index:15}
-.loneghost-wrap #nanoBtn:hover{color:#0ff;border-color:#0ff}
-.loneghost-wrap .ss-bg{position:absolute;inset:0;z-index:1;background:#0a0a0a}
+.loneghost-wrap{position:relative;cursor:pointer;user-select:none;-webkit-user-select:none;color:var(--text-sec);font-family:'JetBrains Mono','Inconsolata',monospace;font-size:13px;line-height:1.5;max-width:1400px;margin:0 auto;min-height:500px;overflow:hidden;background:var(--bg)}
+.loneghost-wrap #output{position:absolute;top:58px;left:0;right:0;bottom:0;overflow-y:auto;padding:20px 20px 40px;z-index:10;white-space:pre-wrap;word-wrap:break-word}
+.loneghost-wrap .st{color:var(--text-dim)}
+.loneghost-wrap .sitch{color:var(--text-muted)}
+.loneghost-wrap .ts{color:var(--text-sec)}
+.loneghost-wrap .acc{color:var(--accent)}
+.loneghost-wrap .lg-1{color:var(--text)}
+.loneghost-wrap .lg-2{color:var(--accent)}
+.loneghost-wrap .lg-3{color:var(--text-quote)}
+.loneghost-wrap .lg-4{color:var(--text-sec)}
+.loneghost-wrap .lg-5{color:var(--text-tert)}
+.loneghost-wrap .lg-banner{position:sticky;top:0;padding:18px 20px 12px;background:var(--lg-banner-bg);color:var(--lg-banner-text);font-weight:bold;text-transform:uppercase;letter-spacing:0.12em;font-size:0.85rem;border-top:2px solid var(--lg-accent);z-index:99;display:flex;justify-content:space-between;align-items:center}
+.loneghost-wrap #ssToggleBtn{background:none;border:1px solid var(--border);color:var(--lg-accent);font-size:16px;cursor:pointer;border-radius:0;padding:2px 8px;line-height:1;margin-left:6px}
+.loneghost-wrap #ssToggleBtn:hover{border-color:var(--lg-accent)}
+.loneghost-wrap #ssToggleBtn.off{color:var(--lg-dim);border-color:var(--term-border)}
+.loneghost-wrap #clearBtn{background:none;border:1px solid var(--border);color:var(--lg-accent);font-size:12px;cursor:pointer;border-radius:0;padding:2px 8px;line-height:1}
+.loneghost-wrap #clearBtn:hover{border-color:var(--lg-accent)}
+.loneghost-wrap #downloadBtn{background:none;border:1px solid var(--border);color:var(--lg-accent);font-size:12px;cursor:pointer;border-radius:0;padding:2px 8px;line-height:1;margin-left:8px}
+.loneghost-wrap #downloadBtn:hover{border-color:var(--lg-accent)}
+.loneghost-wrap #nanoBtn{position:absolute;bottom:12px;right:12px;background:none;border:1px solid var(--border-3);color:var(--text-dim);font-size:16px;cursor:pointer;border-radius:0;padding:2px 12px;line-height:1.4;z-index:15}
+.loneghost-wrap #nanoBtn:hover{color:var(--lg-accent);border-color:var(--lg-accent)}
+.loneghost-wrap .ss-bg{position:absolute;inset:0;z-index:1;background:var(--bg)}
 .loneghost-wrap .ss-bg img{width:100%;height:100%;object-fit:cover}
-.loneghost-wrap .ss-overlay{position:absolute;inset:0;z-index:2;background:rgba(0,0,0,0.65)}
+.loneghost-wrap .ss-overlay{position:absolute;inset:0;z-index:2;background:var(--overlay)}
 .loneghost-wrap #flashLayer{position:absolute;inset:0;z-index:5;pointer-events:none;background:transparent;transition:background 0s}
 </style>
 </head>
@@ -1016,45 +1339,47 @@ body {
 
 
 <div id="page-wrap">
-  <div style="height:32px"></div>
-  <div class="banner"><img src="usvu_banner.jpeg" alt="USVU Banner"></div>
+  <div class="academic-band"></div>
   <div class="header">
-  <h1>USVirtualUni — AAPL 19.91 — "D Otomei"</h1>
-  <div class="desc">Artist / MetaDeveloper / B.I.G. &#10022; <a href="https://kredtidy.tumblr.com" target="_blank" style="color:var(--accent);text-decoration:none;transition:opacity 0.15s;font-family:'Bedstead Condensed',sans-serif" onmouseover="this.style.opacity='0.7'" onmouseout="this.style.opacity='1'">BLACK DIGITAL CyberSecure #BDCS</a> &#10022; Incubator Studios Outbeat Produce EST 2024</div>
+  <h1>USVirtualUni — AAPL 19.91 — "D Otomei" 乙女</h1>
+  <div class="desc">Artist / MetaDeveloper / B.I.G. &#10022; <a href="https://kredtidy.tumblr.com" target="_blank" style="color:var(--accent);text-decoration:none;transition:opacity 0.15s" onmouseover="this.style.opacity='0.7'" onmouseout="this.style.opacity='1'">BLACK DIGITAL CyberSecure #BDCS</a> &#10022; Incubator Studios Outbeat Produce EST 2024</div>
+  <div class="dept">Office of Academic Affairs 教務課 · Bulletin 2026-19 · 学士課程 · 학사 과정 · 学士课程 · Registrar AAPL 19.91 · Est. MMXXIV</div>
+  <div class="hanko" title="乙女">乙<br>女</div>
   <div class="controls">
+    <span class="controls-caption">MODULES · モジュール</span>
     <select class="theme-select" id="themeSelect">
-      <option value="dark-green">Dark Green</option>
-      <option value="dark-blue">Dark Blue</option>
-      <option value="dark-purple">Dark Purple</option>
-      <option value="dark-red">Dark Red</option>
-      <option value="dark-cyan">Dark Cyan</option>
-      <option value="dark-amber">Dark Amber</option>
-      <option value="light">Light</option>
-      <option value="light-blue">Light Blue</option>
-      <option value="light-warm">Light Warm</option>
-      <option value="light-mint">Light Mint</option>
+      <option value="dark-green">Terminal: Green</option>
+      <option value="dark-blue">Terminal: Blue</option>
+      <option value="dark-purple">Terminal: Purple</option>
+      <option value="dark-red">Terminal: Red</option>
+      <option value="dark-cyan">Terminal: Cyan</option>
+      <option value="dark-amber">Terminal: Amber</option>
+      <option value="light">Terminal: White</option>
+      <option value="light-blue">Terminal: Ice</option>
+      <option value="light-warm">Terminal: Paper</option>
+      <option value="light-mint">Terminal: Mint</option>
     </select>
-    <button class="term-btn" id="boyGameBtn" style="padding:4px 10px;font-size:0.75rem">👦 Game-Boy</button>
-    <button class="term-btn" id="gameBtn" style="padding:4px 10px;font-size:0.75rem">⚔ Bushido</button>
+    <button class="term-btn" id="boyGameBtn" style="padding:4px 10px;font-size:0.75rem">Game-Boy</button>
+    <button class="term-btn" id="gameBtn" style="padding:4px 10px;font-size:0.75rem">Bushido</button>
     <button class="term-btn" id="terminalBtn">&gt;_ Terminal</button>
-    <button class="term-btn" id="liveBtn" style="position:relative;padding:4px 12px 4px 22px;border-color:#555">
-      <span id="liveDot" style="position:absolute;left:7px;top:50%;transform:translateY(-50%);width:8px;height:8px;border-radius:50%;background:#555;display:inline-block;transition:background 0.3s"></span>
-      <span id="liveLabel" style="font-family:system-ui,sans-serif;font-size:0.75rem">Offline</span>
+    <button class="term-btn" id="liveBtn" style="position:relative;padding:4px 12px 4px 22px;border-color:var(--text-muted)">
+      <span id="liveDot" style="position:absolute;left:7px;top:50%;transform:translateY(-50%);width:8px;height:8px;border-radius:0;background:var(--text-muted);display:inline-block;transition:background 0.3s"></span>
+      <span id="liveLabel" style="font-size:0.75rem">Offline</span>
     </button>
     <a class="term-btn" href="https://github.com/USVU/hackintossh" target="_blank" style="text-decoration:none;display:inline-flex;align-items:center">USVU/hackintossh</a>
-    <button class="term-btn" id="dojicalBtn" style="padding:4px 10px;font-size:0.75rem">🐰 Dojical</button>
-    <button class="term-btn" id="flashpointBtn">💠 FlashPoint</button>
-    <button class="term-btn" id="medicineBtn">📚 Medicine Textbook</button>
-    <button class="term-btn" id="agentBtn">📖 Agent Handbook</button>
-    <button class="term-btn" id="lightkeepersBtn">🎨 LightKeepers</button>
-    <button class="term-btn" id="neoncityBtn">🏙️ NeonCity</button>
-    <button class="term-btn" id="maptermBtn">🗺️ Mapterm</button>
+    <button class="term-btn" id="dojicalBtn" style="padding:4px 10px;font-size:0.75rem">Dojical</button>
+    <button class="term-btn" id="flashpointBtn">FlashPoint</button>
+    <button class="term-btn" id="medicineBtn">Medicine Textbook</button>
+    <button class="term-btn" id="agentBtn">Agent Handbook</button>
+    <button class="term-btn" id="lightkeepersBtn">LightKeepers</button>
+    <button class="term-btn" id="neoncityBtn">NeonCity</button>
+    <button class="term-btn" id="maptermBtn">Mapterm</button>
   </div>
 </div>
 
 <!-- LoneGhost.Net main content -->
 <div class="loneghost-wrap">
-<div class="lg-banner">Welcome to LoneGhost.Net <button id="downloadBtn" title="Download this HTML file" tabindex="-1">↓ DL HTML</button> <span style="flex:1"></span><button id="clearBtn" title="Clear output" tabindex="-1">CLR</button><button id="ssToggleBtn" title="Toggle slideshow" tabindex="-1">◎ SS</button></div>
+<div class="lg-banner">Welcome to LoneGhost.Net ローンゴースト <button id="downloadBtn" title="Download this HTML file" tabindex="-1">DL HTML</button> <span style="flex:1"></span><button id="clearBtn" title="Clear output" tabindex="-1">CLR</button><button id="ssToggleBtn" title="Toggle slideshow" tabindex="-1">SS</button></div>
 <div class="ss-bg" id="ssBg"><img id="ssImg" alt="" /></div>
 <div class="ss-overlay" id="ssOverlay"></div>
 <div id="flashLayer"></div>
@@ -1062,12 +1387,17 @@ body {
 <button id="nanoBtn" tabindex="-1">NANO</button>
 </div>
 
+<div class="academic-footer">
+  <span>USVirtualUniversity 米国バーチャル大学 · Registrar AAPL 19.91 · kredtidy@usvu</span>
+  <span>教務課 · 학사부 · 教务处 · Est. MMXXIV · Virtual Accreditation Pending</span>
+</div>
+
 </div> <!-- end page-wrap -->
 
 <div class="toverlay" id="toverlay">
   <div class="twindow">
     <div class="ttbar">
-      <span>kredtidy@web-pipe</span>
+      <span>kredtidy@web-pipe 端末</span>
       <button class="tclose" id="tclose">&times;</button>
     </div>
     <div class="tbody" id="tbody"></div>
@@ -1090,14 +1420,14 @@ body {
 <div class="toverlay" id="gameOverlay">
   <div class="twindow" style="max-width:1312px;height:90vh">
     <div class="ttbar">
-      <span>⚔ Bushido Blade</span>
+      <span>Bushido Blade 武士道</span>
       <button class="tclose" id="gameClose">&times;</button>
     </div>
     <div id="gameWrap" style="flex:1;position:relative;overflow:hidden;background:#1a1a0a;display:flex;align-items:center;justify-content:center;padding:0">
   <iframe id="gameFrame" src="./samurai.html" style="width:100%;height:100%;border:none" title="Bushido Blade"
     onerror="this.style.display='none';this.nextSibling.style.display='flex'"></iframe>
   <div style="display:none;flex-direction:column;align-items:center;color:#666;font-family:'Inconsolata',monospace;font-size:13px;gap:8px">
-    <span>⚠ Could not load samurai.html</span>
+    <span>! Could not load samurai.html</span>
     <span style="font-size:11px;color:#444">Place both files in the same directory</span>
   </div>
 </div>
@@ -1106,14 +1436,14 @@ body {
 <div class="toverlay" id="boyGameOverlay">
   <div class="twindow" style="max-width:1312px;height:90vh">
     <div class="ttbar">
-      <span>👦 Kawaii Field — Game-Boy</span>
+      <span>Kawaii Field — Game-Boy ゲームボーイ</span>
       <button class="tclose" id="boyGameClose">&times;</button>
     </div>
     <div id="boyGameWrap" style="flex:1;position:relative;overflow:hidden;background:#1a1a2e;display:flex;align-items:center;justify-content:center;padding:0">
   <iframe id="boyGameFrame" src="./game-boy.html" style="width:100%;height:100%;border:none" title="Kawaii Field"
     onerror="this.style.display='none';this.nextSibling.style.display='flex'"></iframe>
   <div style="display:none;flex-direction:column;align-items:center;color:#666;font-family:'Inconsolata',monospace;font-size:13px;gap:8px">
-    <span>⚠ Could not load game-boy.html</span>
+    <span>! Could not load game-boy.html</span>
     <span style="font-size:11px;color:#444">Place both files in the same directory</span>
   </div>
 </div>
@@ -1122,14 +1452,14 @@ body {
 <div class="toverlay" id="flashpointOverlay">
   <div class="twindow" style="max-width:98vw;width:98vw;height:98vh;height:98dvh">
     <div class="ttbar">
-      <span>🔥 FlashPoint</span>
+      <span>FlashPoint フラッシュポイント</span>
       <button class="tclose" id="flashpointClose">&times;</button>
     </div>
     <div style="flex:1;position:relative;overflow:hidden;background:#000;display:flex;align-items:center;justify-content:center;padding:0">
       <iframe src="./FlashPoint-NeonBunny.html" style="width:100%;height:100%;border:none" title="FlashPoint"
         onerror="this.style.display='none';this.nextSibling.style.display='flex'"></iframe>
       <div style="display:none;flex-direction:column;align-items:center;color:#666;font-family:'Inconsolata',monospace;font-size:13px;gap:8px">
-        <span>⚠ Could not load FlashPoint-NeonBunny.html</span>
+        <span>! Could not load FlashPoint-NeonBunny.html</span>
         <span style="font-size:11px;color:#444">Place FlashPoint-NeonBunny.html in the root directory</span>
       </div>
     </div>
@@ -1139,14 +1469,14 @@ body {
 <div class="toverlay" id="agentOverlay">
   <div class="twindow" style="max-width:98vw;width:98vw;height:98vh;height:98dvh">
     <div class="ttbar">
-      <span>📖 Agent Handbook</span>
+      <span>Agent Handbook エージェントハンドブック</span>
       <button class="tclose" id="agentClose">&times;</button>
     </div>
     <div style="flex:1;position:relative;overflow:hidden;background:#000;display:flex;align-items:center;justify-content:center;padding:0">
       <iframe src="./A-HB.html" style="width:100%;height:100%;border:none" title="Agent Handbook"
         onerror="this.style.display='none';this.nextSibling.style.display='flex'"></iframe>
       <div style="display:none;flex-direction:column;align-items:center;color:#666;font-family:'Inconsolata',monospace;font-size:13px;gap:8px">
-        <span>⚠ Could not load A-HB.html</span>
+        <span>! Could not load A-HB.html</span>
         <span style="font-size:11px;color:#444">Place A-HB.html in the root directory</span>
       </div>
     </div>
@@ -1155,14 +1485,14 @@ body {
 <div class="toverlay" id="lightkeepersOverlay">
   <div class="twindow" style="max-width:98vw;width:98vw;height:98vh;height:98dvh">
     <div class="ttbar">
-      <span>🎨 LightKeepers</span>
+      <span>LightKeepers ライトキーパーズ</span>
       <button class="tclose" id="lightkeepersClose">&times;</button>
     </div>
     <div style="flex:1;position:relative;overflow:hidden;background:#000;display:flex;align-items:center;justify-content:center;padding:0">
       <iframe src="./LightKeepers.html" style="width:100%;height:100%;border:none" title="LightKeepers"
         onerror="this.style.display='none';this.nextSibling.style.display='flex'"></iframe>
       <div style="display:none;flex-direction:column;align-items:center;color:#666;font-family:'Inconsolata',monospace;font-size:13px;gap:8px">
-        <span>⚠ Could not load LightKeepers.html</span>
+        <span>! Could not load LightKeepers.html</span>
         <span style="font-size:11px;color:#444">Place LightKeepers.html in the root directory</span>
       </div>
     </div>
@@ -1171,14 +1501,14 @@ body {
 <div class="toverlay" id="neoncityOverlay">
   <div class="twindow" style="max-width:98vw;width:98vw;height:98vh;height:98dvh">
     <div class="ttbar">
-      <span>🏙️ NeonCity</span>
+      <span>NeonCity ネオンシティ</span>
       <button class="tclose" id="neoncityClose">&times;</button>
     </div>
     <div style="flex:1;position:relative;overflow:hidden;background:#000;display:flex;align-items:center;justify-content:center;padding:0">
       <iframe src="./NeonCity.html" style="width:100%;height:100%;border:none" title="NeonCity"
         onerror="this.style.display='none';this.nextSibling.style.display='flex'"></iframe>
       <div style="display:none;flex-direction:column;align-items:center;color:#666;font-family:'Inconsolata',monospace;font-size:13px;gap:8px">
-        <span>⚠ Could not load NeonCity.html</span>
+        <span>! Could not load NeonCity.html</span>
         <span style="font-size:11px;color:#444">Place NeonCity.html in the root directory</span>
       </div>
     </div>
@@ -1187,14 +1517,14 @@ body {
 <div class="toverlay" id="medicineOverlay">
   <div class="twindow" style="max-width:98vw;width:98vw;height:98vh;height:98dvh">
     <div class="ttbar">
-      <span>📚 Medicine Textbook</span>
+      <span>Medicine Textbook 医学教科書</span>
       <button class="tclose" id="medicineClose">&times;</button>
     </div>
     <div style="flex:1;position:relative;overflow:hidden;background:#000;display:flex;align-items:center;justify-content:center;padding:0">
       <iframe src="./MedicineTextbook.html" style="width:100%;height:100%;border:none" title="Medicine Textbook"
         onerror="this.style.display='none';this.nextSibling.style.display='flex'"></iframe>
       <div style="display:none;flex-direction:column;align-items:center;color:#666;font-family:'Inconsolata',monospace;font-size:13px;gap:8px">
-        <span>⚠ Could not load MedicineTextbook.html</span>
+        <span>! Could not load MedicineTextbook.html</span>
         <span style="font-size:11px;color:#444">Place MedicineTextbook.html in the root directory</span>
       </div>
     </div>
@@ -1355,7 +1685,7 @@ function tileHtml(post) {
         ${text ? `<div class="tile-text">${escHtml(truncate(text, 180))}</div>` : ''}
         <div class="tile-meta">
           <span class="tile-date">${date}</span>
-          <span style="color:#555;text-transform:capitalize;font-size:0.7rem">${post.type}</span>
+          <span style="color:var(--text-muted);text-transform:capitalize;font-size:0.7rem">${post.type}</span>
         </div>
         ${tags.length ? `<div class="tile-tags">${tags.map(t => `<span class="tile-tag">${escHtml(t)}</span>`).join('')}</div>` : ''}
       </div>
@@ -1521,7 +1851,7 @@ async function fetchPage(page, append) {
     if (page >= totalPages) {
       allLoaded = true;
       if (isInfinite) {
-        $('pagination').innerHTML = '<div style="text-align:center;padding:32px;color:#555;font-size:0.85rem">All ' + totalPosts + ' posts loaded.</div>';
+        $('pagination').innerHTML = '<div style="text-align:center;padding:32px;color:var(--text-muted);font-size:0.85rem">All ' + totalPosts + ' posts loaded.</div>';
       }
     }
 
@@ -1686,7 +2016,7 @@ function renderPagination() {
 
   if (startPage > 1) {
     h += `<button class="page-btn" onclick="goPage(1)">1</button>`;
-    if (startPage > 2) h += `<span style="color:#555">…</span>`;
+    if (startPage > 2) h += `<span style="color:var(--text-muted)">…</span>`;
   }
 
   for (let i = startPage; i <= endPage; i++) {
@@ -1694,7 +2024,7 @@ function renderPagination() {
   }
 
   if (endPage < total) {
-    if (endPage < total - 1) h += `<span style="color:#555">…</span>`;
+    if (endPage < total - 1) h += `<span style="color:var(--text-muted)">…</span>`;
     h += `<button class="page-btn" onclick="goPage(${total})">${total}</button>`;
   }
 
@@ -2685,11 +3015,20 @@ const $liveDot = document.getElementById("liveDot");
 const $liveLabel = document.getElementById("liveLabel");
 const $termTitle = document.getElementById("termTitle");
 
+function themeVar(name, fallback) {
+  try {
+    const v = getComputedStyle(document.body).getPropertyValue(name).trim();
+    return v || fallback;
+  } catch { return fallback; }
+}
+
 function setLiveStatus(connected) {
   wsConnected = connected;
-  $liveDot.style.background = connected ? "#20ff20" : "#555";
+  const on = themeVar('--accent', '#20ff20');
+  const off = themeVar('--text-muted', '#555');
+  $liveDot.style.background = connected ? on : off;
   $liveLabel.textContent = connected ? "Live" : "Offline";
-  document.getElementById("liveBtn").style.borderColor = connected ? "#20ff20" : "#555";
+  document.getElementById("liveBtn").style.borderColor = connected ? on : off;
 }
 
 function wsConnect() {
@@ -2769,7 +3108,7 @@ function openLiveTerminal() {
 
   if (!wsConnected) {
     $liveLabel.textContent = "Connecting...";
-    $liveDot.style.background = "#ffaa00";
+    $liveDot.style.background = themeVar('--warn', '#ffaa00');
   }
 
   document.getElementById("page-wrap").style.display = "none";
@@ -2791,7 +3130,12 @@ function openLiveTerminal() {
       cursorStyle: "block",
       fontSize: 14,
       fontFamily: "'Inconsolata', Consolas, 'Courier New', monospace",
-      theme: { background: "#0c0c0c", foreground: "#20ff20", cursor: "#20ff20", selectionBackground: "#20ff2040" },
+      theme: {
+        background: themeVar('--term-bg', '#0a0a0a'),
+        foreground: themeVar('--accent', '#20ff20'),
+        cursor: themeVar('--accent', '#20ff20'),
+        selectionBackground: themeVar('--accent-light', 'rgba(32,255,32,0.25)'),
+      },
       allowTransparency: false,
       cols,
       rows,
@@ -3007,18 +3351,19 @@ function log(text) {
   out.scrollTop = out.scrollHeight;
 }
 
-const colors = [
-  '#32CD32', '#FFD700', '#9370DB', '#00CED1', '#FF6B6B',
-  '#00FF7F', '#FF69B4', '#00BFFF', '#FF4500', '#7B68EE',
-];
+const SHADES = ['lg-1', 'lg-2', 'lg-3', 'lg-4', 'lg-5'];
 
-function randomColor() {
-  return colors[Math.floor(Math.random() * colors.length)];
+function randomShadeClass() {
+  return SHADES[Math.floor(Math.random() * SHADES.length)];
+}
+
+function randomShadeColor() {
+  const map = { 'lg-1': '--text', 'lg-2': '--accent', 'lg-3': '--text-quote', 'lg-4': '--text-sec', 'lg-5': '--text-tert' };
+  return themeVar(map[randomShadeClass()], '#20ff20');
 }
 
 function flash() {
-  const c = randomColor();
-  document.getElementById('flashLayer').style.background = c;
+  document.getElementById('flashLayer').style.background = randomShadeColor();
   setTimeout(() => {
     document.getElementById('flashLayer').style.background = 'transparent';
   }, 100);
@@ -3080,8 +3425,7 @@ function generateResult() {
     words.push(diction[Math.floor(Math.random() * diction.length)]);
   }
   const kchat = words.join('  ');
-  const c = randomColor();
-  log(`<span class="st"> st</span> ${ans} <span class="sitch">${sitch}</span> <span style="color:${c}">${kchat}</span> <span class="ts">${ts}</span>`);
+  log(`<span class="st"> st</span> ${ans} <span class="sitch">${sitch}</span> <span class="${randomShadeClass()}">${kchat}</span> <span class="ts">${ts}</span>`);
 }
 
 
